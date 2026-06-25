@@ -42,6 +42,7 @@ export default (sequelize, DataTypes) => {
         });
 
     Product.associate = (models) => {
+        if (models.OrderItem) Product.hasMany(models.OrderItem, { foreignKey: 'product_id' });
         Product.belongsTo(models.Users, { foreignKey: 'user_id' });
     }
 
