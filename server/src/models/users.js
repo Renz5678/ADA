@@ -1,5 +1,5 @@
 'use strict';
-import { Model, Sequelize } from 'sequelize';
+import { Model } from 'sequelize';
 import bcrypt from 'bcrypt';
 
 export default (sequelize, DataTypes) => {
@@ -39,13 +39,15 @@ export default (sequelize, DataTypes) => {
 
     Users.beforeCreate(async (user) => {
         user.password = await bcrypt.hash(user.password, 10);
-    })
+    });
 
     Users.comparePassword = async (password, user) => {
         return await bcrypt.compare(password, user.password);
-    }
+    };
 
-    Users.associate = (models) => { }
+    Users.associate = (models) => {
+        Users.hasMany(models.Product, { foreignKey: 'user_id' });
+    };
 
     return Users;
 }
