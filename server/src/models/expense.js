@@ -1,7 +1,7 @@
 'use strict';
 import { Model } from 'sequelize';
 
-export default (sequelize, Model) => {
+export default (sequelize, DataTypes) => {
     class Expense extends Model { };
 
     Expense.init({
