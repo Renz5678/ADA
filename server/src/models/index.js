@@ -17,17 +17,17 @@ const sequelize = new Sequelize({
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DATABASE,
-    logging: false
+    logging: console.log
 });
 
 const models = {
-    Users: UserFactory(Sequelize, DataTypes),
-    Product: ProductFactory(Sequelize, DataTypes),
-    Orders: OrderFactory(Sequelize, DataTypes),
-    OrderItem: OrderItemFactory(Sequelize, DataTypes),
-    Material: MaterialFactory(Sequelize, DataTypes),
-    MaterialTransaction: MaterialTransactionFactory(Sequelize, DataTypes),
-    Expense: ExpenseFactory(Sequelize, DataTypes)
+    Users: UserFactory(sequelize, DataTypes),
+    Product: ProductFactory(sequelize, DataTypes),
+    Orders: OrderFactory(sequelize, DataTypes),
+    OrderItem: OrderItemFactory(sequelize, DataTypes),
+    Material: MaterialFactory(sequelize, DataTypes),
+    MaterialTransaction: MaterialTransactionFactory(sequelize, DataTypes),
+    Expense: ExpenseFactory(sequelize, DataTypes)
 };
 
 Object.values(models).forEach(model => {

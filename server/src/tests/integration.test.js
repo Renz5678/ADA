@@ -62,8 +62,8 @@ describe('Integration: OrderItem', () => {
 describe('Integration: Material', () => {
     it('should create a new material', async () => {
         material = await Material.create({
-            user_id = user.user_id,
-            material_code = 'TEST001',
+            user_id: user.user_id,
+            material_code: 'TEST001',
             material_name: 'Test Material',
             unit_cost: 350.00,
             quantity: 10
