@@ -6,6 +6,11 @@ export default (sequelize, DataTypes) => {
     class Users extends Model { };
 
     Users.init({
+        user_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         username: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -48,6 +53,7 @@ export default (sequelize, DataTypes) => {
     Users.associate = (models) => {
         if (models.Product) Users.hasMany(models.Product, { foreignKey: 'user_id' });
         if (models.Orders) Users.hasMany(models.Orders, { foreignKey: 'user_id' });
+        if (models.Material) Users.hasMany(models.Material, { foreignKey: 'user_id' });
     };
 
     return Users;

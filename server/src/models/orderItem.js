@@ -5,11 +5,16 @@ export default (sequelize, DataTypes) => {
     class OrderItem extends Model { };
 
     OrderItem.init({
+        order_item_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         order_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'orders',
+                model: 'Orders',
                 key: 'order_id'
             }
         },
@@ -17,7 +22,7 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'product',
+                model: 'Product',
                 key: 'product_id'
             }
         },

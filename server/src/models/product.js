@@ -5,11 +5,16 @@ export default (sequelize, DataTypes) => {
     class Product extends Model { };
 
     Product.init({
+        product_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true
+        },
         user_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
             references: {
-                model: 'users',
+                model: 'Users',
                 key: 'user_id'
             }
         },
