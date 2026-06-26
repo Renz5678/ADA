@@ -16,13 +16,13 @@ beforeAll(async () => {
 
 describe('Material', () => {
     it('should create a material associated with a certain user', async () => {
-        const user = await Users.create({
+        const user = await Users.build({
             username: 'renz',
             email: 'test@email.com',
             password: 'testpassword'
         });
 
-        const material = await Material.create({
+        const material = await Material.build({
             user_id: user.user_id,
             material_code: 'TEST001',
             material_name: 'Test',

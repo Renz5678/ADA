@@ -102,7 +102,7 @@ describe('Integration: Relationships', () => {
             include: [{ model: MaterialTransaction }]
         });
 
-        expect(result.MaterialTransaction).toHaveLength(1);
+        expect(result.MaterialTransactions).toHaveLength(1);
         expect(result.MaterialTransaction[0].type).toBe('Purchase')
     });
 
@@ -125,7 +125,7 @@ describe('Integration: Relationships', () => {
             ]
         })
 
-        expect(result.Materials).toHaveLength(1);
+        expect(result[0].Materials).toHaveLength(1);
         expect(result.Orders).toHaveLength(1);
         expect(result.Expenses).toHaveLength(1);
     });

@@ -22,7 +22,7 @@ beforeAll(async () => {
 
 describe('Order Items', () => {
     it('should create an order item from a user which has a product, and an order with said order item', async () => {
-        const user = await Users.create({
+        const user = await Users.build({
             username: 'renz',
             email: 'test@email.com',
             password: 'testpassword'

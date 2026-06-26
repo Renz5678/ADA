@@ -16,7 +16,7 @@ beforeAll(async () => {
 
 describe('Orders Model', () => {
     it('should create an order with a valid user', async () => {
-        const user = Users.create({
+        const user = Users.build({
             username: 'renz',
             email: 'test@email.com',
             password: 'testpassword'

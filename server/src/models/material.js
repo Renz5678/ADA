@@ -55,7 +55,8 @@ export default (sequelize, DataTypes) => {
 
     Material.associate = (models) => {
         Material.belongsTo(models.Users, { foreignKey: 'user_id' });
-    }
+        if (models.MaterialTransaction) Material.hasMany(models.MaterialTransaction, { foreignKey: 'material_id' });
+    };
 
     return Material;
 }

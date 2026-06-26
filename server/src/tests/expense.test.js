@@ -16,13 +16,13 @@ beforeAll(async () => {
 
 describe('Expense', () => {
     it('should create an expense anchored on a user id', async () => {
-        const user = await Users.create({
+        const user = await Users.build({
             username: 'renz',
             email: 'test@email.com',
             password: 'testpassword'
         });
 
-        const expense = await Expense.create({
+        const expense = await Expense.build({
             user_id: user.user_id,
             title: 'Test',
             amount: 350.50,

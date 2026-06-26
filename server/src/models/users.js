@@ -54,6 +54,7 @@ export default (sequelize, DataTypes) => {
         if (models.Product) Users.hasMany(models.Product, { foreignKey: 'user_id' });
         if (models.Orders) Users.hasMany(models.Orders, { foreignKey: 'user_id' });
         if (models.Material) Users.hasMany(models.Material, { foreignKey: 'user_id' });
+        if (models.Expense) Users.hasMany(models.Expense, { foreignKey: 'user_id' });
     };
 
     return Users;

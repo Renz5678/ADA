@@ -19,13 +19,13 @@ beforeAll(async () => {
 
 describe('Material Transaction', () => {
     it('should create a material transaction, anchroed on a user and a material', async () => {
-        const user = await Users.create({
+        const user = await Users.build({
             username: 'renz',
             email: 'test@email.com',
             password: 'testpassword'
         });
 
-        const material = await Material.create({
+        const material = await Material.build({
             user_id: user.user_id,
             material_code: 'TEST001',
             material_name: 'Test',
@@ -33,7 +33,7 @@ describe('Material Transaction', () => {
             quantity: 4
         });
 
-        const materialTransaction = await MaterialTransaction.create({
+        const materialTransaction = await MaterialTransaction.build({
             material_id: material.material_id,
             type: 'Purchase',
             quantity: 3,
