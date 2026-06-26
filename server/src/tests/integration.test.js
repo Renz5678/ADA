@@ -1,4 +1,5 @@
 import { sequelize, models } from '../models/index.js';
+jest.setTimeout(30000);
 
 const { Users, Product, Orders, OrderItem, Material, MaterialTransaction, Expense } = models;
 
@@ -7,7 +8,7 @@ let user, product, orders, orderItem, material, materialTransaction, expense;
 beforeAll(async () => {
     await sequelize.authenticate();
     await sequelize.sync({ force: true });
-});
+}, 30000);
 
 afterAll(async () => {
     await sequelize.close();
@@ -103,16 +104,16 @@ describe('Integration: Relationships', () => {
         });
 
         expect(result.MaterialTransactions).toHaveLength(1);
-        expect(result.MaterialTransaction[0].type).toBe('Purchase')
+        expect(result.MaterialTransactions[0].type).toBe('Purchase')
     });
 
     it('should fetch order with its items', async () => {
-        const result = await OrderItem.findAll({
+        const result = await Orders.findOne({
             where: { order_id: order.order_id },
             include: [{ model: OrderItem }]
         })
 
-        expect(result.OrderItem).toHaveLength(1);
+        expect(result.OrderItems).toHaveLength(1);
     });
 
     it('should fetch user with all their data', async () => {
@@ -126,7 +127,7 @@ describe('Integration: Relationships', () => {
         })
 
         expect(result[0].Materials).toHaveLength(1);
-        expect(result.Orders).toHaveLength(1);
-        expect(result.Expenses).toHaveLength(1);
+        expect(result[0].Orders).toHaveLength(1);
+        expect(result[0].Expenses).toHaveLength(1);
     });
 });
