@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "devStart": "nodemon server.js",
     "test": "jest"
   },
   "jest": {
@@ -19,6 +20,7 @@
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "pg": "^8.22.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.8"
@@ -28,6 +30,8 @@
     "@babel/preset-env": "^8.0.2",
     "babel-jest": "^30.4.1",
     "jest": "^30.4.2",
-    "sqlite3": "^6.0.1"
+    "nodemon": "^3.1.14",
+    "sqlite3": "^6.0.1",
+    "supertest": "^7.2.2"
   }
 }

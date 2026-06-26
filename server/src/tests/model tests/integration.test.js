@@ -1,4 +1,4 @@
-import { sequelize, models } from '../models/index.js';
+import { sequelize, models } from '../../models/index.js';
 jest.setTimeout(30000);
 
 const { Users, Product, Orders, OrderItem, Material, MaterialTransaction, Expense } = models;
