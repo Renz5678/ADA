@@ -46,7 +46,13 @@ const createMaterialTransaction = async (req, res) => {
         const userId = req.user.id;
         const materialId = req.params.id;
 
-        const isMaterialToTheUser = await Material.findOne({ where: { user_id: userId, material_id: materialId } });
+        const isMaterialToTheUser = await Material.findOne({
+            where:
+            {
+                user_id: userId,
+                material_id: materialId
+            }
+        });
 
         if (!isMaterialToTheUser) return res.status(404).json({ message: 'No material found associated with the user!' });
 

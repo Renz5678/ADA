@@ -6,7 +6,11 @@ const getOrders = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const orders = await Orders.findAll({ where: { user_id: userId } });
+        const orders = await Orders.findAll({
+            where: {
+                user_id: userId
+            }
+        });
 
         return res.status(200).json(orders);
     } catch (e) {
@@ -26,7 +30,7 @@ const getOrderById = async (req, res) => {
             }
         });
 
-        if (order === null) return res.status(404).json({ message: 'Order not found!' });
+        if (!order) return res.status(404).json({ message: 'Order not found!' });
 
         return res.status(200).json(order);
     } catch (e) {
@@ -59,7 +63,10 @@ const updateOrder = async (req, res) => {
         const { order_date, total_amount, status } = req.body;
 
         const order = await Orders.findOne({
-            where: { user_id: userId, order_id: orderId }
+            where: {
+                user_id: userId,
+                order_id: orderId
+            }
         });
 
         if (!order) return res.status(404).json({ message: 'Order not found!' });
@@ -83,7 +90,10 @@ const deleteOrder = async (req, res) => {
         const orderId = req.params.id;
 
         const order = await Orders.findOne({
-            where: { user_id: userId, order_id: orderId }
+            where: {
+                user_id: userId,
+                order_id: orderId
+            }
         });
 
         if (!order) return res.status(404).json({ message: 'Order not found!' });

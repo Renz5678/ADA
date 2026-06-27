@@ -6,7 +6,11 @@ const getProducts = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const products = await Product.findAll({ where: { user_id: userId } });
+        const products = await Product.findAll({
+            where: {
+                user_id: userId
+            }
+        });
 
         return res.status(200).json(products);
     } catch (e) {
@@ -26,7 +30,7 @@ const getProductById = async (req, res) => {
             }
         });
 
-        if (product === null) return res.status(404).json({ message: 'Product not found!' });
+        if (!product) return res.status(404).json({ message: 'Product not found!' });
 
         return res.status(200).json(product);
     } catch (e) {
@@ -61,7 +65,12 @@ const updateProduct = async (req, res) => {
 
         const { product_code, product_name, price } = req.body;
 
-        const product = await Product.findOne({ where: { user_id: userId, product_id: productId } });
+        const product = await Product.findOne({
+            where: {
+                user_id: userId,
+                product_id: productId
+            }
+        });
         if (!product) return res.status(404).json({ message: 'Product not found!' });
 
         const updates = {};
@@ -82,7 +91,12 @@ const deleteProduct = async (req, res) => {
         const userId = req.user.id;
         const productId = req.params.id;
 
-        const product = await Product.findOne({ where: { user_id: userId, product_id: productId } });
+        const product = await Product.findOne({
+            where: {
+                user_id: userId,
+                product_id: productId
+            }
+        });
         if (!product) return res.status(404).json({ message: 'Product not found!' });
 
         await product.destroy();

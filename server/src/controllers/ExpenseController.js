@@ -6,7 +6,9 @@ const getExpenses = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const expenses = await Expense.findAll({ where: { user_id: userId } });
+        const expenses = await Expense.findAll({
+            where: { user_id: userId }
+        });
 
         return res.status(200).json(expenses);
     } catch (e) {
@@ -20,7 +22,10 @@ const getExpenseById = async (req, res) => {
         const expenseId = req.params.id;
 
         const expense = await Expense.findOne({
-            where: { user_id: userId, expense_id: expenseId }
+            where: {
+                user_id: userId,
+                expense_id: expenseId
+            }
         });
 
         if (!expense) return res.status(404).json({ message: 'Expense not found!' });

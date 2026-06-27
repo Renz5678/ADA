@@ -6,7 +6,11 @@ const getMaterials = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const materials = await Material.findAll({ where: { user_id: userId } });
+        const materials = await Material.findAll({
+            where: {
+                user_id: userId
+            }
+        });
 
         return res.status(200).json(materials)
     } catch (e) {
@@ -26,7 +30,7 @@ const getMaterialById = async (req, res) => {
             }
         });
 
-        if (material === null) return res.status(404).json({ message: 'Material not found' });
+        if (!material) return res.status(404).json({ message: 'Material not found' });
 
         return res.status(200).json(material);
     } catch (e) {
