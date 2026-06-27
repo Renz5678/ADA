@@ -46,7 +46,7 @@ const createOrder = async (req, res) => {
             status
         });
 
-        return res.status(201).json({ message: 'Order created!' });
+        return res.status(201).json({ message: 'Order created!', data: newOrder });
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }

@@ -48,7 +48,7 @@ const createMaterial = async (req, res) => {
             quantity
         });
 
-        return res.status(201).json({ message: 'Material created!' });
+        return res.status(201).json({ message: 'Material created!', data: newMaterial });
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
