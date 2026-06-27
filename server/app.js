@@ -1,6 +1,6 @@
 import express from 'express';
-import userRouter from './src/routes/user.js';
 import authRouter from './src/routes/auth.js';
+import productRouter from './src/routes/product.js';
 
 const app = express();
 
@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
     })
 });
 
-app.use('/user', userRouter);
 app.use('/auth', authRouter)
+app.use('/products', productRouter);
 
 export default app;
