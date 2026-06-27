@@ -78,7 +78,7 @@ const updateOrder = async (req, res) => {
 const deleteOrder = async (req, res) => {
     try {
         const userId = req.user.id;
-        const orderid = req.params.id;
+        const orderId = req.params.id;
 
         const order = await Orders.findOne({
             where: { user_id: userId, order_id: orderId }
@@ -92,3 +92,5 @@ const deleteOrder = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
 };
+
+export { getOrders, getOrderById, createOrder, updateOrder, deleteOrder };
