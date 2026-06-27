@@ -50,7 +50,7 @@ export default (sequelize, DataTypes) => {
 
     Orders.associate = (models) => {
         if (models.OrderItem) Orders.hasMany(models.OrderItem, { foreignKey: 'order_id' });
-        Orders.belongsTo(models.Users, { foreignKey: 'user_id' });
+        if (models.Users) Orders.belongsTo(models.Users, { foreignKey: 'user_id' });
     };
 
     return Orders;

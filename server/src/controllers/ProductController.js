@@ -1,13 +1,12 @@
 import { models } from "../models/index.js";
 
 const { Product } = models;
+
 const getProducts = async (req, res) => {
     try {
         const userId = req.user.id;
 
-        const products = await Product.findAll({
-            where: { user_id: userId }
-        });
+        const products = await Product.findAll({ where: { user_id: userId } });
 
         return res.status(200).json(products);
     } catch (e) {
