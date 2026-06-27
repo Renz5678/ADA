@@ -70,12 +70,13 @@ const updateMaterial = async (req, res) => {
 
         if (!material) return res.status(404).json({ message: 'Material not found!' });
 
-        material.material_code = material_code;
-        material.material_name = material_name;
-        material.unit_cost = unit_cost;
-        material.quantity = quantity;
+        const updates = {};
+        if (material_code !== undefined) updates.material_code = material_code;
+        if (material_name !== undefined) updates.material_name = material_name;
+        if (unit_cost !== undefined) updates.unit_cost = unit_cost;
+        if (quantity !== undefined) updates.quantity = quantity;
 
-        await material.save();
+        await material.update(updates);
 
         return res.status(200).json({ message: 'Material updated successfully!' });
     } catch (e) {

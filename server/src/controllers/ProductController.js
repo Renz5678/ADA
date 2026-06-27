@@ -64,17 +64,18 @@ const updateProduct = async (req, res) => {
         const product = await Product.findOne({ where: { user_id: userId, product_id: productId } });
         if (!product) return res.status(404).json({ message: 'Product not found!' });
 
-        product.product_code = product_code;
-        product.product_name = product_name;
-        product.price = price;
+        const updates = {};
+        if (product_code !== undefined) updates.product_code = product_code;
+        if (product_name !== undefined) updates.product_name = product_name;
+        if (price !== undefined) updates.price = price;
 
-        await product.save();
+        await product.update(updates)
 
         return res.status(200).json({ message: 'Product updated successfully!' });
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
-}
+};
 
 const deleteProduct = async (req, res) => {
     try {

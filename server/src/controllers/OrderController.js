@@ -64,10 +64,12 @@ const updateOrder = async (req, res) => {
 
         if (!order) return res.status(404).json({ message: 'Order not found!' });
 
-        order.order_date = order_date;
-        order.total_amount = total_amount;
-        order.status = status;
-        await order.save();
+        const updates = {};
+        if (order_date !== undefined) updates.order_date = order_date;
+        if (total_amount !== undefined) updates.total_amount = total_amount;
+        if (status !== undefined) updates.status = status;
+
+        await order.update(updates);
 
         return res.status(200).json({ message: 'Order updated successfully!' });
     } catch (e) {
