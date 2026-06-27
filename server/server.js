@@ -4,7 +4,7 @@ import { sequelize } from "./src/models/index.js";
 const port = 3000;
 
 const start = async () => {
-    await sequelize.sync();
+    await sequelize.sync({ logging: false });
 
     app.listen(port, () => {
         console.log(`Server is running at port ${port}`);
