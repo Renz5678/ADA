@@ -4,6 +4,7 @@ import productRouter from './src/routes/product.js';
 import orderRouter from './src/routes/order.js';
 import materialRouter from './src/routes/material.js';
 import materialTransactionRouter from './src/routes/materialTransaction.js';
+import expenseRouter from './src/routes/expense.js';
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.use('/products', productRouter);
 app.use('/orders', orderRouter);
 app.use('/materials', materialRouter);
 app.use('/material_transaction', materialTransactionRouter);
+app.use('/expenses', expenseRouter);
 
 export default app;
