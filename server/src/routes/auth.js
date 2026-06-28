@@ -10,6 +10,6 @@ authRouter.post('/login', login);
 
 authRouter.post('/verify-otp', verifyOtp);
 
-authRouter, post('/resend-otp', resendOtp);
+authRouter.post('/resend-otp', resendOtp);
 
 export default authRouter;

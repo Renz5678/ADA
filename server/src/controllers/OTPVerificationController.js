@@ -40,6 +40,7 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
+        console.log(req.body.email);
         const email = req.body.email;
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
@@ -66,6 +67,7 @@ const resendOtp = async (req, res) => {
 
         return res.status(200).json({ message: 'New OTP sent!' });
     } catch (e) {
+        console.error(e);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
