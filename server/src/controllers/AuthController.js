@@ -3,11 +3,17 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { models } from '../models/index.js';
 import transporter from '../utils/mailer.js';
+import { validationResult } from 'express-validator';
 
 const { Users } = models;
 
 const register = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
 
@@ -59,6 +65,11 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const { email, password } = req.body;
 
         const userResult = await Users.findOne({
@@ -92,6 +103,11 @@ const login = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const email = req.body.email;
         const otp = req.body.verification_token;
 
@@ -126,6 +142,11 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const email = req.body.email;
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
@@ -158,6 +179,11 @@ const resendOtp = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const email = req.body.email;
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
@@ -189,6 +215,11 @@ const resetPassword = async (req, res) => {
 
 const confirmResetPassword = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const email = req.body.email;
         const verification_token = req.body.verification_token;
         const newPassword = req.body.password;
