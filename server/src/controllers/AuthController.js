@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
@@ -175,6 +174,7 @@ const resetPassword = async (req, res) => {
         user.verification_token = verification_token;
         user.otp_expires_at = otp_expires_at;
 
+        await user.save();
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Password Reset Code',
