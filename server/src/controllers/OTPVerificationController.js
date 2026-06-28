@@ -1,5 +1,7 @@
 import { models } from "../models/index.js";
 import transporter from "../utils/mailer.js";
+import crypto from 'crypto';
+
 const { Users } = models;
 
 const verifyOtp = async (req, res) => {
@@ -32,9 +34,40 @@ const verifyOtp = async (req, res) => {
 
         return res.status(200).json({ message: 'Account verified!' });
     } catch (e) {
-        console.error(e);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
-export { verifyOtp };
+const resendOtp = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const verification_token = crypto.randomInt(100000, 999999).toString();
+        const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
+
+        const user = await Users.findOne({
+            where: {
+                email: email,
+                is_verified: false
+            }
+        });
+
+        if (!user) return res.status(404).json({ message: 'Email not found or wrong verification code!' });
+
+        user.verification_token = verification_token;
+        user.otp_expires_at = otp_expires_at;
+
+        await user.save();
+
+        await transporter.sendMail({
+            to: email,
+            subject: 'Your ADA Account Verification Code',
+            text: `Hi ${user.username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`
+        });
+
+        return res.status(200).json({ message: 'New OTP sent!' });
+    } catch (e) {
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+export { verifyOtp, resendOtp };
