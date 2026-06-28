@@ -35,6 +35,18 @@ export default (sequelize, DataTypes) => {
                 notEmpty: { msg: 'Password must not be empty' },
                 notNull: { msg: 'Password must not be null' }
             }
+        },
+        verification_token: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        is_verified: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        otp_expires_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     },
         {
