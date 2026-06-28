@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import { models } from '../models/index.js';
 import transporter from '../utils/mailer.js';
 
@@ -126,7 +127,6 @@ const verifyOtp = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        console.log(req.body.email);
         const email = req.body.email;
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
@@ -153,9 +153,67 @@ const resendOtp = async (req, res) => {
 
         return res.status(200).json({ message: 'New OTP sent!' });
     } catch (e) {
-        console.error(e);
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
-export { register, login, verifyOtp, resendOtp };
+const resetPassword = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const verification_token = crypto.randomInt(100000, 999999).toString();
+        const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
+
+        const user = await Users.findOne({
+            where: {
+                email: email,
+                is_verified: true
+            }
+        });
+
+        if (!user) return res.status(404).json({ message: 'Account not found!' });
+
+        user.verification_token = verification_token;
+        user.otp_expires_at = otp_expires_at;
+
+        await transporter.sendMail({
+            to: email,
+            subject: 'Your ADA Password Reset Code',
+            text: `Hi ${user.username},\n\nWe received a request to reset your ADA account password. Use the OTP below to proceed:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request a password reset, please ignore this email and your account will remain secure.\n\nBest regards,\nThe ADA Team`
+        });
+
+        return res.status(200).json({ message: 'OTP for password reset sent!' });
+    } catch (e) {
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+const confirmResetPassword = async (req, res) => {
+    try {
+        const email = req.body.email;
+        const verification_token = req.body.verification_token;
+        const newPassword = req.body.password;
+
+        const user = await Users.findOne({
+            where: {
+                email: email,
+                verification_token: verification_token,
+            }
+        });
+
+        if (!user) return res.status(404).json({ message: 'Account not existing or invalid OTP!' });
+        if (user.otp_expires_at < new Date()) return res.status(400).json({ message: 'OTP Expired!' });
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        user.password = hashedPassword;
+        user.verification_token = null;
+        user.otp_expires_at = null;
+        await user.save();
+
+        return res.status(200).json({ message: 'Password reset successful!' });
+    } catch (e) {
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+export { register, login, verifyOtp, resendOtp, resetPassword, confirmResetPassword };
