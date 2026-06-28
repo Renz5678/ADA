@@ -4,15 +4,17 @@ import { Op } from 'sequelize';
 
 const { Users } = models;
 
-const startCleanUpJob = cron.schedule('*/10 * * * *', async () => {
-    await Users.destroy({
-        where: {
-            is_verified: false,
-            created_at: {
-                [Op.lt]: new Date(Date.now() - 60 * 60 * 1000)
+const startCleanUpJob = () => {
+    cron.schedule('*/10 * * * *', async () => {
+        await Users.destroy({
+            where: {
+                is_verified: false,
+                created_at: {
+                    [Op.lt]: new Date(Date.now() - 60 * 60 * 1000)
+                }
             }
-        }
-    });
-});
+        });
+    })
+};
 
 export default startCleanUpJob;
