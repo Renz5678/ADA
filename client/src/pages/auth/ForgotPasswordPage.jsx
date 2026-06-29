@@ -17,13 +17,13 @@ export default function ForgotPasswordPage() {
 
     const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     if (!email) {
-    //         navigate("/signup", { replace: true });
-    //     }
-    // }, [email, navigate]);
+    useEffect(() => {
+        if (!email) {
+            navigate("/signup", { replace: true });
+        }
+    }, [email, navigate]);
 
-    // if (!email) return null;
+    if (!email) return null;
 
     const handleChange = (value, index) => {
         // Only allow digits
