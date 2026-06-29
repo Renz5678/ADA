@@ -1,4 +1,5 @@
 import { models } from "../models/index.js";
+import { validationResult } from "express-validator";
 
 const { Material } = models;
 

@@ -1,4 +1,5 @@
 import { models } from '../models/index.js';
+import { validationResult } from 'express-validator';
 
 const { Orders } = models;
 
@@ -40,6 +41,11 @@ const getOrderById = async (req, res) => {
 
 const createOrder = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
 
         const { order_date, total_amount, status } = req.body;
@@ -58,6 +64,11 @@ const createOrder = async (req, res) => {
 
 const updateOrder = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
         const orderId = req.params.id;
         const { order_date, total_amount, status } = req.body;
