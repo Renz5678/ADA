@@ -9,7 +9,7 @@ const startCleanUpJob = () => {
         await Users.destroy({
             where: {
                 is_verified: false,
-                created_at: {
+                createdAt: {
                     [Op.lt]: new Date(Date.now() - 60 * 60 * 1000)
                 }
             }

@@ -1,10 +1,17 @@
+import { verifyOtp, resendOtp } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export default function VerifyOTPPage({ email }) {
+export default function VerifyOTPPage() {
     const [otp, setOtp] = useState(Array(6).fill(""));
     const inputs = useRef([]);
+
+    const { state } = useLocation();
+    const email = state?.email;
+
+    const navigate = useNavigate();
 
     const handleChange = (value, index) => {
         // Only allow digits
@@ -27,6 +34,27 @@ export default function VerifyOTPPage({ email }) {
         }
     };
 
+    const handleVerifyOtp = async () => {
+        try {
+            const res = await verifyOtp({
+                email,
+                verification_token: otp.join("")
+            });
+            navigate('/login');
+        } catch (e) {
+            console.error(e.response?.data?.message || "Verification failed");
+        }
+    }
+
+    const handleResendOtp = async () => {
+        try {
+            const res = await resendOtp({
+                email
+            });
+        } catch (e) {
+            console.error(e.response?.data?.message || "Resend failed");
+        }
+    }
     return (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -65,11 +93,13 @@ export default function VerifyOTPPage({ email }) {
 
                         <button
                             className="w-[70%] h-14 text-xl bg-[#8D4A52] rounded-4xl text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="button"
+                            onClick={handleVerifyOtp}
                         >
                             Login
                         </button>
 
-                        <div className="text-md text-[#8D4A52] font-medium">Resend Code</div>
+                        <div className="text-md text-[#8D4A52] font-medium cursor-pointer" onClick={() => { handleResendOtp() }}>Resend Code</div>
                     </div>
                 </div>
             </div>

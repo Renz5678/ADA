@@ -1,14 +1,15 @@
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { MdOutlineMailOutline, MdLockOutline } from "react-icons/md";
-import { } from "react-icons/md";
-import { } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Icon from "#components/ui/Icon.jsx";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { forgotPassword, login } from "#api/auth.js";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
+
+    const navigate = useNavigate();
 
     const [loginForm, setLoginForm] = useState({
         email: "",
@@ -24,6 +25,32 @@ export default function LoginPage() {
 
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginForm.email);
 
+    const handleLogin = async () => {
+        try {
+            const res = await login({
+                email: loginForm.email,
+                password: loginForm.password
+            });
+
+            navigate('/dashboard');
+        } catch (e) {
+            console.error(e.response?.data?.message || "Login failed");
+        }
+    }
+
+    const handleForgotPassword = async () => {
+        try {
+            if (loginForm.email === "") return alert("Please enter your email");
+
+            const res = await forgotPassword({
+                email: loginForm.email
+            })
+
+            navigate('/verify-otp', { state: { email: signUpForm.email } });
+        } catch (e) {
+            console.error(e.response?.data?.message || "Password reset failed");
+        }
+    }
     return (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -68,7 +95,8 @@ export default function LoginPage() {
                             <label className="flex flex-col gap-1">
                                 <div className="flex relative font-medium text-sm">
                                     <div className="flex items-center gap-2"><MdLockOutline /> Password</div>
-                                    <div className="absolute right-0 text-[#8D4A52] hover:cursor-pointer">Forgot Password?</div>
+                                    <div className="absolute right-0 text-[#8D4A52] hover:cursor-pointer"
+                                        onClick={() => { handleForgotPassword() }}>Forgot Password?</div>
                                 </div>
                                 <div className="relative">
                                     <input
@@ -91,6 +119,8 @@ export default function LoginPage() {
                             <button
                                 disabled={!isValidEmail || !loginForm.password}
                                 className="w-full h-10 bg-[#8D4A52] rounded-4xl text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                type="button"
+                                onClick={handleLogin}
                             >
                                 Login
                             </button>

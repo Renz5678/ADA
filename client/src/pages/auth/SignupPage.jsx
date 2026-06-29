@@ -1,9 +1,10 @@
 import { FaGoogle, FaCheck, FaEye, FaEyeSlash } from "react-icons/fa";
 import { MdOutlineMailOutline, MdLockOutline } from "react-icons/md";
 import { IoMdPerson } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState, useRef } from "react";
+import { signup } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
 
 const passwordRules = [
@@ -14,6 +15,8 @@ const passwordRules = [
 ];
 
 export default function SignupPage() {
+    const navigate = useNavigate();
+
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
 
@@ -36,6 +39,19 @@ export default function SignupPage() {
         });
     };
 
+    const handleSignup = async () => {
+        try {
+            const res = await signup({
+                username: signUpForm.username,
+                email: signUpForm.email,
+                password: signUpForm.password
+            });
+
+            navigate('/verify-otp', { state: { email: signUpForm.email } });
+        } catch (e) {
+            console.error(e.response?.data?.message || "Signup failed");
+        }
+    }
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signUpForm.email);
     const allRulesPassed = passwordRules.every(rule => rule.test(signUpForm.password));
     const passwordsMatch = signUpForm.password === signUpForm.confirmPassword;
@@ -207,8 +223,10 @@ export default function SignupPage() {
                                 </div>
 
                                 <button
+                                    type="button"
                                     disabled={!allRulesPassed || !passwordsMatch || !isValidEmail}
                                     className="w-full h-10 bg-[#8D4A52] rounded-4xl text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    onClick={handleSignup}
                                 >
                                     Sign Up
                                 </button>
