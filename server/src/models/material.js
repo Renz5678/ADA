@@ -42,7 +42,7 @@ export default (sequelize, DataTypes) => {
             }
         },
         quantity: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DECIMAL(10, 2),
             allowNull: false,
             validate: {
                 notNull: { msg: 'Quantity must not be null' }
