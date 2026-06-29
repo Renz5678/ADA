@@ -1,4 +1,5 @@
 import { models } from "../models/index.js";
+import { validationResult } from "express-validator";
 
 const { Product } = models;
 
@@ -40,6 +41,11 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
 
         const { product_code, product_name, price } = req.body;
@@ -60,6 +66,11 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
         const productId = req.params.id;
 
