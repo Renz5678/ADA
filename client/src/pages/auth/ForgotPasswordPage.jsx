@@ -1,26 +1,29 @@
-import { verifyOtp, resendOtp } from "#api/auth.js";
+import { verifyOtp, resendOtp, confirmResetPassword } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function VerifyOTPPage() {
+export default function ForgotPasswordPage() {
     const [otp, setOtp] = useState(Array(6).fill(""));
-    const [newPassword, setNewPassword] = useState("");
     const inputs = useRef([]);
+
+    const [isModalOn, setIsModalOn] = useState(true);
+    const [newPassword, setNewPassword] = useState("");
+    const [newConfirmPassword, setNewConfirmPassword] = useState("");
 
     const { state } = useLocation();
     const email = state?.email;
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!email) {
-            navigate("/signup", { replace: true });
-        }
-    }, [email, navigate]);
+    // useEffect(() => {
+    //     if (!email) {
+    //         navigate("/signup", { replace: true });
+    //     }
+    // }, [email, navigate]);
 
-    if (!email) return null;
+    // if (!email) return null;
 
     const handleChange = (value, index) => {
         // Only allow digits
@@ -43,11 +46,21 @@ export default function VerifyOTPPage() {
         }
     };
 
-    const handleVerifyOtp = async () => {
+    const handleSettingNewPassword = () => {
+        if (newPassword !== newConfirmPassword) {
+            alert("Passwords do not match!")
+            return;
+        }
+
+        setIsModalOn(false);
+    }
+
+    const handleResetPassword = async () => {
         try {
-            const res = await verifyOtp({
+            const res = await confirmResetPassword({
                 email,
-                verification_token: otp.join("")
+                verification_token: otp.join(""),
+                password: newPassword
             });
             navigate('/login');
         } catch (e) {
@@ -64,6 +77,7 @@ export default function VerifyOTPPage() {
             console.error(e.response?.data?.message || "Resend failed");
         }
     }
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -72,8 +86,41 @@ export default function VerifyOTPPage() {
             className="h-screen"
         >
             <div className="w-screen h-screen bg-[#FFF7E6] flex justify-center items-center">
-                <div className="fixed inset-0 bg-gray-900/40 z-10 backdrop-blur-sm"></div>
+                {isModalOn && <div className="fixed inset-0 bg-gray-900/40 z-10 backdrop-blur-sm flex justify-center items-center">
+                    <div className="w-[30%] bg-white h-[65%] rounded-3xl flex flex-col justify-center items-center font-body p-6 gap-6">
+                        <div className="font-headline text-3xl font-semibold w-full text-center">Enter your new password</div>
+
+                        <form className="w-[90%] p-6 flex flex-col justify-center items-center gap-4">
+                            <label className="">New Password
+                                <input
+                                    type="password"
+                                    name="password"
+                                    className="w-[100%] h-10 px-4 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
+                                    onChange={(e) => {
+                                        setNewPassword(e.target.value)
+                                    }}></input>
+                            </label>
+                            <label>Confirm New Password
+                                <input
+                                    type="password"
+                                    className="w-[100%] h-10 px-4 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
+                                    onChange={(e) => {
+                                        setNewConfirmPassword(e.target.value)
+                                    }}></input>
+                            </label>
+                        </form>
+
+                        <button
+                            className="w-[70%] h-14 text-xl bg-[#8D4A52] rounded-4xl text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="button"
+                            onClick={handleSettingNewPassword}
+                        >
+                            Proceed
+                        </button>
+                    </div>
+                </div>}
                 <div className="w-[80%] lg:w-[35%] h-full flex flex-col p-2 gap-4 items-center justify-center">
+
                     <div className="gap-2">
                         <div className="font-headline text-5xl text-[#0F1D29] font-semibold text-center w-full flex items-center gap-4">
                             <Icon height={4} width={4} />ADA
@@ -103,7 +150,7 @@ export default function VerifyOTPPage() {
                         <button
                             className="w-[70%] h-14 text-xl bg-[#8D4A52] rounded-4xl text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                             type="button"
-                            onClick={handleVerifyOtp}
+                            onClick={handleResetPassword}
                         >
                             Login
                         </button>

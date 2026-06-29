@@ -3,242 +3,264 @@ import { MdOutlineMailOutline, MdLockOutline } from "react-icons/md";
 import { IoMdPerson } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { signup } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
 
-const passwordRules = [
+// — Constants —————————————————————————————————————————————
+
+const PASSWORD_RULES = [
     { label: "Uppercase letter", test: (p) => /[A-Z]/.test(p) },
     { label: "Lowercase letter", test: (p) => /[a-z]/.test(p) },
     { label: "Number", test: (p) => /[0-9]/.test(p) },
     { label: "Symbol", test: (p) => /[^A-Za-z0-9]/.test(p) },
 ];
 
+const INITIAL_FORM = { username: "", email: "", password: "", confirmPassword: "" };
+
+function PasswordRulesList({ password }) {
+    return (
+        <ul className="flex flex-col gap-1 mt-1">
+            {PASSWORD_RULES.map(({ label, test }) => {
+                const passed = test(password);
+                return (
+                    <li
+                        key={label}
+                        className={`flex items-center gap-2 text-xs ${passed ? "text-green-500" : "text-red-400"}`}
+                    >
+                        <span>{passed ? "✓" : "✗"}</span>
+                        <span>{label}</span>
+                    </li>
+                );
+            })}
+        </ul>
+    );
+}
+
+function FieldError({ message }) {
+    if (!message) return null;
+    return <p className="text-xs text-red-500 mt-1">{message}</p>;
+}
+
 export default function SignupPage() {
     const navigate = useNavigate();
 
-    const emailRef = useRef(null);
-    const passwordRef = useRef(null);
-
+    const [form, setForm] = useState(INITIAL_FORM);
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [agreed, setAgreed] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
-    const [emailFocused, setEmailFocused] = useState(false);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
-    const [signUpForm, setSignUpForm] = useState({
-        username: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-    });
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
+    const allRulesPassed = PASSWORD_RULES.every(({ test }) => test(form.password));
+    const passwordsMatch = form.password === form.confirmPassword;
+    const showRules = (passwordFocused || form.password.length > 0) && !allRulesPassed;
+    const canSubmit = isValidEmail && allRulesPassed && passwordsMatch && agreed && !loading;
 
     const handleChange = (e) => {
-        setSignUpForm({
-            ...signUpForm,
-            [e.target.name]: e.target.value
-        });
+        setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        setError("");
     };
 
     const handleSignup = async () => {
+        if (!canSubmit) return;
+        setLoading(true);
+        setError("");
         try {
-            const res = await signup({
-                username: signUpForm.username,
-                email: signUpForm.email,
-                password: signUpForm.password
+            await signup({
+                username: form.username,
+                email: form.email,
+                password: form.password,
             });
-
-            navigate('/verify-otp', { state: { email: signUpForm.email } });
+            navigate("/verify-otp", { state: { email: form.email } });
         } catch (e) {
-            console.error(e.response?.data?.message || "Signup failed");
+            setError(e.response?.data?.message || "Signup failed. Please try again.");
+        } finally {
+            setLoading(false);
         }
-    }
-    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(signUpForm.email);
-    const allRulesPassed = passwordRules.every(rule => rule.test(signUpForm.password));
-    const passwordsMatch = signUpForm.password === signUpForm.confirmPassword;
+    };
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="h-screen"
+            className="min-h-screen bg-[#FFF7E6] flex justify-center items-center"
         >
-            <div className="w-screen h-screen bg-[#FFF7E6] flex justify-center items-center">
-                <div className="h-full w-[85%] flex gap-2 items-center justify-center">
-                    <div className="h-full w-[50%] p-6 hidden lg:block">
-                        <div className="h-full w-full flex flex-col justify-center gap-2">
-                            <div className="gap-2">
-                                <div className="font-headline text-3xl text-[#0F1D29] font-semibold w-full flex items-center gap-4">
-                                    <Icon height={2} width={2} />ADA
-                                </div>
-                                <div className="font-label text-[#551E26] mt-2">Create. Sell. Track</div>
-                            </div>
-                            <div className="font-headline text-5xl font-semibold">
-                                Your freelance business, finally in sync.
-                            </div>
-                            <div className="font-body text-lg">
-                                Manage projects, orders, deadlines, expenses, and finances in one calm workspace designed to help independent professionals stay focused on what matters most.
-                            </div>
+            <div className="w-full max-w-5xl flex gap-2 items-center justify-center px-4">
+
+                {/* — Left panel — */}
+                <div className="hidden lg:flex h-full w-1/2 p-6 flex-col justify-center gap-4">
+                    <div>
+                        <div className="font-headline text-3xl text-[#0F1D29] font-semibold flex items-center gap-4">
+                            <Icon height={2} width={2} /> ADA
                         </div>
+                        <div className="font-label text-[#551E26] mt-1">Create. Sell. Track</div>
                     </div>
+                    <h1 className="font-headline text-5xl font-semibold leading-tight">
+                        Your freelance business, finally in sync.
+                    </h1>
+                    <p className="font-body text-lg text-[#0F1D29]/80">
+                        Manage projects, orders, deadlines, expenses, and finances in one calm
+                        workspace designed to help independent professionals stay focused.
+                    </p>
+                </div>
 
-                    <div className="h-full w-[100%] lg:w-[50%] p-6 flex items-center justify-center overflow-y-auto">
-                        <div className="w-[85%] p-8 bg-white rounded-2xl flex flex-col gap-4 my-6">
-                            <div className="text-3xl font-headline font-[550]">Create your ADA account</div>
+                {/* — Right panel (form) — */}
+                <div className="w-full lg:w-1/2 flex items-center justify-center py-8">
+                    <div className="w-full max-w-sm bg-white rounded-2xl p-8 flex flex-col gap-5 shadow-sm">
+                        <h2 className="text-3xl font-headline font-[550]">Create your ADA account</h2>
 
-                            <form className="font-body flex flex-col gap-4">
-                                {/* Username */}
-                                <label className="flex flex-col">
-                                    <div className="font-medium text-sm flex items-center gap-2"><IoMdPerson /> Username</div>
+                        {/* Global error */}
+                        {error && (
+                            <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                                {error}
+                            </p>
+                        )}
+
+                        <div className="font-body flex flex-col gap-4">
+
+                            {/* Username */}
+                            <label className="flex flex-col gap-1">
+                                <span className="font-medium text-sm flex items-center gap-2">
+                                    <IoMdPerson /> Username
+                                </span>
+                                <input
+                                    name="username"
+                                    value={form.username}
+                                    onChange={handleChange}
+                                    type="text"
+                                    autoComplete="username"
+                                    className="w-full h-9 px-4 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
+                                />
+                            </label>
+
+                            {/* Email */}
+                            <label className="flex flex-col gap-1">
+                                <span className="font-medium text-sm flex items-center gap-2">
+                                    <MdOutlineMailOutline /> Email Address
+                                </span>
+                                <input
+                                    name="email"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    type="email"
+                                    autoComplete="email"
+                                    className="w-full h-9 px-4 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
+                                />
+                                {form.email && !isValidEmail && (
+                                    <FieldError message="Enter a valid email address (e.g. name@example.com)" />
+                                )}
+                            </label>
+
+                            {/* Password */}
+                            <label className="flex flex-col gap-1">
+                                <span className="font-medium text-sm flex items-center gap-2">
+                                    <MdLockOutline /> Password
+                                </span>
+                                <div className="relative">
                                     <input
-                                        name="username"
-                                        value={signUpForm.username}
+                                        name="password"
+                                        value={form.password}
                                         onChange={handleChange}
-                                        type="text"
-                                        className="w-full h-9 px-4 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
+                                        type={showPassword ? "text" : "password"}
+                                        autoComplete="new-password"
+                                        onFocus={() => setPasswordFocused(true)}
+                                        onBlur={() => setPasswordFocused(false)}
+                                        className="w-full h-9 px-4 pr-10 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
                                     />
-                                </label>
-
-                                {/* Email */}
-                                <label className="flex flex-col">
-                                    <div className="font-medium text-sm flex items-center gap-2"><MdOutlineMailOutline /> Email Address</div>
-                                    <div className="relative">
-                                        <input
-                                            ref={emailRef}
-                                            name="email"
-                                            value={signUpForm.email}
-                                            onChange={handleChange}
-                                            type="email"
-                                            onFocus={() => setEmailFocused(true)}
-                                            onBlur={() => setEmailFocused(false)}
-                                            className="w-full h-9 px-4 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
-                                        />
-
-                                        {/* Email popover — shows when invalid, hides when valid */}
-                                        {/* Email popover */}
-                                        {(emailFocused || signUpForm.email) && !isValidEmail && emailRef.current && (() => {
-                                            const rect = emailRef.current.getBoundingClientRect();
-                                            return (
-                                                <div style={{ position: "fixed", top: rect.top, left: rect.right + 12, zIndex: 9999 }}
-                                                    className="w-40 bg-white border border-[#e0e0e0] rounded-xl shadow-lg p-3">
-                                                    <div className="absolute -left-2 top-3 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[8px] border-r-white" />
-                                                    <p className="text-xs font-semibold text-[#0F1D29] mb-2">Email must look like:</p>
-                                                    <div className="flex flex-col gap-1">
-                                                        <div className="flex items-center gap-2 text-xs text-[#888]"><span>•</span><span>name@example.com</span></div>
-                                                        <div className="flex items-center gap-2 text-xs text-[#888]"><span>•</span><span>Must contain @</span></div>
-                                                        <div className="flex items-center gap-2 text-xs text-[#888]"><span>•</span><span>Must have a domain (e.g. .com)</span></div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })()}
-                                    </div>
-                                </label>
-
-                                {/* Password */}
-                                <label className="flex flex-col">
-                                    <div className="flex relative font-medium text-sm items-center gap-2">
-                                        <MdLockOutline /> Password
-                                    </div>
-                                    <div className="relative">
-                                        <input
-                                            ref={passwordRef}
-                                            name="password"
-                                            value={signUpForm.password}
-                                            onChange={handleChange}
-                                            type={showPassword ? "text" : "password"}
-                                            onFocus={() => setPasswordFocused(true)}
-                                            onBlur={() => setPasswordFocused(false)}
-                                            className="w-full border border-[#c1c1c1] px-4 h-9 rounded-lg focus:outline-[#CBA0AA] pr-10"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword(prev => !prev)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52]"
-                                        >
-                                            {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                        </button>
-
-                                        {/* Password rules popover */}
-                                        {/* Password popover */}
-                                        {(passwordFocused || signUpForm.password) && !allRulesPassed && passwordRef.current && (() => {
-                                            const rect = passwordRef.current.getBoundingClientRect();
-                                            return (
-                                                <div style={{ position: "fixed", top: rect.top, left: rect.left - 192 - 12, zIndex: 9999 }}
-                                                    className="w-40 bg-white border border-[#e0e0e0] rounded-xl shadow-lg p-3">
-                                                    <div className="absolute -right-2 top-3 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[8px] border-r-white" />
-                                                    <p className="text-xs font-semibold text-[#0F1D29] mb-2">Password must have:</p>
-                                                    <div className="flex flex-col gap-1">
-                                                        {passwordRules.map((rule) => {
-                                                            const passed = rule.test(signUpForm.password);
-                                                            return (
-                                                                <div key={rule.label} className={`flex items-center gap-2 text-xs ${passed ? "text-green-500" : "text-red-400"}`}>
-                                                                    <span>{passed ? "✓" : "✗"}</span>
-                                                                    <span>{rule.label}</span>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })()}
-                                    </div>
-                                </label>
-
-                                {/* Confirm Password */}
-                                <label className="flex flex-col">
-                                    <div className="flex relative font-medium text-sm items-center gap-2">
-                                        <FaCheck /> Confirm Password
-                                    </div>
-                                    <div className="relative">
-                                        <input
-
-                                            name="confirmPassword"
-                                            value={signUpForm.confirmPassword}
-                                            onChange={handleChange}
-                                            type={showConfirmPassword ? "text" : "password"}
-                                            className="w-full border border-[#c1c1c1] px-4 h-9 rounded-lg focus:outline-[#CBA0AA] pr-10"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowConfirmPassword(prev => !prev)}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52]"
-                                        >
-                                            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                                        </button>
-                                    </div>
-
-                                    {signUpForm.confirmPassword && !passwordsMatch && (
-                                        <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
-                                    )}
-                                    {signUpForm.confirmPassword && passwordsMatch && (
-                                        <p className="text-xs text-green-500 mt-1">Passwords match ✓</p>
-                                    )}
-                                </label>
-
-                                <div className="flex gap-2 my-2">
-                                    <input type="checkbox" className="accent-[#C87B83]" />
-                                    <label className="text-sm">
-                                        I agree to the Terms of Service and Privacy Policy
-                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword((p) => !p)}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52]"
+                                    >
+                                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </button>
                                 </div>
+                                {/* Inline rules — no floating popover */}
+                                {showRules && <PasswordRulesList password={form.password} />}
+                            </label>
 
-                                <button
-                                    type="button"
-                                    disabled={!allRulesPassed || !passwordsMatch || !isValidEmail}
-                                    className="w-full h-10 bg-[#8D4A52] rounded-4xl text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    onClick={handleSignup}
-                                >
-                                    Sign Up
-                                </button>
-                            </form>
+                            {/* Confirm Password */}
+                            <label className="flex flex-col gap-1">
+                                <span className="font-medium text-sm flex items-center gap-2">
+                                    <FaCheck /> Confirm Password
+                                </span>
+                                <div className="relative">
+                                    <input
+                                        name="confirmPassword"
+                                        value={form.confirmPassword}
+                                        onChange={handleChange}
+                                        type={showConfirm ? "text" : "password"}
+                                        autoComplete="new-password"
+                                        className="w-full h-9 px-4 pr-10 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirm((p) => !p)}
+                                        aria-label={showConfirm ? "Hide password" : "Show password"}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52]"
+                                    >
+                                        {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                                    </button>
+                                </div>
+                                {form.confirmPassword && !passwordsMatch && (
+                                    <FieldError message="Passwords do not match" />
+                                )}
+                                {form.confirmPassword && passwordsMatch && (
+                                    <p className="text-xs text-green-500 mt-1">Passwords match ✓</p>
+                                )}
+                            </label>
 
-                            <div className="flex flex-col w-full items-center gap-3">
-                                <div className="text-[#CBA0AA]">or continue with</div>
-                                <button className="w-[80%] border border-[#c1c1c1] rounded p-2 h-10 rounded-lg flex justify-center items-center gap-4 hover:bg-[#0F1D29] hover:text-white transition duration-150">
-                                    <FaGoogle /> Google
-                                </button>
-                                <div className="font-label h-8 mt-4">Already have an account? <Link to="/login" className="font-semibold text-[#8D4A52]">Login to ADA</Link></div>
-                            </div>
+                            {/* Terms */}
+                            <label className="flex items-start gap-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={agreed}
+                                    onChange={(e) => setAgreed(e.target.checked)}
+                                    className="accent-[#C87B83] mt-0.5"
+                                />
+                                <span className="text-sm">
+                                    I agree to the{" "}
+                                    <a href="/terms" className="text-[#8D4A52] font-medium hover:underline">
+                                        Terms of Service
+                                    </a>{" "}
+                                    and{" "}
+                                    <a href="/privacy" className="text-[#8D4A52] font-medium hover:underline">
+                                        Privacy Policy
+                                    </a>
+                                </span>
+                            </label>
+
+                            {/* Submit */}
+                            <button
+                                type="button"
+                                disabled={!canSubmit}
+                                onClick={handleSignup}
+                                className="w-full h-10 bg-[#8D4A52] rounded-full text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {loading ? "Creating account…" : "Sign Up"}
+                            </button>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="flex flex-col items-center gap-3">
+                            <span className="text-[#CBA0AA] text-sm">or continue with</span>
+                            <button
+                                type="button"
+                                className="w-4/5 border border-[#c1c1c1] rounded-lg p-2 h-10 flex justify-center items-center gap-3 hover:bg-[#0F1D29] hover:text-white transition duration-150 text-sm"
+                            >
+                                <FaGoogle /> Google
+                            </button>
+                            <p className="font-label text-sm mt-2">
+                                Already have an account?{" "}
+                                <Link to="/login" className="font-semibold text-[#8D4A52] hover:underline">
+                                    Log in to ADA
+                                </Link>
+                            </p>
                         </div>
                     </div>
                 </div>

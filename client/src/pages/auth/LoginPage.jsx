@@ -27,11 +27,13 @@ export default function LoginPage() {
 
     const handleLogin = async () => {
         try {
+            console.log(loginForm)
             const res = await login({
                 email: loginForm.email,
                 password: loginForm.password
             });
 
+            localStorage.setItem("token", res.data.token);
             navigate('/dashboard');
         } catch (e) {
             console.error(e.response?.data?.message || "Login failed");
@@ -46,7 +48,7 @@ export default function LoginPage() {
                 email: loginForm.email
             })
 
-            navigate('/verify-otp', { state: { email: signUpForm.email } });
+            navigate('/reset-password', { state: { email: loginForm.email } });
         } catch (e) {
             console.error(e.response?.data?.message || "Password reset failed");
         }
