@@ -9,7 +9,7 @@ export const createOrderValidator = [
         .isFloat().withMessage('Total Amount must be a decimal value!'),
     body('status')
         .notEmpty().withMessage('Status must not be empty')
-        .isString().withMessage('Status must be a string')
+        .isIn(['Pending', 'Done', 'Delivered', 'Cancelled']).withMessage('Status must be Pending, Done, Delivered, or Cancelled')
 ];
 
 export const updateOrderValidator = [
@@ -21,5 +21,5 @@ export const updateOrderValidator = [
         .isFloat().withMessage('Total Amount must be a decimal value!'),
     body('status')
         .optional()
-        .isString().withMessage('Status must be a string')
+        .isIn(['Pending', 'Done', 'Delivered', 'Cancelled']).withMessage('Status must be Pending, Done, Delivered, or Cancelled')
 ];
