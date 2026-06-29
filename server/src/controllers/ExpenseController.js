@@ -1,4 +1,5 @@
 import { models } from "../models/index.js";
+import { validationResult } from "express-validator";
 
 const { Expense } = models;
 
@@ -38,6 +39,11 @@ const getExpenseById = async (req, res) => {
 
 const createExpense = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
 
         const { title, amount, category, expense_date } = req.body;
@@ -58,6 +64,12 @@ const createExpense = async (req, res) => {
 
 const updateExpense = async (req, res) => {
     try {
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
         const expenseId = req.params.id;
 

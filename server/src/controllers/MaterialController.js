@@ -40,6 +40,11 @@ const getMaterialById = async (req, res) => {
 
 const createMaterial = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
 
         const { material_code, material_name, unit_cost, quantity } = req.body;
@@ -60,6 +65,11 @@ const createMaterial = async (req, res) => {
 
 const updateMaterial = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
         const materialId = req.params.id;
 

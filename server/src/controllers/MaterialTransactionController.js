@@ -43,6 +43,11 @@ const getMaterialTransactionById = async (req, res) => {
 
 const createMaterialTransaction = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
         const materialId = req.params.id;
 
@@ -74,6 +79,11 @@ const createMaterialTransaction = async (req, res) => {
 
 const updateMaterialTransaction = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
         const userId = req.user.id;
         const materialTransactionId = req.params.id;
 
