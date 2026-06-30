@@ -7,8 +7,6 @@ import { useState } from "react";
 import { signup } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
 
-// — Constants —————————————————————————————————————————————
-
 const PASSWORD_RULES = [
     { label: "Uppercase letter", test: (p) => /[A-Z]/.test(p) },
     { label: "Lowercase letter", test: (p) => /[a-z]/.test(p) },
@@ -18,16 +16,13 @@ const PASSWORD_RULES = [
 
 const INITIAL_FORM = { username: "", email: "", password: "", confirmPassword: "" };
 
-function PasswordRulesList({ password }) {
+function PasswordRulesList({ password, visible }) {
     return (
-        <ul className="flex flex-col gap-1 mt-1">
+        <ul className={`flex flex-col gap-0.5 mt-1 overflow-hidden transition-all duration-200 ${visible ? "max-h-24 opacity-100" : "max-h-0 opacity-0"}`}>
             {PASSWORD_RULES.map(({ label, test }) => {
                 const passed = test(password);
                 return (
-                    <li
-                        key={label}
-                        className={`flex items-center gap-2 text-xs ${passed ? "text-green-500" : "text-red-400"}`}
-                    >
+                    <li key={label} className={`flex items-center gap-1.5 text-[11px] ${passed ? "text-green-500" : "text-red-400"}`}>
                         <span>{passed ? "✓" : "✗"}</span>
                         <span>{label}</span>
                     </li>
@@ -39,10 +34,15 @@ function PasswordRulesList({ password }) {
 
 function FieldError({ message }) {
     if (!message) return null;
-    return <p className="text-xs text-red-500 mt-1">{message}</p>;
+    return <p className="text-[11px] text-red-500 mt-0.5">{message}</p>;
 }
 
-export default function SignupPage() {
+function FieldSuccess({ message, visible }) {
+    if (!visible) return null;
+    return <p className="text-[11px] text-green-500 mt-0.5">{message}</p>;
+}
+
+export default function SignupPage({ onStart, onStop }) {
     const navigate = useNavigate();
 
     const [form, setForm] = useState(INITIAL_FORM);
@@ -56,7 +56,6 @@ export default function SignupPage() {
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
     const allRulesPassed = PASSWORD_RULES.every(({ test }) => test(form.password));
     const passwordsMatch = form.password === form.confirmPassword;
-    const showRules = (passwordFocused || form.password.length > 0) && !allRulesPassed;
     const canSubmit = isValidEmail && allRulesPassed && passwordsMatch && agreed && !loading;
 
     const handleChange = (e) => {
@@ -68,6 +67,7 @@ export default function SignupPage() {
         if (!canSubmit) return;
         setLoading(true);
         setError("");
+        onStart("Creating your account...");
         try {
             await signup({
                 username: form.username,
@@ -79,6 +79,7 @@ export default function SignupPage() {
             setError(e.response?.data?.message || "Signup failed. Please try again.");
         } finally {
             setLoading(false);
+            onStop();
         }
     };
 
@@ -110,21 +111,20 @@ export default function SignupPage() {
 
                 {/* — Right panel (form) — */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center py-8">
-                    <div className="w-full max-w-sm bg-white rounded-2xl p-8 flex flex-col gap-5 shadow-sm">
-                        <h2 className="text-3xl font-headline font-[550]">Create your ADA account</h2>
+                    <div className="w-full max-w-sm bg-white rounded-2xl p-6 flex flex-col gap-4 shadow-sm">
+                        <h2 className="text-2xl font-headline font-[550]">Create your ADA account</h2>
 
-                        {/* Global error */}
                         {error && (
-                            <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                            <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                                 {error}
                             </p>
                         )}
 
-                        <div className="font-body flex flex-col gap-4">
+                        <div className="font-body flex flex-col gap-3">
 
                             {/* Username */}
-                            <label className="flex flex-col gap-1">
-                                <span className="font-medium text-sm flex items-center gap-2">
+                            <label className="flex flex-col gap-0.5">
+                                <span className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
                                     <IoMdPerson /> Username
                                 </span>
                                 <input
@@ -133,13 +133,13 @@ export default function SignupPage() {
                                     onChange={handleChange}
                                     type="text"
                                     autoComplete="username"
-                                    className="w-full h-9 px-4 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
+                                    className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                                 />
                             </label>
 
                             {/* Email */}
-                            <label className="flex flex-col gap-1">
-                                <span className="font-medium text-sm flex items-center gap-2">
+                            <label className="flex flex-col gap-0.5">
+                                <span className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
                                     <MdOutlineMailOutline /> Email Address
                                 </span>
                                 <input
@@ -147,17 +147,14 @@ export default function SignupPage() {
                                     value={form.email}
                                     onChange={handleChange}
                                     type="email"
-                                    autoComplete="email"
-                                    className="w-full h-9 px-4 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
+                                    className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                                 />
-                                {form.email && !isValidEmail && (
-                                    <FieldError message="Enter a valid email address (e.g. name@example.com)" />
-                                )}
+                                <FieldError message={form.email && !isValidEmail ? "Enter a valid email (e.g. name@example.com)" : null} />
                             </label>
 
                             {/* Password */}
-                            <label className="flex flex-col gap-1">
-                                <span className="font-medium text-sm flex items-center gap-2">
+                            <label className="flex flex-col gap-0.5">
+                                <span className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
                                     <MdLockOutline /> Password
                                 </span>
                                 <div className="relative">
@@ -169,24 +166,26 @@ export default function SignupPage() {
                                         autoComplete="new-password"
                                         onFocus={() => setPasswordFocused(true)}
                                         onBlur={() => setPasswordFocused(false)}
-                                        className="w-full h-9 px-4 pr-10 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
+                                        className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((p) => !p)}
                                         aria-label={showPassword ? "Hide password" : "Show password"}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52]"
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52] text-xs"
                                     >
                                         {showPassword ? <FaEyeSlash /> : <FaEye />}
                                     </button>
                                 </div>
-                                {/* Inline rules — no floating popover */}
-                                {showRules && <PasswordRulesList password={form.password} />}
+                                <PasswordRulesList
+                                    password={form.password}
+                                    visible={passwordFocused || form.password.length > 0}
+                                />
                             </label>
 
                             {/* Confirm Password */}
-                            <label className="flex flex-col gap-1">
-                                <span className="font-medium text-sm flex items-center gap-2">
+                            <label className="flex flex-col gap-0.5">
+                                <span className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
                                     <FaCheck /> Confirm Password
                                 </span>
                                 <div className="relative">
@@ -196,23 +195,22 @@ export default function SignupPage() {
                                         onChange={handleChange}
                                         type={showConfirm ? "text" : "password"}
                                         autoComplete="new-password"
-                                        className="w-full h-9 px-4 pr-10 border border-[#c1c1c1] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CBA0AA]"
+                                        className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirm((p) => !p)}
                                         aria-label={showConfirm ? "Hide password" : "Show password"}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52]"
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52] text-xs"
                                     >
                                         {showConfirm ? <FaEyeSlash /> : <FaEye />}
                                     </button>
                                 </div>
-                                {form.confirmPassword && !passwordsMatch && (
-                                    <FieldError message="Passwords do not match" />
-                                )}
-                                {form.confirmPassword && passwordsMatch && (
-                                    <p className="text-xs text-green-500 mt-1">Passwords match ✓</p>
-                                )}
+                                <FieldError message={form.confirmPassword && !passwordsMatch ? "Passwords do not match" : null} />
+                                <FieldSuccess
+                                    message="Passwords match ✓"
+                                    visible={form.confirmPassword.length > 0 && passwordsMatch}
+                                />
                             </label>
 
                             {/* Terms */}
@@ -223,7 +221,7 @@ export default function SignupPage() {
                                     onChange={(e) => setAgreed(e.target.checked)}
                                     className="accent-[#C87B83] mt-0.5"
                                 />
-                                <span className="text-sm">
+                                <span className="text-xs">
                                     I agree to the{" "}
                                     <a href="/terms" className="text-[#8D4A52] font-medium hover:underline">
                                         Terms of Service
@@ -240,22 +238,22 @@ export default function SignupPage() {
                                 type="button"
                                 disabled={!canSubmit}
                                 onClick={handleSignup}
-                                className="w-full h-10 bg-[#8D4A52] rounded-full text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full h-9 bg-[#8D4A52] rounded-full text-white text-sm font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? "Creating account…" : "Sign Up"}
                             </button>
                         </div>
 
                         {/* Divider */}
-                        <div className="flex flex-col items-center gap-3">
-                            <span className="text-[#CBA0AA] text-sm">or continue with</span>
+                        <div className="flex flex-col items-center gap-2">
+                            <span className="text-[#CBA0AA] text-xs">or continue with</span>
                             <button
                                 type="button"
-                                className="w-4/5 border border-[#c1c1c1] rounded-lg p-2 h-10 flex justify-center items-center gap-3 hover:bg-[#0F1D29] hover:text-white transition duration-150 text-sm"
+                                className="w-4/5 border border-[#c1c1c1] rounded-lg h-9 flex justify-center items-center gap-3 hover:bg-[#0F1D29] hover:text-white transition duration-150 text-xs"
                             >
                                 <FaGoogle /> Google
                             </button>
-                            <p className="font-label text-sm mt-2">
+                            <p className="font-label text-xs mt-1">
                                 Already have an account?{" "}
                                 <Link to="/login" className="font-semibold text-[#8D4A52] hover:underline">
                                     Log in to ADA

@@ -9,7 +9,7 @@ import { login, forgotPassword } from "#api/auth.js";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default function LoginPage() {
+export default function LoginPage({ onStart, onStop }) {
     const navigate = useNavigate();
 
     const [form, setForm] = useState({ email: "", password: "" });
@@ -29,6 +29,9 @@ export default function LoginPage() {
         e.preventDefault();
         if (!canSubmit) return;
 
+        onStart("Logging you in...");
+        setIsSubmitting(true);
+
         setIsSubmitting(true);
         try {
             const res = await login({ email: form.email, password: form.password });
@@ -38,6 +41,7 @@ export default function LoginPage() {
             setError(err.response?.data?.message || "Login failed. Please try again.");
         } finally {
             setIsSubmitting(false);
+            onStop();
         }
     };
 
@@ -51,11 +55,14 @@ export default function LoginPage() {
             return;
         }
 
+        onStart("Redirecting...");
         try {
             await forgotPassword({ email: form.email });
             navigate("/reset-password", { state: { email: form.email } });
         } catch (err) {
             setError(err.response?.data?.message || "Password reset failed. Try again.");
+        } finally {
+            onStop();
         }
     };
 

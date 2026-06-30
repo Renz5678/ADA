@@ -1,24 +1,18 @@
-import { Routes, Route } from "react-router-dom";
-
-import SignupPage from "#pages/auth/SignupPage.jsx";
-import LoginPage from "#pages/auth/LoginPage.jsx";
-import VerifyOTPPage from "#pages/auth/VerifyOTPPage.jsx";
-import DashboardPage from "#pages/auth/DashboardPage.jsx";
-import ProtectedRoute from "#components/ui/ProtectedRoute.jsx";
-import ForgotPasswordPage from "#pages/auth/ForgotPasswordPage.jsx";
+import { useState } from "react";
+import LoadingBar from "#components/ui/LoadingBar.jsx";
+import AppRouter from "#routes/AppRouter.jsx";
 
 export default function App() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState("");
+
+    const startLoading = (message) => { setLoadingMessage(message); setIsLoading(true); };
+    const stopLoading = () => { setIsLoading(false); setLoadingMessage(""); };
+
     return (
-        <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/reset-password" element={<ForgotPasswordPage />} />
-            <Route path="/dashboard" element={
-                <ProtectedRoute>
-                    <DashboardPage />
-                </ProtectedRoute>
-            } />
-        </Routes>
+        <>
+            <LoadingBar isLoading={isLoading} message={loadingMessage} />
+            <AppRouter onStart={startLoading} onStop={stopLoading} />
+        </>
     );
 }
