@@ -4,18 +4,17 @@ import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import Icon from "#components/ui/Icon.jsx";
+import ErrorModal from "#components/ui/ErrorModal.jsx";
 import { resendOtp, confirmResetPassword } from "#api/auth.js";
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 30;
 
-export default function ForgotPasswordPage() {
+export default function ForgotPasswordPage({ onStart, onStop }) {
     const { state } = useLocation();
     const email = state?.email;
     const navigate = useNavigate();
 
-    // Step 1: user sets new password in modal
-    // Step 2: user enters OTP to confirm reset
     const [isSettingPassword, setIsSettingPassword] = useState(true);
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,7 +23,7 @@ export default function ForgotPasswordPage() {
     const [passwordError, setPasswordError] = useState("");
 
     const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
-    const [error, setError] = useState("");
+    const [errorModal, setErrorModal] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [resendCooldown, setResendCooldown] = useState(0);
 
@@ -65,7 +64,6 @@ export default function ForgotPasswordPage() {
         const newOtp = [...otp];
         newOtp[index] = value;
         setOtp(newOtp);
-        setError("");
 
         if (value && index < OTP_LENGTH - 1) focusInput(index + 1);
     };
@@ -89,15 +87,43 @@ export default function ForgotPasswordPage() {
         focusInput(Math.min(pasted.length, OTP_LENGTH - 1));
     };
 
+    // ── Resend ──────────────────────────────────────────────────
+    const handleResendOtp = async () => {
+        if (resendCooldown > 0) return;
+
+        onStart("Sending a new code...");
+        try {
+            await resendOtp({ email });
+            setResendCooldown(RESEND_COOLDOWN_SECONDS);
+            setOtp(Array(OTP_LENGTH).fill(""));
+            focusInput(0);
+        } catch (err) {
+            const status = err.response?.status;
+            const retryAfter = err.response?.headers?.["retry-after"];
+
+            setErrorModal({
+                title: "Couldn't Resend Code",
+                message: status === 429
+                    ? retryAfter
+                        ? `Too many requests. Please wait ${retryAfter} seconds before trying again.`
+                        : "Too many requests. Please wait a moment before trying again."
+                    : err.response?.data?.message || "Failed to resend code. Try again.",
+                actions: [
+                    { label: "OK", onClick: () => { }, variant: "primary" }
+                ]
+            });
+        } finally {
+            onStop();
+        }
+    };
+
     // ── Submit reset ────────────────────────────────────────────
     const handleResetPassword = async () => {
         const code = otp.join("");
-        if (code.length < OTP_LENGTH) {
-            setError("Please enter the complete 6-digit code.");
-            return;
-        }
+        if (code.length < OTP_LENGTH) return;
 
         setIsSubmitting(true);
+        onStart("Resetting your password...");
         try {
             await confirmResetPassword({
                 email,
@@ -106,22 +132,52 @@ export default function ForgotPasswordPage() {
             });
             navigate("/login");
         } catch (err) {
-            setError(err.response?.data?.message || "Reset failed. Please try again.");
+            const status = err.response?.status;
+            const retryAfter = err.response?.headers?.["retry-after"];
+
             setOtp(Array(OTP_LENGTH).fill(""));
             focusInput(0);
+
+            if (status === 400) {
+                setErrorModal({
+                    title: "Code Expired",
+                    message: "Your verification code has expired. Request a new one to continue.",
+                    actions: [
+                        { label: "Resend Code", onClick: handleResendOtp, variant: "primary" },
+                        { label: "Go Back", onClick: () => navigate("/login"), variant: "secondary" }
+                    ]
+                });
+            } else if (status === 404) {
+                setErrorModal({
+                    title: "Incorrect Code",
+                    message: "That code doesn't match. Double-check and try again, or request a new one.",
+                    actions: [
+                        { label: "Try Again", onClick: () => { }, variant: "primary" },
+                        { label: "Resend Code", onClick: handleResendOtp, variant: "secondary" }
+                    ]
+                });
+            } else if (status === 429) {
+                setErrorModal({
+                    title: "Too Many Attempts",
+                    message: retryAfter
+                        ? `You've made too many attempts. Please wait ${retryAfter} seconds before trying again.`
+                        : "You've made too many attempts. Please wait a moment before trying again.",
+                    actions: [
+                        { label: "OK", onClick: () => { }, variant: "primary" }
+                    ]
+                });
+            } else {
+                setErrorModal({
+                    title: "Something Went Wrong",
+                    message: "An unexpected error occurred. Check your connection and try again.",
+                    actions: [
+                        { label: "Try Again", onClick: () => { }, variant: "primary" }
+                    ]
+                });
+            }
         } finally {
             setIsSubmitting(false);
-        }
-    };
-
-    const handleResendOtp = async () => {
-        if (resendCooldown > 0) return;
-        try {
-            await resendOtp({ email });
-            setResendCooldown(RESEND_COOLDOWN_SECONDS);
-            setError("");
-        } catch (err) {
-            setError(err.response?.data?.message || "Failed to resend code. Try again.");
+            onStop();
         }
     };
 
@@ -134,6 +190,8 @@ export default function ForgotPasswordPage() {
             transition={{ duration: 0.5, ease: "easeOut" }}
             className="w-screen h-screen bg-[#FFF7E6] flex justify-center items-center"
         >
+            <ErrorModal errorModal={errorModal} setErrorModal={setErrorModal} />
+
             {/* ── Step 1: Set new password modal ── */}
             {isSettingPassword && (
                 <div className="fixed inset-0 bg-gray-900/40 z-10 backdrop-blur-sm flex justify-center items-center">
@@ -248,10 +306,6 @@ export default function ForgotPasswordPage() {
                             />
                         ))}
                     </div>
-
-                    {error && (
-                        <p className="text-xs text-red-500 -mt-2 text-center">{error}</p>
-                    )}
 
                     <button
                         type="button"
