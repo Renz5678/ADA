@@ -19,12 +19,9 @@ export default (sequelize, DataTypes) => {
             },
         },
         type: {
-            type: DataTypes.STRING,
+            type: DataTypes.ENUM('Purchase', 'Usage'),
             allowNull: false,
-            validate: {
-                notEmpty: { msg: 'Type must not be empty' },
-                notNull: { msg: 'Type must not be null' }
-            }
+            validate: { isIn: { args: [['Purchase', 'Usage']], msg: 'Type must be Purchase or Usage' } }
         },
         quantity: {
             type: DataTypes.DECIMAL(10, 2),

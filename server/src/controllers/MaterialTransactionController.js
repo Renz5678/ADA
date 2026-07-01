@@ -1,4 +1,4 @@
-import { models } from '../models/index.js';
+import { models, sequelize } from '../models/index.js';
 import { validationResult } from 'express-validator';
 
 const { Material, MaterialTransaction } = models;
@@ -22,6 +22,8 @@ const getMaterialTransactions = async (req, res) => {
 };
 
 const getMaterialTransactionById = async (req, res) => {
+    const t = await sequelize.transaction();
+
     try {
         const userId = req.user.id;
         const materialTransactionId = req.params.id;
@@ -32,7 +34,7 @@ const getMaterialTransactionById = async (req, res) => {
                 model: Material,
                 where: { user_id: userId }
             }
-        });
+        }, { transaction: t });
 
         if (!materialTransaction) return res.status(404).json({ message: 'Material Transaction Not Found!' });
 
@@ -64,15 +66,35 @@ const createMaterialTransaction = async (req, res) => {
 
         const { type, quantity, unit_cost, date_bought } = req.body;
 
-        const newMaterialTransaction = await MaterialTransaction.create({
-            material_id: materialId,
-            type,
-            quantity,
-            unit_cost,
-            date_bought
-        });
+        const t = await sequelize.transaction();
 
-        return res.status(201).json({ message: 'Material Transaction created!', data: newMaterialTransaction });
+        try {
+            const newMaterialTransaction = await MaterialTransaction.create({
+                material_id: materialId,
+                type,
+                quantity,
+                unit_cost,
+                date_bought
+            }, { transaction: t });
+
+            if (type === 'Purchase') {
+                await isMaterialToTheUser.increment('quantity', { by: Number(quantity), transaction: t });
+                await isMaterialToTheUser.update({ unit_cost }, { transaction: t });
+            } else if (type === 'Usage') {
+                if (Number(isMaterialToTheUser.quantity) < Number(quantity)) {
+                    await t.rollback();
+                    return res.status(400).json({ message: 'Not enough stock for this usage!' });
+                }
+                await isMaterialToTheUser.decrement('quantity', { by: Number(quantity), transaction: t });
+            }
+
+            await t.commit();
+
+            return res.status(201).json({ message: 'Material Transaction created!', data: newMaterialTransaction });
+        } catch (e) {
+            await t.rollback();
+            return res.status(500).json({ message: 'Internal Server Error!' });
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
