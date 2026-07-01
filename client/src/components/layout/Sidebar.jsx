@@ -1,8 +1,26 @@
 import Navitem from "./Navitem"
 import { useState } from "react";
-import { MdDashboard } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart } from "react-icons/md";
 
-const navItems = ["Dashboard", "Orders", "Products", "Expenses"];
+const navItems = {
+    "Dashboard": {
+        "name": "Dashboard",
+        "icon": MdOutlineDashboard
+    },
+    "Orders": {
+        "name": "Orders",
+        "icon": MdOutlineReceiptLong
+    },
+    "Products": {
+        "name": "Products",
+        "icon": MdOutlineCases
+    },
+    "Expenses":
+    {
+        "name": "Expenses",
+        "icon": MdOutlineShoppingCart
+    },
+}
 
 export default function Sidebar() {
     const [activeNav, setActiveNav] = useState("Dashboard");
@@ -17,12 +35,14 @@ export default function Sidebar() {
             </div>
 
             <div className="flex flex-col gap-2 mt-8">
-                {navItems.map((name) => (
+                {Object.values(navItems).map(({ name, icon }) => (
                     <Navitem
                         key={name}
                         navName={name}
                         isActive={activeNav === name}
-                        onClick={() => setActiveNav(name)}
+                        onClick={() => setActiveNav(name)
+                        }
+                        icon={icon}
                     />
                 ))}
             </div>
