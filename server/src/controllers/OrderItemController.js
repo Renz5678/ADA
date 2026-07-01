@@ -1,4 +1,4 @@
-import { models } from '../models/index.js';
+import { models, sequelize } from '../models/index.js';
 import { validationResult } from 'express-validator';
 
 const { OrderItem, Orders, Product } = models;
@@ -102,7 +102,7 @@ const createOrderItem = async (req, res) => {
         const productId = req.body.product_id;
         const orderId = req.body.order_id;
 
-        const { quantity, subtotal } = req.body;
+        const { quantity } = req.body;
 
         const product = await Product.findOne({
             where: {
@@ -122,13 +122,27 @@ const createOrderItem = async (req, res) => {
 
         if (!order) return res.status(404).json({ message: 'Order not found!' });
 
-        const newOrderitem = await OrderItem.create({
-            order_id: orderId,
-            product_id: productId,
-            quantity, subtotal
-        });
+        const subtotal = Number(product.price) * Number(quantity);
 
-        return res.status(201).json({ message: 'New Order Item created!', data: newOrderitem });
+        const t = await sequelize.transaction();
+
+        try {
+            const newOrderitem = await OrderItem.create({
+                order_id: orderId,
+                product_id: productId,
+                quantity,
+                subtotal
+            }, { transaction: t });
+
+            await order.increment('total_amount', { by: subtotal, transaction: t });
+
+            await t.commit();
+
+            return res.status(201).json({ message: 'New Order Item created!', data: newOrderitem });
+        } catch (e) {
+            await t.rollback();
+            return res.status(500).json({ message: 'Internal Server Error!' });
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
@@ -144,7 +158,7 @@ const updateOrderItem = async (req, res) => {
         const userId = req.user.id;
         const orderItemId = req.params.id;
 
-        const { quantity, subtotal } = req.body;
+        const { quantity } = req.body;
 
         const orderItem = await OrderItem.findOne({
             where: { order_item_id: orderItemId },
@@ -157,13 +171,29 @@ const updateOrderItem = async (req, res) => {
 
         if (!orderItem) return res.status(404).json({ message: 'Order Item not found!' });
 
-        const updates = {};
-        if (quantity !== undefined) updates.quantity = quantity;
-        if (subtotal !== undefined) updates.subtotal = subtotal;
+        if (quantity === undefined) {
+            return res.status(200).json({ message: 'Nothing to update!' });
+        }
 
-        await orderItem.update(updates);
+        const product = await Product.findOne({ where: { product_id: orderItem.product_id } });
+        const order = await Orders.findOne({ where: { order_id: orderItem.order_id } });
 
-        res.status(200).json({ message: 'Order Item updated successfully!' });
+        const newSubtotal = Number(product.price) * Number(quantity);
+        const subtotalDelta = newSubtotal - Number(orderItem.subtotal);
+
+        const t = await sequelize.transaction();
+
+        try {
+            await orderItem.update({ quantity, subtotal: newSubtotal }, { transaction: t });
+            await order.increment('total_amount', { by: subtotalDelta, transaction: t });
+
+            await t.commit();
+
+            res.status(200).json({ message: 'Order Item updated successfully!' });
+        } catch (e) {
+            await t.rollback();
+            return res.status(500).json({ message: 'Internal Server Error!' });
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
@@ -185,9 +215,24 @@ const deleteOrderitem = async (req, res) => {
 
         if (!orderItem) return res.status(404).json({ message: 'Order Item not found!' });
 
-        await orderItem.destroy();
+        const order = await Orders.findOne({ where: { order_id: orderItem.order_id } });
 
-        return res.status(200).json({ message: 'Order item deleted!' });
+        const t = await sequelize.transaction();
+
+        try {
+            await orderItem.destroy({ transaction: t });
+
+            if (order) {
+                await order.decrement('total_amount', { by: Number(orderItem.subtotal), transaction: t });
+            }
+
+            await t.commit();
+
+            return res.status(200).json({ message: 'Order item deleted!' });
+        } catch (e) {
+            await t.rollback();
+            return res.status(500).json({ message: 'Internal Server Error!' });
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }

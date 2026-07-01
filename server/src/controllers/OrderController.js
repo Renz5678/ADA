@@ -48,11 +48,11 @@ const createOrder = async (req, res) => {
 
         const userId = req.user.id;
 
-        const { order_date, total_amount, status } = req.body;
+        const { order_date, status } = req.body;
         const newOrder = await Orders.create({
             user_id: userId,
             order_date,
-            total_amount,
+            total_amount: 0,
             status
         });
 
@@ -71,7 +71,7 @@ const updateOrder = async (req, res) => {
 
         const userId = req.user.id;
         const orderId = req.params.id;
-        const { order_date, total_amount, status } = req.body;
+        const { order_date, status } = req.body;
 
         const order = await Orders.findOne({
             where: {
@@ -84,7 +84,6 @@ const updateOrder = async (req, res) => {
 
         const updates = {};
         if (order_date !== undefined) updates.order_date = order_date;
-        if (total_amount !== undefined) updates.total_amount = total_amount;
         if (status !== undefined) updates.status = status;
 
         await order.update(updates);

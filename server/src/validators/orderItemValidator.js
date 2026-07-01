@@ -1,19 +1,19 @@
 import { body } from "express-validator";
 
 export const createOrderItemValidator = [
+    body('order_id')
+        .notEmpty().withMessage('Order ID is required')
+        .isInt().withMessage('Order ID must be an integer'),
+    body('product_id')
+        .notEmpty().withMessage('Product ID is required')
+        .isInt().withMessage('Product ID must be an integer'),
     body('quantity')
         .notEmpty().withMessage('Quantity must not be empty!')
-        .isFloat().withMessage('Quantity must be a decimal value'),
-    body('subtotal')
-        .notEmpty().withMessage('Subtotal must not be empty!')
-        .isFloat().withMessage('Subtotal must be a decimal value')
+        .isFloat({ gt: 0 }).withMessage('Quantity must be a positive decimal value')
 ];
 
 export const updateOrderItemValidator = [
     body('quantity')
         .optional()
-        .isFloat().withMessage('Quantity must be a decimal value'),
-    body('subtotal')
-        .optional()
-        .isFloat().withMessage('Subtotal must be a decimal value')
+        .isFloat({ gt: 0 }).withMessage('Quantity must be a positive decimal value')
 ];
