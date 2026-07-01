@@ -17,7 +17,7 @@ const register = async (req, res) => {
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
 
-        const { username, email, password } = req.body;
+        const { username, business_name, email, password } = req.body;
 
         const userResult = await Users.findOne({
             where: { email }
@@ -44,6 +44,7 @@ const register = async (req, res) => {
 
         const newUser = await Users.create({
             username,
+            business_name,
             email,
             password,
             verification_token,

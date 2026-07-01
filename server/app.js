@@ -8,6 +8,8 @@ import materialRouter from './src/routes/material.js';
 import materialTransactionRouter from './src/routes/materialTransaction.js';
 import expenseRouter from './src/routes/expense.js';
 import orderItemRouter from './src/routes/orderItem.js';
+import userRouter from './src/routes/user.js';
+
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
 const app = express();
@@ -35,5 +37,6 @@ app.use('/materials', materialRouter);
 app.use('/material-transaction', materialTransactionRouter);
 app.use('/expenses', expenseRouter);
 app.use('/order-item', orderItemRouter);
+app.use('/user-details', userRouter);
 
 export default app;

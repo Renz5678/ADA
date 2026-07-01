@@ -1,8 +1,12 @@
 import { IoSearch } from "react-icons/io5";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
+import { useCurrentUser } from "#hooks/useUser.js";
 
 export default function Topbar() {
+    const { data: user, isLoading, isError, error } = useCurrentUser();
+    console.log({ user, isLoading, isError, error });
+
     return (
         <div className="flex flex-none w-full bg-[#FFFFFF] border-b-3 border-[#dddddd] h-[12%] items-center p-3">
             <div className="flex-none h-[100%] w-14" />
@@ -20,8 +24,12 @@ export default function Topbar() {
                     <AiOutlineQuestionCircle size={22} />
                 </div>
                 <div className="flex flex-col h-full w-[50%] justify-center">
-                    <div className="text-right w-full font-headline font-medium text-2xl">Business Name</div>
-                    <div className="text-right w-full font-body text-sm">Username</div>
+                    <div className="text-right w-full font-headline font-medium text-2xl">
+                        {isLoading ? "…" : user?.business_name}
+                    </div>
+                    <div className="text-right w-full font-body text-sm">
+                        {isLoading ? "" : user?.username}
+                    </div>
                 </div>
             </div>
         </div>

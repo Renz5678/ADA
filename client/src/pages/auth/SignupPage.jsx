@@ -1,6 +1,6 @@
 import { FaGoogle, FaCheck, FaEye, FaEyeSlash } from "react-icons/fa";
 import { MdOutlineMailOutline, MdLockOutline } from "react-icons/md";
-import { IoMdPerson } from "react-icons/io";
+import { IoMdPerson, IoMdBusiness } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -14,7 +14,7 @@ const PASSWORD_RULES = [
     { label: "Symbol", test: (p) => /[^A-Za-z0-9]/.test(p) },
 ];
 
-const INITIAL_FORM = { username: "", email: "", password: "", confirmPassword: "" };
+const INITIAL_FORM = { username: "", businessName: "", email: "", password: "", confirmPassword: "" };
 
 function PasswordRulesList({ password, visible }) {
     return (
@@ -71,6 +71,7 @@ export default function SignupPage({ onStart, onStop }) {
         try {
             await signup({
                 username: form.username,
+                business_name: form.businessName,
                 email: form.email,
                 password: form.password,
             });
@@ -133,6 +134,20 @@ export default function SignupPage({ onStart, onStop }) {
                                     onChange={handleChange}
                                     type="text"
                                     autoComplete="username"
+                                    className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
+                                />
+                            </label>
+
+                            <label className="flex flex-col gap-0.5">
+                                <span className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
+                                    <IoMdBusiness /> Business Name
+                                </span>
+                                <input
+                                    name="businessName"
+                                    value={form.businessName}
+                                    onChange={handleChange}
+                                    type="text"
+                                    autoComplete="businessName"
                                     className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                                 />
                             </label>

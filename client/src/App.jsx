@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoadingBar from "#components/ui/LoadingBar.jsx";
 import AppRouter from "#routes/AppRouter.jsx";
+
+const queryClient = new QueryClient();
 
 export default function App() {
     const [isLoading, setIsLoading] = useState(false);
@@ -11,8 +14,10 @@ export default function App() {
 
     return (
         <>
-            <LoadingBar isLoading={isLoading} message={loadingMessage} />
-            <AppRouter onStart={startLoading} onStop={stopLoading} />
+            <QueryClientProvider client={queryClient}>
+                <LoadingBar isLoading={isLoading} message={loadingMessage} />
+                <AppRouter onStart={startLoading} onStop={stopLoading} />
+            </QueryClientProvider>
         </>
     );
 }

@@ -19,6 +19,14 @@ export default (sequelize, DataTypes) => {
                 notEmpty: { msg: 'Username must not be empty' }
             }
         },
+        business_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                notNull: { msg: 'Business Name must not be null' },
+                notEmpty: { msg: 'Business Name must not be empty' }
+            }
+        },
         email: {
             type: DataTypes.STRING,
             allowNull: false,
