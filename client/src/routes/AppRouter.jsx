@@ -4,9 +4,14 @@ import AppLayout from "#components/layout/AppLayout.jsx";
 import SignupPage from "#pages/auth/SignupPage.jsx";
 import LoginPage from "#pages/auth/LoginPage.jsx";
 import VerifyOTPPage from "#pages/auth/VerifyOTPPage.jsx";
-import DashboardPage from "#pages/app/DashboardPage.jsx";
 import ProtectedRoute from "#components/ProtectedRoute.jsx";
 import ForgotPasswordPage from "#pages/auth/ForgotPasswordPage.jsx";
+
+
+import DashboardPage from "#pages/app/DashboardPage.jsx";
+import ExpensesPage from "#pages/app/ExpensesPage.jsx";
+import OrdersPage from "#pages/app/OrdersPage.jsx";
+import ProductsPage from "#pages/app/ProductsPage.jsx";
 
 export default function AppRouter({ onStart, onStop }) {
     return (
@@ -20,8 +25,9 @@ export default function AppRouter({ onStart, onStop }) {
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
                     <Route path="/dashboard" element={<DashboardPage />} />
-                    {/* <Route path="/projects" element={<ProjectsPage />} /> */}
-                    {/* <Route path="/invoices" element={<InvoicesPage />} /> */}
+                    <Route path="/expenses" element={<ExpensesPage />} />
+                    <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/products" element={<ProductsPage />} />
                 </Route>
             </Route>
         </Routes>
