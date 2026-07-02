@@ -1,5 +1,4 @@
-// client/src/constants/orderStatus.js
-export const orderStatusStyles = {
+export const STATUS_STYLES = {
     Pending: { bgColor: "bg-amber-100", textColor: "text-amber-700" },
     Done: { bgColor: "bg-green-100", textColor: "text-green-700" },
     Delivered: { bgColor: "bg-blue-100", textColor: "text-blue-700" },

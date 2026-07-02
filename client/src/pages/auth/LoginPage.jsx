@@ -102,7 +102,7 @@ export default function LoginPage({ onStart, onStop }) {
                                 value={form.email}
                                 onChange={handleChange}
                                 autoComplete="email"
-                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
+                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA]"
                             />
                             {form.email && (
                                 <p className={`text-xs mt-1 ${isValidEmail ? "text-green-500" : "text-red-500"}`}>
