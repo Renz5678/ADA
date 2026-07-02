@@ -6,14 +6,31 @@ const { Orders } = models;
 const getOrders = async (req, res) => {
     try {
         const userId = req.user.id;
+        let pageNumber = Number(req.query.page) || 1;
+        let limit = Number(req.query.limit) || 10;
 
-        const orders = await Orders.findAll({
+        if (pageNumber < 1) pageNumber = 1;
+        if (limit < 1) limit = 10;
+
+        const offset = (pageNumber - 1) * limit;
+
+        const { count, rows } = await Orders.findAndCountAll({
             where: {
                 user_id: userId
-            }
+            },
+            order: [['order_date', 'DESC']],
+            limit,
+            offset
         });
 
-        return res.status(200).json(orders);
+        const totalPages = Math.ceil(count / limit);
+
+        return res.status(200).json({
+            orders: rows,
+            totalCount: count,
+            totalPages,
+            currentPage: pageNumber
+        });
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
