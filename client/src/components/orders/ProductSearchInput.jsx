@@ -1,7 +1,6 @@
 // src/components/orders/ProductSearchInput.jsx
 import { useState, useRef, useEffect } from 'react';
 
-// Wraps the matching substring in <mark> so the user sees why each result matched
 function highlightMatch(text, query) {
     const idx = text.toLowerCase().indexOf(query.toLowerCase());
     if (idx === -1) return text;
@@ -18,7 +17,7 @@ function highlightMatch(text, query) {
 }
 
 export default function ProductSearchInput({ products, value, onChange, placeholder = 'Search by code or name...' }) {
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState(value ? value.product_name : '');
     const [isOpen, setIsOpen] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(0);
     const containerRef = useRef(null);
@@ -42,9 +41,12 @@ export default function ProductSearchInput({ products, value, onChange, placehol
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    // Selecting a suggestion fills the search box with that product's name
+    // (like clicking a Google suggestion), but the box stays editable —
+    // it does not lock into a separate "selected value" display.
     const selectProduct = (product) => {
         onChange(product);
-        setQuery('');
+        setQuery(product.product_name);
         setIsOpen(false);
         setHighlightedIndex(0);
     };
@@ -70,7 +72,7 @@ export default function ProductSearchInput({ products, value, onChange, placehol
         <div className="relative" ref={containerRef}>
             <input
                 type="text"
-                value={value ? value.product_name : query}
+                value={query}
                 onChange={(e) => {
                     onChange(null);
                     setQuery(e.target.value);

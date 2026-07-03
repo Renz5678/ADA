@@ -37,10 +37,10 @@ const OrdersTable = ({ orders, isFetching, onView, onOpen, onDelete }) => {
                 <td className="px-4 py-3">
                   <Badge label={order.status} bgColor={statusStyle.bgColor} textColor={statusStyle.textColor} />
                 </td>
-                <td className="px-4 py-3 text-right space-x-2">
+                <td className="px-4 py-3 text-right space-x-2" flex flex-row>
                     <Button variant="primary" onClick={() => onView(order.order_id)}>View</Button>
                     <Button variant="secondary" onClick={() => onOpen(order.order_id)}>Edit</Button>
-                    <Button variant="secondary" onClick={() => onDelete(order.order_id)}>Delete</Button>
+                    <Button variant="danger" onClick={() => onDelete(order)}>Delete</Button>
                 </td>
               </tr>
             );

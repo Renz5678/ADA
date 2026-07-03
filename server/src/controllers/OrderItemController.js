@@ -49,17 +49,21 @@ const getOrderItemsByOrderid = async (req, res) => {
         const orderId = req.params.id;
 
         const orderItem = await OrderItem.findAll({
-            include: {
-                model: Orders,
-                where: {
-                    user_id: userId,
-                    order_id: orderId
+            include: [
+                {
+                    model: Orders,
+                    where: {
+                        user_id: userId,
+                        order_id: orderId
+                    },
+                    attributes: []
                 },
-                attributes: []
-            }
+                {
+                    model: Product,
+                    attributes: ['product_id', 'product_name', 'product_code', 'price']
+                }
+            ]
         });
-
-        if (orderItem.length === 0) return res.status(404).json({ message: 'Order Item not found!' });
 
         return res.status(200).json(orderItem);
     } catch (e) {
