@@ -11,15 +11,17 @@ import MaterialTransactionFactory from '../models/material_transaction.js';
 import ExpenseFactory from '../models/expense.js';
 import WeeklyAvailabilityFactory from '../models/weeklyAvailability.js';
 
-const sequelize = new Sequelize({
-    dialect: 'postgres',
-    host: process.env.POSTGRES_HOST,
-    port: Number(process.env.POSTGRES_PORT) || 5432,
-    username: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: process.env.POSTGRES_DATABASE,
-    logging: console.log
-});
+const sequelize = process.env.NODE_ENV === 'test' 
+    ? new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false })
+    : new Sequelize({
+        dialect: 'postgres',
+        host: process.env.POSTGRES_HOST,
+        port: Number(process.env.POSTGRES_PORT) || 5432,
+        username: process.env.POSTGRES_USER,
+        password: process.env.POSTGRES_PASSWORD,
+        database: process.env.POSTGRES_DATABASE,
+        logging: false
+    });
 
 const models = {
     Users: UserFactory(sequelize, DataTypes),
