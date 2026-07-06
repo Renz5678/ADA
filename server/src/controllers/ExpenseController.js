@@ -6,12 +6,32 @@ const { Expense } = models;
 const getExpenses = async (req, res) => {
     try {
         const userId = req.user.id;
+        const page = req.query.page ? Number(req.query.page) : null;
+        const limit = req.query.limit ? Number(req.query.limit) : null;
+        
+        const whereClause = { user_id: userId };
 
-        const expenses = await Expense.findAll({
-            where: { user_id: userId }
-        });
-
-        return res.status(200).json(expenses);
+        if (page && limit) {
+            const offset = (page - 1) * limit;
+            const { count, rows } = await Expense.findAndCountAll({
+                where: whereClause,
+                limit,
+                offset,
+                order: [['expense_date', 'DESC'], ['createdAt', 'DESC']]
+            });
+            return res.status(200).json({
+                expenses: rows,
+                totalCount: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page
+            });
+        } else {
+            const expenses = await Expense.findAll({
+                where: whereClause,
+                order: [['expense_date', 'DESC'], ['createdAt', 'DESC']]
+            });
+            return res.status(200).json(expenses);
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }

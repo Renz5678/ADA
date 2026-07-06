@@ -16,8 +16,12 @@ import Skeleton from '#components/ui/Skeleton.jsx';
 
 export default function ExpensesPage() {
     const queryClient = useQueryClient();
-    const { data: expenses, isFetching: isFetchingExpenses, isError: isExpensesError, error: expensesError } = useExpenses();
-    const { data: materials, isFetching: isFetchingMaterials, isError: isMaterialsError, error: materialsError } = useMaterials();
+    const [expensesPage, setExpensesPage] = useState(1);
+    const [materialsPage, setMaterialsPage] = useState(1);
+    const limit = 5;
+
+    const { data: expensesData, isFetching: isFetchingExpenses, isError: isExpensesError, error: expensesError } = useExpenses(expensesPage, limit);
+    const { data: materialsData, isFetching: isFetchingMaterials, isError: isMaterialsError, error: materialsError } = useMaterials(materialsPage, limit);
 
     const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
     const [editingExpense, setEditingExpense] = useState(null);
@@ -112,7 +116,7 @@ export default function ExpensesPage() {
         createTxMut.mutate({ materialId: data.material_id, data });
     };
 
-    if ((isFetchingExpenses && !expenses) || (isFetchingMaterials && !materials)) {
+    if ((isFetchingExpenses && !expensesData) || (isFetchingMaterials && !materialsData)) {
         return (
             <div className="w-full flex flex-col gap-6 flex-1 min-h-0">
                 <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
@@ -140,11 +144,32 @@ export default function ExpensesPage() {
                     </Button>
                 </div>
                 <ExpensesTable
-                    expenses={expenses}
+                    expenses={expensesData?.expenses ?? []}
                     isFetching={isFetchingExpenses}
                     onEdit={(exp) => { setEditingExpense(exp); setIsExpenseModalOpen(true); }}
                     onDelete={handleDeleteExpense}
                 />
+                {expensesData && expensesData.totalCount > 0 && (
+                    <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
+                        <Button
+                            variant="secondary"
+                            disabled={expensesPage === 1}
+                            onClick={() => setExpensesPage((p) => Math.max(1, p - 1))}
+                        >
+                            Previous
+                        </Button>
+                        <span className="text-sm text-gray-600 font-body">
+                            Page {expensesData.currentPage} of {expensesData.totalPages}
+                        </span>
+                        <Button
+                            variant="secondary"
+                            disabled={expensesPage === expensesData.totalPages}
+                            onClick={() => setExpensesPage((p) => Math.min(expensesData.totalPages, p + 1))}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {/* Materials Card */}
@@ -156,12 +181,33 @@ export default function ExpensesPage() {
                     </Button>
                 </div>
                 <MaterialsTable
-                    materials={materials}
+                    materials={materialsData?.materials ?? []}
                     isFetching={isFetchingMaterials}
                     onEdit={(mat) => { setEditingMaterial(mat); setIsMaterialModalOpen(true); }}
                     onDelete={handleDeleteMaterial}
                     onTransaction={(mat) => { setTxMaterial(mat); setTxError(null); setIsTxModalOpen(true); }}
                 />
+                {materialsData && materialsData.totalCount > 0 && (
+                    <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
+                        <Button
+                            variant="secondary"
+                            disabled={materialsPage === 1}
+                            onClick={() => setMaterialsPage((p) => Math.max(1, p - 1))}
+                        >
+                            Previous
+                        </Button>
+                        <span className="text-sm text-gray-600 font-body">
+                            Page {materialsData.currentPage} of {materialsData.totalPages}
+                        </span>
+                        <Button
+                            variant="secondary"
+                            disabled={materialsPage === materialsData.totalPages}
+                            onClick={() => setMaterialsPage((p) => Math.min(materialsData.totalPages, p + 1))}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {/* Modals */}

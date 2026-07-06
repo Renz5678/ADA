@@ -6,7 +6,8 @@ import startDeadlineReminderJob from './src/utils/deadlineReminderJob.js';
 const port = 3000;
 
 const start = async () => {
-    await sequelize.sync({ alter: true, logging: false });
+    await sequelize.authenticate();
+    console.log("Database connection has been established successfully.");
 
     startCleanUpJob();
     startDeadlineReminderJob();

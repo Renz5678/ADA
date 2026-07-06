@@ -2,18 +2,45 @@ import { models } from "../models/index.js";
 import { validationResult } from "express-validator";
 
 const { Product } = models;
+import { Op } from 'sequelize';
 
 const getProducts = async (req, res) => {
     try {
         const userId = req.user.id;
+        const page = req.query.page ? Number(req.query.page) : null;
+        const limit = req.query.limit ? Number(req.query.limit) : null;
+        const search = req.query.search || '';
 
-        const products = await Product.findAll({
-            where: {
-                user_id: userId
-            }
-        });
+        const whereClause = { user_id: userId };
 
-        return res.status(200).json(products);
+        if (search) {
+            whereClause[Op.or] = [
+                { product_code: { [Op.iLike]: `%${search}%` } },
+                { product_name: { [Op.iLike]: `%${search}%` } }
+            ];
+        }
+
+        if (page && limit) {
+            const offset = (page - 1) * limit;
+            const { count, rows } = await Product.findAndCountAll({
+                where: whereClause,
+                limit,
+                offset,
+                order: [['createdAt', 'DESC']]
+            });
+            return res.status(200).json({
+                products: rows,
+                totalCount: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page
+            });
+        } else {
+            const products = await Product.findAll({
+                where: whereClause,
+                order: [['product_name', 'ASC']]
+            });
+            return res.status(200).json(products);
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }

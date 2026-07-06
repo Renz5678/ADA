@@ -9,7 +9,11 @@ import Skeleton from '#components/ui/Skeleton.jsx';
 
 export default function ProductsPage() {
     const queryClient = useQueryClient();
-    const { data: products, isLoading, isError, error, isFetching } = useProducts();
+    const [page, setPage] = useState(1);
+    const limit = 10;
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const { data, isLoading, isError, error, isFetching } = useProducts(page, limit, searchQuery);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null); // null = creating, otherwise editing this product
@@ -82,14 +86,47 @@ export default function ProductsPage() {
             </div>
             
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
+                <div className="flex w-full sm:w-1/3">
+                    <input
+                        type="text"
+                        placeholder="Search by code or name..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setPage(1);
+                        }}
+                        className="border border-[#c1c1c1] rounded-lg px-3 py-2 w-full text-sm font-body"
+                    />
+                </div>
 
-            <ProductsTable
-                products={products}
-                isFetching={isFetching}
-                onEdit={handleOpenEdit}
-                onDelete={handleDelete}
-            />
+                <ProductsTable
+                    products={data?.products ?? []}
+                    isFetching={isFetching}
+                    onEdit={handleOpenEdit}
+                    onDelete={handleDelete}
+                />
 
+                {data && data.totalCount > 0 && (
+                    <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
+                        <Button
+                            variant="secondary"
+                            disabled={page === 1}
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        >
+                            Previous
+                        </Button>
+                        <span className="text-sm text-gray-600 font-body">
+                            Page {data.currentPage} of {data.totalPages}
+                        </span>
+                        <Button
+                            variant="secondary"
+                            disabled={page === data.totalPages}
+                            onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                )}
             </div>
 
             <ProductModal

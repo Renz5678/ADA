@@ -6,14 +6,32 @@ const { Material, Expense } = models;
 const getMaterials = async (req, res) => {
     try {
         const userId = req.user.id;
+        const page = req.query.page ? Number(req.query.page) : null;
+        const limit = req.query.limit ? Number(req.query.limit) : null;
+        
+        const whereClause = { user_id: userId };
 
-        const materials = await Material.findAll({
-            where: {
-                user_id: userId
-            }
-        });
-
-        return res.status(200).json(materials)
+        if (page && limit) {
+            const offset = (page - 1) * limit;
+            const { count, rows } = await Material.findAndCountAll({
+                where: whereClause,
+                limit,
+                offset,
+                order: [['material_name', 'ASC']]
+            });
+            return res.status(200).json({
+                materials: rows,
+                totalCount: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page
+            });
+        } else {
+            const materials = await Material.findAll({
+                where: whereClause,
+                order: [['material_name', 'ASC']]
+            });
+            return res.status(200).json(materials);
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
