@@ -9,14 +9,19 @@ const { Orders, Users } = models;
 const startDeadlineReminderJob = () => {
     // Run at 8am daily
     cron.schedule('0 8 * * *', async () => {
+        console.log('[DeadlineJob] Running deadline reminder job...');
+        let sent = 0;
+        let failed = 0;
+
         try {
-            console.log('Running deadline reminder job...');
-            
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
             const inTwoDays = new Date(today);
             inTwoDays.setDate(today.getDate() + 2);
+
+            const todayStr = today.toISOString().split('T')[0];
+            const inTwoDaysStr = inTwoDays.toISOString().split('T')[0];
 
             const dueOrders = await Orders.findAll({
                 where: {
@@ -24,7 +29,7 @@ const startDeadlineReminderJob = () => {
                     deadline: {
                         [Op.and]: [
                             { [Op.ne]: null },
-                            { [Op.between]: [today.toISOString().split('T')[0], inTwoDays.toISOString().split('T')[0]] }
+                            { [Op.between]: [todayStr, inTwoDaysStr] }
                         ]
                     }
                 },
@@ -36,18 +41,17 @@ const startDeadlineReminderJob = () => {
             });
 
             if (!dueOrders.length) {
-                console.log('No due tasks found.');
+                console.log('[DeadlineJob] No orders due in the next 2 days. Exiting.');
                 return;
             }
+
+            console.log(`[DeadlineJob] Found ${dueOrders.length} due order(s). Grouping by user...`);
 
             // Group by user
             const ordersByUser = dueOrders.reduce((acc, order) => {
                 const userId = order.user_id;
                 if (!acc[userId]) {
-                    acc[userId] = {
-                        user: order.User, // Order belongsTo Users
-                        orders: []
-                    };
+                    acc[userId] = { user: order.User, orders: [] };
                 }
                 acc[userId].orders.push(order);
                 return acc;
@@ -55,27 +59,41 @@ const startDeadlineReminderJob = () => {
 
             for (const userId in ordersByUser) {
                 const { user, orders } = ordersByUser[userId];
-                
-                if (!user || !user.email) continue;
 
-                let textContent = `Hello ${user.username},\n\nHere are your upcoming tasks that are due soon:\n\n`;
+                if (!user?.email) {
+                    console.warn(`[DeadlineJob] User ${userId} has no email address. Skipping.`);
+                    failed++;
+                    continue;
+                }
+
+                // Build plain text fallback
+                let textContent = `Hello ${user.username},\n\nHere are your upcoming tasks due soon:\n\n`;
                 orders.forEach(o => {
-                    textContent += `- Order #${o.order_id} is due on ${o.deadline} (Total: ₱${o.total_amount})\n`;
+                    textContent += `- Order #${o.order_id} is due on ${o.deadline} (Total: \u20b1${o.total_amount})\n`;
                 });
-                textContent += `\nPlease check your ADA Dashboard for more details.\n\nBest,\nADA Team`;
+                textContent += `\nPlease check your ADA Dashboard for more details.\n\nBest,\nThe ADA Team`;
 
-                await transporter.sendMail({
-                    from: process.env.EMAIL_USER,
-                    to: user.email,
-                    subject: 'ADA - Upcoming Deadlines Reminder',
-                    text: textContent,
-                    html: getDeadlineReminderHtml(user.username, orders)
-                });
+                // Each email is wrapped independently so one failure doesn't abort the batch
+                try {
+                    await transporter.sendMail({
+                        from: process.env.EMAIL_USER,
+                        to: user.email,
+                        subject: 'ADA \u2014 Upcoming Deadlines Reminder',
+                        text: textContent,
+                        html: getDeadlineReminderHtml(user.username, orders)
+                    });
+                    console.log(`[DeadlineJob] \u2713 Sent reminder to ${user.email} (${orders.length} order(s))`);
+                    sent++;
+                } catch (emailErr) {
+                    console.error(`[DeadlineJob] \u2717 Failed to send to ${user.email}:`, emailErr.message);
+                    failed++;
+                }
             }
 
-            console.log('Deadline reminder job completed.');
         } catch (error) {
-            console.error('Error running deadline reminder job:', error);
+            console.error('[DeadlineJob] Fatal error during job execution:', error);
+        } finally {
+            console.log(`[DeadlineJob] Complete. Sent: ${sent}, Failed: ${failed}`);
         }
     });
 };

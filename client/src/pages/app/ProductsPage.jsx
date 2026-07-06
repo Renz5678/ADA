@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { useProducts } from '#hooks/useProducts.js';
 import { createProduct, updateProduct, deleteProduct } from '#api/product.js';
 import ProductsTable from '#components/products/ProductsTable.jsx';
@@ -25,7 +26,9 @@ export default function ProductsPage() {
         onSuccess: () => {
             invalidateProducts();
             setIsModalOpen(false);
-        }
+            toast.success('Product created successfully!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to create product.')
     });
 
     const updateMutation = useMutation({
@@ -34,12 +37,18 @@ export default function ProductsPage() {
             invalidateProducts();
             setIsModalOpen(false);
             setEditingProduct(null);
-        }
+            toast.success('Product updated successfully!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to update product.')
     });
 
     const deleteMutation = useMutation({
         mutationFn: deleteProduct,
-        onSuccess: invalidateProducts
+        onSuccess: () => {
+            invalidateProducts();
+            toast.success('Product deleted.');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to delete product.')
     });
 
     const handleOpenCreate = () => {

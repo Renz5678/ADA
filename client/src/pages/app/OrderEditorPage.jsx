@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { getOrderById, getOrderItemsByOrder, createOrder, createOrderItem, updateOrderItem, deleteOrderItem, updateOrder } from '#api/orders.js';
 import { useProducts } from '#hooks/useProducts.js';
 import Button from '#components/ui/Button.jsx';
@@ -162,14 +163,19 @@ export default function OrderEditorPage() {
         },
         onSuccess: (newOrderId) => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
-            alert(`Order #${newOrderId} has been created successfully!`);
+            toast.success(`Order #${newOrderId} created successfully!`);
             navigate(`/orders`);
-        }
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to create order.')
     });
 
     const updateDetailsMutation = useMutation({
         mutationFn: (updates) => updateOrder(orderId, updates),
-        onSuccess: () => invalidateOrderQueries(orderId)
+        onSuccess: () => {
+            invalidateOrderQueries(orderId);
+            toast.success('Order updated!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to update order.')
     });
 
     const statusStyle = STATUS_STYLES[displayStatus] ?? STATUS_STYLES.Pending;
@@ -378,7 +384,7 @@ export default function OrderEditorPage() {
                             }
                             createOrderOnlyMutation.mutate();
                         } else {
-                            alert(`Order #${orderId} has been updated successfully!`);
+                            toast.success(`Order #${orderId} saved!`);
                             navigate('/orders');
                         }
                     }}

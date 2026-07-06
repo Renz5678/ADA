@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { useOrders, useOrderStats } from '#hooks/useOrders.js';
 import { deleteOrder, updateOrder } from '#api/orders.js';
 import OrdersTable from '#components/orders/OrdersTable.jsx';
@@ -28,14 +29,18 @@ export default function OrdersPage() {
         mutationFn: deleteOrder,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
-        }
+            toast.success('Order deleted.');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to delete order.')
     });
 
     const updateMutation = useMutation({
         mutationFn: ({ id, updates }) => updateOrder(id, updates),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
-        }
+            toast.success('Order status updated!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to update order.')
     });
 
     const handleDelete = (order) => {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { useExpenses } from '#hooks/useExpenses.js';
 import { useMaterials } from '#hooks/useMaterials.js';
 import { createExpense, updateExpense, deleteExpense } from '#api/expenses.js';
@@ -38,15 +39,30 @@ export default function ExpensesPage() {
 
     const createExpenseMut = useMutation({
         mutationFn: createExpense,
-        onSuccess: () => { invalidateExpenses(); setIsExpenseModalOpen(false); }
+        onSuccess: () => {
+            invalidateExpenses();
+            setIsExpenseModalOpen(false);
+            toast.success('Expense added!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to add expense.')
     });
     const updateExpenseMut = useMutation({
         mutationFn: ({ id, updates }) => updateExpense(id, updates),
-        onSuccess: () => { invalidateExpenses(); setIsExpenseModalOpen(false); setEditingExpense(null); }
+        onSuccess: () => {
+            invalidateExpenses();
+            setIsExpenseModalOpen(false);
+            setEditingExpense(null);
+            toast.success('Expense updated!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to update expense.')
     });
     const deleteExpenseMut = useMutation({
         mutationFn: deleteExpense,
-        onSuccess: invalidateExpenses
+        onSuccess: () => {
+            invalidateExpenses();
+            toast.success('Expense deleted.');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to delete expense.')
     });
 
     const handleSaveExpense = (data) => {
@@ -67,19 +83,31 @@ export default function ExpensesPage() {
 
     const createMaterialMut = useMutation({
         mutationFn: createMaterial,
-        onSuccess: () => { 
-            invalidateMaterials(); 
+        onSuccess: () => {
+            invalidateMaterials();
             invalidateExpenses();
-            setIsMaterialModalOpen(false); 
-        }
+            setIsMaterialModalOpen(false);
+            toast.success('Material created!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to create material.')
     });
     const updateMaterialMut = useMutation({
         mutationFn: ({ id, updates }) => updateMaterial(id, updates),
-        onSuccess: () => { invalidateMaterials(); setIsMaterialModalOpen(false); setEditingMaterial(null); }
+        onSuccess: () => {
+            invalidateMaterials();
+            setIsMaterialModalOpen(false);
+            setEditingMaterial(null);
+            toast.success('Material updated!');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to update material.')
     });
     const deleteMaterialMut = useMutation({
         mutationFn: deleteMaterial,
-        onSuccess: invalidateMaterials
+        onSuccess: () => {
+            invalidateMaterials();
+            toast.success('Material deleted.');
+        },
+        onError: (err) => toast.error(err.response?.data?.message || 'Failed to delete material.')
     });
 
     const handleSaveMaterial = (data) => {
@@ -104,10 +132,12 @@ export default function ExpensesPage() {
             setIsTxModalOpen(false);
             setTxMaterial(null);
             setTxError(null);
+            toast.success('Transaction logged successfully!');
         },
         onError: (err) => {
             const msg = err.response?.data?.message || 'Failed to log transaction.';
             setTxError(msg);
+            toast.error(msg);
         }
     });
 
