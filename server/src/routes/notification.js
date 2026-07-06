@@ -1,10 +1,10 @@
 import express from 'express';
 import NotificationController from '../controllers/NotificationController.js';
-import { authenticateToken } from '../middleware/auth.js';
+import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.use(authenticateToken); // Protect all notification routes
+router.use(authMiddleware); // Protect all notification routes
 
 router.get('/', NotificationController.getNotifications);
 router.get('/unread-count', NotificationController.getUnreadCount);

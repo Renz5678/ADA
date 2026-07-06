@@ -1,0 +1,68 @@
+name: ADA CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    # 1. Install & Lint Client
+    - name: Install Client Dependencies
+      run: npm ci
+      working-directory: ./client
+
+    - name: Run Client Linter
+      run: npm run lint
+      working-directory: ./client
+
+    # 2. Install & Test Backend
+    - name: Install Server Dependencies
+      run: npm ci
+      working-directory: ./server
+
+    - name: Run Backend Tests
+      run: npm run test
+      working-directory: ./server
+      env:
+        DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_db
+        JWT_SECRET: test_secret
+
+  build-docker:
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Build Docker Compose (Dry Run)
+      run: docker compose build

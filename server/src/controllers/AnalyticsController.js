@@ -108,7 +108,6 @@ const getSalesByMonth = async (req, res) => {
 
         return res.status(200).json(sales);
     } catch (e) {
-    } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
 };
