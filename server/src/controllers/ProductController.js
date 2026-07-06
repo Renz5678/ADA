@@ -77,6 +77,10 @@ const createProduct = async (req, res) => {
 
         const { product_code, product_name, price } = req.body;
 
+        if (!product_name || price === undefined) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
         const newProduct = await Product.create({
             user_id: userId,
             product_code,

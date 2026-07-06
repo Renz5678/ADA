@@ -106,6 +106,10 @@ const createOrderItem = async (req, res) => {
         const productId = req.body.product_id;
         const orderId = req.body.order_id;
 
+        if (!productId || !orderId) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
         const { quantity } = req.body;
 
         const product = await Product.findOne({

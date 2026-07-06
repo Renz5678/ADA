@@ -25,7 +25,7 @@ const register = async (req, res) => {
         })
 
         if (userResult !== null) {
-            if (!userResult.is_verified || userResult.otp_expires_at < new Date()) {
+            if (!userResult.is_verified) {
                 userResult.verification_token = verification_token;
                 userResult.otp_expires_at = otp_expires_at;
                 await userResult.save();

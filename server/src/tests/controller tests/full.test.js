@@ -55,17 +55,17 @@ afterAll(async () => {
     console.log('--- STARTING AFTERALL ---');
     // Clean up in reverse dependency order
     console.log('Destroying MaterialTransaction...');
-    await MaterialTransaction.destroy({ where: { material_id: materialId } });
+    if (materialId) await MaterialTransaction.destroy({ where: { material_id: materialId } });
     console.log('Destroying OrderItem...');
-    await OrderItem.destroy({ where: { order_item_id: orderItemId } });
+    if (orderItemId) await OrderItem.destroy({ where: { order_item_id: orderItemId } });
     console.log('Destroying Orders...');
-    await Orders.destroy({ where: { user_id: userId } });
+    if (userId) await Orders.destroy({ where: { user_id: userId } });
     console.log('Destroying Product...');
-    await Product.destroy({ where: { user_id: userId } });
+    if (userId) await Product.destroy({ where: { user_id: userId } });
     console.log('Destroying Material...');
-    await Material.destroy({ where: { user_id: userId } });
+    if (userId) await Material.destroy({ where: { user_id: userId } });
     console.log('Destroying Expense...');
-    await Expense.destroy({ where: { user_id: userId } });
+    if (userId) await Expense.destroy({ where: { user_id: userId } });
     console.log('Destroying Users...');
     await Users.destroy({ where: { email: testUser.email } });
     console.log('Closing sequelize...');

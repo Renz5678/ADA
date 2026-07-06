@@ -68,6 +68,10 @@ const createExpense = async (req, res) => {
 
         const { title, amount, category, expense_date } = req.body;
 
+        if (amount === undefined || !category || !expense_date) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
         const newExpense = await Expense.create({
             user_id: userId,
             title,

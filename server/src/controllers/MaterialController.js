@@ -68,6 +68,10 @@ const createMaterial = async (req, res) => {
 
         const { material_code, material_name, unit_cost, quantity } = req.body;
 
+        if (!material_name || unit_cost === undefined || quantity === undefined) {
+            return res.status(400).json({ message: 'Missing required fields' });
+        }
+
         const newMaterial = await Material.create({
             user_id: userId,
             material_code,
