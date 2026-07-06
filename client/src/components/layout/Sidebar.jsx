@@ -18,15 +18,15 @@ export default function Sidebar() {
 
     return (
         <>
-            {/* Toggle button, only visible below md breakpoint */}
+            {/* Hamburger — only below lg */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="lg:hidden fixed top-5 left-4 z-50 text-[#3A0812]"
+                className="lg:hidden fixed top-4 left-4 z-50 text-white bg-[#0F1D29] p-1.5 rounded-lg shadow-md"
             >
-                <MdMenu size={28} />
+                <MdMenu size={22} />
             </button>
 
-            {/* Backdrop, only shown on mobile when sidebar is open */}
+            {/* Backdrop */}
             {isOpen && (
                 <div
                     onClick={() => setIsOpen(false)}
@@ -34,10 +34,12 @@ export default function Sidebar() {
                 />
             )}
 
+            {/* Sidebar panel */}
             <div
-                className={`flex flex-none flex-col w-[30%] lg:w-[20%] h-full bg-[#0F1D29] p-4
+                className={`flex flex-none flex-col h-full bg-[#0F1D29] p-4
                     fixed lg:static top-0 left-0 z-50 transition-transform duration-300
-                    ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+                    w-[75vw] max-w-[280px] lg:w-[220px]
+                    ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
             >
                 <button
                     onClick={() => setIsOpen(false)}
@@ -46,10 +48,10 @@ export default function Sidebar() {
                     <MdClose size={24} />
                 </button>
 
-                <div className="font-headline text-white font-semibold text-4xl text-left p-2">
+                <div className="font-headline text-white font-semibold text-3xl lg:text-4xl text-left p-2">
                     ADA
                 </div>
-                <div className="font-body text-[#BAC8D8] font-medium px-2">
+                <div className="font-body text-[#BAC8D8] font-medium px-2 text-xs lg:text-sm">
                     Create. Sell. Track
                 </div>
 

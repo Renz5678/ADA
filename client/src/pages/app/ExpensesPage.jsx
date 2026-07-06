@@ -138,7 +138,7 @@ export default function ExpensesPage() {
             {/* Expenses Card */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
                 <div className="flex items-center justify-between shrink-0">
-                    <h2 className="text-xl font-semibold font-headline text-[#0F1D29]">Expenses</h2>
+                    <h2 className="text-lg sm:text-xl font-semibold font-headline text-[#0F1D29]">Expenses</h2>
                     <Button variant="primary" onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}>
                         + New Expense
                     </Button>
@@ -149,7 +149,7 @@ export default function ExpensesPage() {
                     onEdit={(exp) => { setEditingExpense(exp); setIsExpenseModalOpen(true); }}
                     onDelete={handleDeleteExpense}
                 />
-                {expensesData && expensesData.totalCount > 0 && (
+                {expensesData && expensesData.totalPages > 1 && (
                     <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
                         <Button
                             variant="secondary"
@@ -175,7 +175,7 @@ export default function ExpensesPage() {
             {/* Materials Card */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
                 <div className="flex items-center justify-between shrink-0">
-                    <h2 className="text-xl font-semibold font-headline text-[#0F1D29]">Materials & Stock</h2>
+                    <h2 className="text-lg sm:text-xl font-semibold font-headline text-[#0F1D29]">Materials & Stock</h2>
                     <Button variant="primary" onClick={() => { setEditingMaterial(null); setIsMaterialModalOpen(true); }}>
                         + New Material
                     </Button>
@@ -187,7 +187,7 @@ export default function ExpensesPage() {
                     onDelete={handleDeleteMaterial}
                     onTransaction={(mat) => { setTxMaterial(mat); setTxError(null); setIsTxModalOpen(true); }}
                 />
-                {materialsData && materialsData.totalCount > 0 && (
+                {materialsData && materialsData.totalPages > 1 && (
                     <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
                         <Button
                             variant="secondary"

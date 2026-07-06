@@ -81,7 +81,7 @@ export default function ProductsPage() {
     return (
         <div className="flex flex-col gap-6 animate-fadeIn w-full flex-1 min-h-0">
             <div className="w-full flex items-center justify-between shrink-0">
-                <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Products</h1>
+                <h1 className="text-xl sm:text-2xl font-semibold font-headline text-[#0F1D29]">Products</h1>
                 <Button variant="primary" onClick={handleOpenCreate}>+ New Product</Button>
             </div>
             
@@ -106,7 +106,7 @@ export default function ProductsPage() {
                     onDelete={handleDelete}
                 />
 
-                {data && data.totalCount > 0 && (
+                {data && data.totalPages > 1 && (
                     <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
                         <Button
                             variant="secondary"

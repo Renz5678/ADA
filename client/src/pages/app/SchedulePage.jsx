@@ -65,13 +65,13 @@ export default function SchedulePage() {
     return (
         <div className="flex flex-col gap-6 animate-fadeIn w-full max-w-[1400px] mx-auto font-body flex-1 min-h-0 overflow-hidden">
             <div className="shrink-0">
-                <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Schedule Planner</h1>
-                <p className="text-gray-500 mt-1">Set your free time, flexible hours, and unavailability.</p>
+                <h1 className="text-xl sm:text-2xl font-semibold font-headline text-[#0F1D29]">Schedule Planner</h1>
+                <p className="text-sm sm:text-base text-gray-500 mt-1">Set your free time, flexible hours, and unavailability.</p>
             </div>
 
             <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] shrink-0">
-                <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-4">
-                    <div className="flex flex-col gap-1 w-[130px]">
+                <form onSubmit={handleAdd} className="flex flex-wrap items-end gap-3">
+                    <div className="flex flex-col gap-1 w-full xs:w-[calc(50%-6px)] sm:w-[130px]">
                         <label className="text-sm font-label text-[#0F1D29]">Day</label>
                         <select 
                             value={dayOfWeek} 
@@ -81,7 +81,7 @@ export default function SchedulePage() {
                             {DAYS.map(day => <option key={day} value={day}>{day}</option>)}
                         </select>
                     </div>
-                    <div className="flex flex-col gap-1 w-[130px]">
+                    <div className="flex flex-col gap-1 w-full xs:w-[calc(50%-6px)] sm:w-[130px]">
                         <label className="text-sm font-label text-[#0F1D29]">Start</label>
                         <input 
                             type="time" 
@@ -91,7 +91,7 @@ export default function SchedulePage() {
                             required
                         />
                     </div>
-                    <div className="flex flex-col gap-1 w-[130px]">
+                    <div className="flex flex-col gap-1 w-full xs:w-[calc(50%-6px)] sm:w-[130px]">
                         <label className="text-sm font-label text-[#0F1D29]">End</label>
                         <input 
                             type="time" 
@@ -101,7 +101,7 @@ export default function SchedulePage() {
                             required
                         />
                     </div>
-                    <div className="flex flex-col gap-1 w-[130px]">
+                    <div className="flex flex-col gap-1 w-full xs:w-[calc(50%-6px)] sm:w-[130px]">
                         <label className="text-sm font-label text-[#0F1D29]">Type</label>
                         <select 
                             value={blockType} 
