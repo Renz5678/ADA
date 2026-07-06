@@ -1,13 +1,14 @@
 import Navitem from "./Navitem"
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdMenu, MdClose } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdMenu, MdClose, MdOutlineCalendarToday } from "react-icons/md";
 
 const navItems = {
     "Dashboard": { name: "Dashboard", icon: MdOutlineDashboard, path: "/dashboard" },
     "Orders": { name: "Orders", icon: MdOutlineReceiptLong, path: "/orders" },
     "Products": { name: "Products", icon: MdOutlineCases, path: "/products" },
     "Expenses": { name: "Expenses", icon: MdOutlineShoppingCart, path: "/expenses" },
+    "Schedule": { name: "Schedule", icon: MdOutlineCalendarToday, path: "/schedule" },
 }
 
 export default function Sidebar() {

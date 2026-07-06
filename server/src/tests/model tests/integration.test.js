@@ -3,7 +3,7 @@ jest.setTimeout(30000);
 
 const { Users, Product, Orders, OrderItem, Material, MaterialTransaction, Expense } = models;
 
-let user, product, orders, orderItem, material, materialTransaction, expense;
+let user, product, order, orderItem, material, materialTransaction, expense;
 
 beforeAll(async () => {
     await sequelize.authenticate();
@@ -18,6 +18,7 @@ describe('Integration: Users', () => {
     it('should create a user', async () => {
         user = await Users.create({
             username: 'renz',
+            business_name: 'Test Business',
             email: 'renz@test.com',
             password: 'testpassword'
         })

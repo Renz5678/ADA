@@ -18,6 +18,7 @@ export default function OrderEditorPage() {
 
     // Local state — only meaningful while isNew (before the order exists in the DB)
     const [localDate, setLocalDate] = useState(todayISO());
+    const [localDeadline, setLocalDeadline] = useState('');
     const [localStatus, setLocalStatus] = useState('Pending');
 
     // Add-item mini-form state
@@ -40,6 +41,7 @@ export default function OrderEditorPage() {
 
     // What the date/status inputs actually display: local state when new, server data once it exists
     const displayDate = isNew ? localDate : (order?.order_date ?? '');
+    const displayDeadline = isNew ? localDeadline : (order?.deadline ?? '');
     const displayStatus = isNew ? localStatus : (order?.status ?? 'Pending');
 
     const invalidateOrderQueries = (id) => {
@@ -53,7 +55,7 @@ export default function OrderEditorPage() {
             let currentOrderId = orderId;
 
             if (isNew) {
-                const newOrder = await createOrder({ order_date: localDate, status: localStatus });
+                const newOrder = await createOrder({ order_date: localDate, deadline: localDeadline || null, status: localStatus });
                 currentOrderId = newOrder.order_id;
             }
 
@@ -134,6 +136,21 @@ export default function OrderEditorPage() {
                             <option key={s} value={s}>{s}</option>
                         ))}
                     </select>
+                </div>
+                <div className="flex-1">
+                    <label className="block text-sm mb-1">Deadline (Optional)</label>
+                    <input
+                        type="date"
+                        value={displayDeadline}
+                        onChange={(e) => {
+                            if (isNew) {
+                                setLocalDeadline(e.target.value);
+                            } else {
+                                updateDetailsMutation.mutate({ deadline: e.target.value || null });
+                            }
+                        }}
+                        className="border rounded-lg px-3 py-2 w-full"
+                    />
                 </div>
             </div>
 

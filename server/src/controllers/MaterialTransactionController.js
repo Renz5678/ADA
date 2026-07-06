@@ -22,8 +22,6 @@ const getMaterialTransactions = async (req, res) => {
 };
 
 const getMaterialTransactionById = async (req, res) => {
-    const t = await sequelize.transaction();
-
     try {
         const userId = req.user.id;
         const materialTransactionId = req.params.id;
@@ -34,7 +32,7 @@ const getMaterialTransactionById = async (req, res) => {
                 model: Material,
                 where: { user_id: userId }
             }
-        }, { transaction: t });
+        });
 
         if (!materialTransaction) return res.status(404).json({ message: 'Material Transaction Not Found!' });
 

@@ -8,6 +8,7 @@ const { Users, Product, Orders, OrderItem, Material, MaterialTransaction, Expens
 
 const testUser = {
     username: 'TestUser',
+    business_name: 'Test Business',
     email: 'adatest@email.com',
     password: 'TestPass1!'
 };
@@ -51,15 +52,25 @@ beforeAll(async () => {
 }, 30000);
 
 afterAll(async () => {
+    console.log('--- STARTING AFTERALL ---');
     // Clean up in reverse dependency order
+    console.log('Destroying MaterialTransaction...');
     await MaterialTransaction.destroy({ where: { material_id: materialId } });
+    console.log('Destroying OrderItem...');
     await OrderItem.destroy({ where: { order_item_id: orderItemId } });
+    console.log('Destroying Orders...');
     await Orders.destroy({ where: { user_id: userId } });
+    console.log('Destroying Product...');
     await Product.destroy({ where: { user_id: userId } });
+    console.log('Destroying Material...');
     await Material.destroy({ where: { user_id: userId } });
+    console.log('Destroying Expense...');
     await Expense.destroy({ where: { user_id: userId } });
+    console.log('Destroying Users...');
     await Users.destroy({ where: { email: testUser.email } });
+    console.log('Closing sequelize...');
     await sequelize.close();
+    console.log('--- AFTERALL COMPLETE ---');
 }, 30000);
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -68,6 +79,7 @@ describe('Auth: Register', () => {
     it('should fail with invalid password (no uppercase)', async () => {
         const res = await request(app).post('/auth/register').send({
             username: 'Test',
+            business_name: 'Test Business',
             email: 'fail@email.com',
             password: 'testpass1!'
         });
@@ -77,6 +89,7 @@ describe('Auth: Register', () => {
     it('should fail with invalid email', async () => {
         const res = await request(app).post('/auth/register').send({
             username: 'Test',
+            business_name: 'Test Business',
             email: 'notanemail',
             password: 'TestPass1!'
         });
@@ -210,7 +223,7 @@ describe('Orders: CRUD', () => {
             .get('/orders')
             .set('Authorization', `Bearer ${authToken}`);
         expect(res.status).toBe(200);
-        expect(Array.isArray(res.body)).toBe(true);
+        expect(Array.isArray(res.body.orders)).toBe(true);
     });
 
     it('should get an order by id', async () => {
@@ -346,7 +359,7 @@ describe('Material Transactions: CRUD', () => {
             .post(`/material-transaction/${materialId}`)
             .set('Authorization', `Bearer ${authToken}`)
             .send({
-                type: 'in',
+                type: 'Purchase',
                 quantity: 50.00,
                 unit_cost: 50.00,
                 date_bought: '2026-06-01'
@@ -360,7 +373,7 @@ describe('Material Transactions: CRUD', () => {
             .post('/material-transaction/999999')
             .set('Authorization', `Bearer ${authToken}`)
             .send({
-                type: 'in',
+                type: 'Purchase',
                 quantity: 50.00,
                 unit_cost: 50.00,
                 date_bought: '2026-06-01'

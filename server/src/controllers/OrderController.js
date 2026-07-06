@@ -1,5 +1,6 @@
-import { models } from '../models/index.js';
+import { models, sequelize } from '../models/index.js';
 import { validationResult } from 'express-validator';
+import { Op } from 'sequelize';
 
 const { Orders } = models;
 
@@ -14,10 +15,27 @@ const getOrders = async (req, res) => {
 
         const offset = (pageNumber - 1) * limit;
 
+        const whereClause = {
+            [Op.and]: [
+                { user_id: userId }
+            ]
+        };
+
+        if (req.query.status) {
+            whereClause[Op.and].push({ status: req.query.status });
+        }
+
+        if (req.query.search) {
+            whereClause[Op.and].push(
+                sequelize.where(
+                    sequelize.cast(sequelize.col('order_id'), 'varchar'),
+                    { [Op.iLike]: `%${req.query.search}%` }
+                )
+            );
+        }
+
         const { count, rows } = await Orders.findAndCountAll({
-            where: {
-                user_id: userId
-            },
+            where: whereClause,
             order: [['order_date', 'DESC']],
             limit,
             offset
@@ -65,10 +83,11 @@ const createOrder = async (req, res) => {
 
         const userId = req.user.id;
 
-        const { order_date, status } = req.body;
+        const { order_date, status, deadline } = req.body;
         const newOrder = await Orders.create({
             user_id: userId,
             order_date,
+            deadline: deadline || null,
             total_amount: 0,
             status
         });
@@ -88,7 +107,7 @@ const updateOrder = async (req, res) => {
 
         const userId = req.user.id;
         const orderId = req.params.id;
-        const { order_date, status } = req.body;
+        const { order_date, status, deadline } = req.body;
 
         const order = await Orders.findOne({
             where: {
@@ -102,6 +121,7 @@ const updateOrder = async (req, res) => {
         const updates = {};
         if (order_date !== undefined) updates.order_date = order_date;
         if (status !== undefined) updates.status = status;
+        if (deadline !== undefined) updates.deadline = deadline;
 
         await order.update(updates);
 
@@ -132,4 +152,44 @@ const deleteOrder = async (req, res) => {
     }
 };
 
-export { getOrders, getOrderById, createOrder, updateOrder, deleteOrder };
+const getOrderStats = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const totalRevenue = await Orders.sum('total_amount', {
+            where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } }
+        });
+        const activeOrdersCount = await Orders.count({
+            where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } }
+        });
+
+        return res.status(200).json({
+            totalRevenue: totalRevenue || 0,
+            activeOrdersCount: activeOrdersCount || 0
+        });
+    } catch (e) {
+        return res.status(500).json({ message: 'Internal Server Error!' });
+    }
+};
+
+const getScheduledOrders = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const scheduledOrders = await Orders.findAll({
+            where: {
+                user_id: userId,
+                status: { [Op.notIn]: ['Done', 'Delivered', 'Cancelled'] }
+            },
+            order: [
+                ['deadline', 'ASC'],
+                ['total_amount', 'DESC']
+            ],
+            limit: 5
+        });
+
+        return res.status(200).json(scheduledOrders);
+    } catch (e) {
+        return res.status(500).json({ message: 'Internal Server Error!' });
+    }
+};
+
+export { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, getOrderStats, getScheduledOrders };

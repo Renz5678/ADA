@@ -13,6 +13,7 @@ import ExpensesPage from "#pages/app/ExpensesPage.jsx";
 import OrdersPage from "#pages/app/OrdersPage.jsx";
 import ProductsPage from "#pages/app/ProductsPage.jsx";
 import OrderEditorPage from "#pages/app/OrderEditorPage.jsx";
+import SchedulePage from "#pages/app/SchedulePage.jsx";
 
 export default function AppRouter({ onStart, onStop }) {
     return (
@@ -31,6 +32,7 @@ export default function AppRouter({ onStart, onStop }) {
                     <Route path="/orders/new" element={<OrderEditorPage />} />
                     <Route path="/orders/:orderId" element={<OrderEditorPage />} />
                     <Route path="/products" element={<ProductsPage />} />
+                    <Route path="/schedule" element={<SchedulePage />} />
                 </Route>
             </Route>
         </Routes>

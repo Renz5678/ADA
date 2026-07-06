@@ -1,13 +1,15 @@
 import app from "./app.js";
 import { sequelize } from "./src/models/index.js";
 import startCleanUpJob from './src/utils/cleanUpJob.js';
+import startDeadlineReminderJob from './src/utils/deadlineReminderJob.js';
 
 const port = 3000;
 
 const start = async () => {
-    await sequelize.sync({ logging: false });
+    await sequelize.sync({ alter: true, logging: false });
 
     startCleanUpJob();
+    startDeadlineReminderJob();
 
     app.listen(port, () => {
         console.log(`Server is running at port ${port}`);

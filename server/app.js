@@ -9,6 +9,8 @@ import materialTransactionRouter from './src/routes/materialTransaction.js';
 import expenseRouter from './src/routes/expense.js';
 import orderItemRouter from './src/routes/orderItem.js';
 import userRouter from './src/routes/user.js';
+import analyticsRouter from './src/routes/analytics.js';
+import scheduleRouter from './src/routes/schedule.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
@@ -38,5 +40,7 @@ app.use('/material-transaction', materialTransactionRouter);
 app.use('/expenses', expenseRouter);
 app.use('/order-item', orderItemRouter);
 app.use('/user-details', userRouter);
+app.use('/analytics', analyticsRouter);
+app.use('/schedule', scheduleRouter);
 
 export default app;

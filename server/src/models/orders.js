@@ -32,6 +32,10 @@ export default (sequelize, DataTypes) => {
                 notNull: { msg: 'Price must not be null' }
             }
         },
+        deadline: {
+            type: DataTypes.DATEONLY,
+            allowNull: true
+        },
         status: {
             type: DataTypes.ENUM('Pending', 'Done', 'Delivered', 'Cancelled'),
             allowNull: false,

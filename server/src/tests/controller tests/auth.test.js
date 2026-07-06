@@ -4,14 +4,27 @@ import { sequelize, models } from '../../models/index.js';
 
 const { Users } = models;
 
+beforeAll(async () => {
+    await sequelize.sync();
+    await Users.destroy({ where: { email: 'test@email.com' } });
+    await Users.create({
+        username: 'LoginUser',
+        business_name: 'Test Business',
+        email: 'test@email.com',
+        password: 'TestPass1!',
+        is_verified: true
+    });
+});
+
 describe('Integration Test: Register', () => {
     it('should create a new user with hashed password', async () => {
         const response = await request(app)
             .post('/auth/register')
             .send({
                 username: 'Renz',
+                business_name: 'Test Business',
                 email: 'test2@email.com',
-                password: 'testpassword'
+                password: 'TestPass1!'
             });
 
         expect(response.status).toBe(201);
@@ -25,7 +38,7 @@ describe('Integration Test: Login', () => {
             .post('/auth/login')
             .send({
                 email: 'test@email.com',
-                password: 'testpassword'
+                password: 'TestPass1!'
             });
 
         expect(response.status).toBe(200);
@@ -37,6 +50,9 @@ describe('Integration Test: Login', () => {
 afterAll(async () => {
     await Users.destroy({
         where: { email: 'test2@email.com' }
+    });
+    await Users.destroy({
+        where: { email: 'test@email.com' }
     });
     await sequelize.close();
 });

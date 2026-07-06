@@ -9,6 +9,7 @@ import OrderItemFactory from '../models/orderItem.js';
 import MaterialFactory from '../models/material.js';
 import MaterialTransactionFactory from '../models/material_transaction.js';
 import ExpenseFactory from '../models/expense.js';
+import WeeklyAvailabilityFactory from '../models/weeklyAvailability.js';
 
 const sequelize = new Sequelize({
     dialect: 'postgres',
@@ -27,7 +28,8 @@ const models = {
     OrderItem: OrderItemFactory(sequelize, DataTypes),
     Material: MaterialFactory(sequelize, DataTypes),
     MaterialTransaction: MaterialTransactionFactory(sequelize, DataTypes),
-    Expense: ExpenseFactory(sequelize, DataTypes)
+    Expense: ExpenseFactory(sequelize, DataTypes),
+    WeeklyAvailability: WeeklyAvailabilityFactory(sequelize, DataTypes)
 };
 
 Object.values(models).forEach(model => {

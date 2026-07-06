@@ -9,7 +9,7 @@ const formatCurrency = (amount) =>
 const formatDate = (dateStr) =>
   new Date(dateStr).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
 
-const OrdersTable = ({ orders, isFetching, onView, onOpen, onDelete }) => {
+const OrdersTable = ({ orders, isFetching, onOpen, onDelete }) => {
   if (orders.length === 0) {
     return <div className="text-center py-10 text-gray-500">No orders found.</div>;
   }
@@ -37,10 +37,11 @@ const OrdersTable = ({ orders, isFetching, onView, onOpen, onDelete }) => {
                 <td className="px-4 py-3">
                   <Badge label={order.status} bgColor={statusStyle.bgColor} textColor={statusStyle.textColor} />
                 </td>
-                <td className="px-4 py-3 text-right space-x-2" flex flex-row>
-                    <Button variant="primary" onClick={() => onView(order.order_id)}>View</Button>
+                <td className="px-4 py-3 text-right">
+                  <div className="flex flex-row gap-2 justify-end">
                     <Button variant="secondary" onClick={() => onOpen(order.order_id)}>Edit</Button>
                     <Button variant="danger" onClick={() => onDelete(order)}>Delete</Button>
+                  </div>
                 </td>
               </tr>
             );
