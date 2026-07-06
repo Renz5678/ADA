@@ -15,15 +15,15 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
   }
 
   return (
-    <div className={`overflow-x-auto rounded-lg border border-gray-200 ${isFetching ? 'opacity-60' : ''}`}>
+    <div className={`flex-1 min-h-0 overflow-auto rounded-lg border border-[#c1c1c1] transition-opacity duration-150 ${isFetching ? 'opacity-60' : ''}`}>
       <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+        <thead className="bg-[#F5F3F3] sticky top-0 z-10 shadow-[0_1px_0_0_#f0f0f0]">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Order ID</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Date</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Total</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Status</th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-[#0F1D29] uppercase font-label">Actions</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-100">

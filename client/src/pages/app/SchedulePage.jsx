@@ -10,14 +10,14 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
 const BLOCK_COLORS = {
-    Free: 'bg-green-100 border-green-300 text-green-800',
-    Flexible: 'bg-blue-100 border-blue-300 text-blue-800',
-    Unavailable: 'bg-gray-200 border-gray-400 text-gray-800'
+    Free: 'bg-green-100 text-green-900',
+    Flexible: 'bg-blue-100 text-blue-900',
+    Unavailable: 'bg-gray-200 text-gray-900'
 };
 
 export default function SchedulePage() {
     const queryClient = useQueryClient();
-    const { data: availabilities, isLoading } = useAvailabilities();
+    const { data: availabilities, isLoading, isError, error } = useAvailabilities();
     
     const [dayOfWeek, setDayOfWeek] = useState('Monday');
     const [startTime, setStartTime] = useState('09:00');
@@ -60,6 +60,7 @@ export default function SchedulePage() {
             <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
         </div>
     );
+    if (isError) return <div className="text-center py-10 text-red-600">Error loading schedule: {error?.message}</div>;
 
     return (
         <div className="flex flex-col gap-6 animate-fadeIn w-full max-w-[1400px] mx-auto font-body flex-1 min-h-0 overflow-hidden">
@@ -137,44 +138,35 @@ export default function SchedulePage() {
                                 </div>
                                 {DAYS.map(day => {
                                     const blocks = getBlocksForHour(day, hour);
+                                    const block = blocks.length > 0 ? blocks[0] : null;
+                                    
+                                    const cellColor = block 
+                                        ? BLOCK_COLORS[block.block_type || 'Free'] 
+                                        : 'bg-white hover:bg-[#FFF7E6]/30';
+
+                                    const isStart = block && parseInt(block.start_time.split(':')[0]) === hour;
+
                                     return (
-                                        <div key={`${day}-${hour}`} className="border-b border-r border-[#e0e0e0] min-h-[44px] relative group hover:bg-[#FFF7E6]/30 transition-colors">
-                                            {blocks.map(block => {
-                                                const colorClass = BLOCK_COLORS[block.block_type || 'Free'];
-                                                const startHour = parseInt(block.start_time.split(':')[0]);
-                                                const endHour = parseInt(block.end_time.split(':')[0]);
-                                                const endMin = parseInt(block.end_time.split(':')[1]);
-                                                const isStart = startHour === hour;
-                                                const isEnd = (endHour === hour && endMin === 0) || (endHour === hour + 1 && endMin === 0 && startHour !== hour);
-                                                
-                                                return (
-                                                    <div 
-                                                        key={block.availability_id} 
-                                                        className={`absolute left-0 right-0 border-x ${isStart ? 'border-t-2 border-t-white/50 rounded-t-sm' : 'border-t-0'} ${isEnd ? 'border-b-2 rounded-b-sm' : 'border-b-0'} ${colorClass} z-10 mx-[2px] px-1.5 py-0.5 overflow-hidden shadow-sm flex flex-col group/block`}
-                                                        style={{ 
-                                                            top: isStart ? '2px' : '-1px', 
-                                                            bottom: '0px'
-                                                        }}
-                                                    >
-                                                        {isStart && (
-                                                            <>
-                                                                <div className="flex justify-between items-start">
-                                                                    <div className="text-[11px] font-semibold tracking-tight truncate mix-blend-color-burn">{block.block_type || 'Free'}</div>
-                                                                    <button 
-                                                                        onClick={() => deleteMutation.mutate(block.availability_id)}
-                                                                        className="opacity-0 group-hover/block:opacity-100 hover:text-red-700 transition cursor-pointer"
-                                                                    >
-                                                                        <MdDelete size={14} />
-                                                                    </button>
-                                                                </div>
-                                                                <div className="text-[10px] leading-none opacity-80 truncate mix-blend-color-burn font-medium">
-                                                                    {block.start_time.slice(0,5)} - {block.end_time.slice(0,5)}
-                                                                </div>
-                                                            </>
-                                                        )}
+                                        <div 
+                                            key={`${day}-${hour}`} 
+                                            className={`border-b border-r border-[#e0e0e0] min-h-[44px] relative group transition-colors ${cellColor} p-1.5`}
+                                        >
+                                            {isStart && (
+                                                <div className="flex flex-col h-full">
+                                                    <div className="flex justify-between items-start">
+                                                        <div className="text-[11px] font-semibold tracking-tight truncate mix-blend-color-burn">{block.block_type || 'Free'}</div>
+                                                        <button 
+                                                            onClick={() => deleteMutation.mutate(block.availability_id)}
+                                                            className="opacity-0 group-hover:opacity-100 hover:text-red-700 transition cursor-pointer mix-blend-color-burn"
+                                                        >
+                                                            <MdDelete size={14} />
+                                                        </button>
                                                     </div>
-                                                );
-                                            })}
+                                                    <div className="text-[10px] leading-none opacity-80 truncate mix-blend-color-burn font-medium mt-0.5">
+                                                        {block.start_time.slice(0,5)} - {block.end_time.slice(0,5)}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     );
                                 })}

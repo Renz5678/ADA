@@ -64,22 +64,24 @@ export default function ProductsPage() {
     };
 
     if (isLoading) return (
-        <div className="w-full">
-            <div className="w-full flex items-center justify-between mb-4">
+        <div className="flex flex-col gap-6 animate-fadeIn w-full flex-1 min-h-0">
+            <div className="w-full flex items-center justify-between mb-4 shrink-0">
                 <Skeleton className="h-8 w-32" />
                 <Skeleton className="h-10 w-28" />
             </div>
-            <Skeleton className="h-[400px] w-full rounded-2xl" />
+            <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
         </div>
     );
     if (isError) return <div>Error: {error.message}</div>;
 
     return (
-        <div className="w-full">
-            <div className="w-full flex items-center justify-between mb-4">
-                <h1 className="text-xl font-semibold">Products</h1>
+        <div className="flex flex-col gap-6 animate-fadeIn w-full flex-1 min-h-0">
+            <div className="w-full flex items-center justify-between shrink-0">
+                <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Products</h1>
                 <Button variant="primary" onClick={handleOpenCreate}>+ New Product</Button>
             </div>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
 
             <ProductsTable
                 products={products}
@@ -87,6 +89,8 @@ export default function ProductsPage() {
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
             />
+
+            </div>
 
             <ProductModal
                 isOpen={isModalOpen}

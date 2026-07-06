@@ -5,14 +5,14 @@ export default function ExpenseModal({ isOpen, onClose, onSave, isSaving, initia
     const isEditing = Boolean(initialExpense);
 
     const [title, setTitle] = useState('');
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState('Operations');
     const [amount, setAmount] = useState('');
     const [expenseDate, setExpenseDate] = useState('');
 
     useEffect(() => {
         if (isOpen) {
             setTitle(initialExpense?.title ?? '');
-            setCategory(initialExpense?.category ?? '');
+            setCategory(initialExpense?.category ?? 'Operations');
             setAmount(initialExpense?.amount ?? '');
             setExpenseDate(initialExpense?.expense_date ?? new Date().toISOString().split('T')[0]);
         }
@@ -52,14 +52,18 @@ export default function ExpenseModal({ isOpen, onClose, onSave, isSaving, initia
 
                     <div>
                         <label className="block text-sm mb-1 font-label text-[#0F1D29]">Category</label>
-                        <input
-                            type="text"
+                        <select
                             value={category}
                             onChange={(e) => setCategory(e.target.value)}
-                            placeholder="e.g. Operations"
                             required
-                            className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
-                        />
+                            className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition appearance-none"
+                        >
+                            <option value="Materials">Materials</option>
+                            <option value="Operations">Operations</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Software">Software</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
 
                     <div>

@@ -63,15 +63,15 @@ export default function OrderEditorPage() {
     
     const [localItems, setLocalItems] = useState([]);
 
-    const { data: products } = useProducts();
+    const { data: products, isError: isProductsError } = useProducts();
 
-    const { data: order } = useQuery({
+    const { data: order, isError: isOrderError, error: orderError } = useQuery({
         queryKey: ['order', orderId],
         queryFn: () => getOrderById(orderId),
         enabled: !isNew
     });
 
-    const { data: items } = useQuery({
+    const { data: items, isError: isItemsError } = useQuery({
         queryKey: ['order-items', orderId],
         queryFn: () => getOrderItemsByOrder(orderId),
         enabled: !isNew
@@ -176,6 +176,12 @@ export default function OrderEditorPage() {
     const computedTotal = isNew 
         ? localItems.reduce((acc, item) => acc + (item.quantity * item.price), 0)
         : Number(order?.total_amount ?? 0);
+
+    if (!isNew && (isOrderError || isItemsError || isProductsError)) return (
+        <div className="w-full text-center py-20 text-red-600">
+            Error loading order or products: {orderError?.message || 'Unknown error occurred.'}
+        </div>
+    );
 
     if (!isNew && !order) return (
         <div className="w-full flex flex-col gap-4">

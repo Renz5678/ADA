@@ -75,7 +75,7 @@ export default function OrdersPage() {
     };
 
     return (
-        <div className="flex flex-col gap-6 animate-fadeIn w-full">
+        <div className="flex flex-col gap-6 animate-fadeIn w-full flex-1 min-h-0">
             <div className="w-full flex items-center justify-between">
                 <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Orders</h1>
                 <Button variant="primary" onClick={() => navigate('/orders/new')}>+ New Order</Button>
@@ -97,7 +97,7 @@ export default function OrdersPage() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                     <div className="w-full sm:w-1/3">

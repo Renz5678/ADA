@@ -16,8 +16,8 @@ import Skeleton from '#components/ui/Skeleton.jsx';
 
 export default function ExpensesPage() {
     const queryClient = useQueryClient();
-    const { data: expenses, isFetching: isFetchingExpenses } = useExpenses();
-    const { data: materials, isFetching: isFetchingMaterials } = useMaterials();
+    const { data: expenses, isFetching: isFetchingExpenses, isError: isExpensesError, error: expensesError } = useExpenses();
+    const { data: materials, isFetching: isFetchingMaterials, isError: isMaterialsError, error: materialsError } = useMaterials();
 
     const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
     const [editingExpense, setEditingExpense] = useState(null);
@@ -117,6 +117,14 @@ export default function ExpensesPage() {
             <div className="w-full flex flex-col gap-6 flex-1 min-h-0">
                 <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
                 <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
+            </div>
+        );
+    }
+
+    if (isExpensesError || isMaterialsError) {
+        return (
+            <div className="w-full text-center py-20 text-red-600">
+                Error loading data: {expensesError?.message || materialsError?.message || 'Unknown error occurred.'}
             </div>
         );
     }
