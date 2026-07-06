@@ -52,7 +52,7 @@ export default function DashboardPage() {
     return (
         <div className="flex flex-col gap-4 animate-fadeIn w-full max-w-[1400px] mx-auto font-body flex-1 min-h-0 overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
-                <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Dashboard</h1>
+                <h1 className="text-xl sm:text-2xl font-semibold font-headline text-[#0F1D29]">Dashboard</h1>
                 
                 <div className="flex bg-[#f0f0f0] rounded-lg p-1">
                     {['today', 'week', 'month'].map(p => (
@@ -89,7 +89,7 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Main Content Area - flex-1 min-h-0 allows it to compress and fill remaining space */}
+            {/* Main Content Area */}
             <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0">
                 
                 {/* Left Column: Sales Trend (Takes more space) */}
@@ -117,7 +117,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Right Column: Split into Deadlines (Top) and Products (Bottom) */}
-                <div className="lg:w-1/3 flex flex-col gap-4 min-h-0">
+                <div className="lg:w-1/3 flex flex-col gap-4 min-h-0 lg:max-h-full">
                     {/* Upcoming Deadlines */}
                     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 flex-1 min-h-0">
                         <h3 className="font-headline font-semibold text-base text-[#0F1D29] shrink-0">Upcoming Deadlines</h3>

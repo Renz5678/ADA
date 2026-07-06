@@ -194,12 +194,12 @@ export default function OrderEditorPage() {
     return (
         <div className="w-full">
             <div className="flex items-center justify-between mb-4">
-                <h1 className="text-xl font-semibold">{isNew ? 'New Order' : `Order #${orderId}`}</h1>
+                <h1 className="text-lg sm:text-xl font-semibold">{isNew ? 'New Order' : `Order #${orderId}`}</h1>
                 <Badge label={displayStatus} bgColor={statusStyle.bgColor} textColor={statusStyle.textColor} />
             </div>
 
             {/* Order details */}
-            <div className="bg-white rounded-2xl p-6 mb-4 flex gap-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 mb-4 flex flex-col sm:flex-row gap-4 sm:gap-6">
                 <div className="flex-1">
                     <label className="block text-sm mb-1">Order Date</label>
                     <input
@@ -251,9 +251,9 @@ export default function OrderEditorPage() {
             </div>
 
             {/* Add items */}
-            <div className="bg-white rounded-2xl p-6 mb-4">
+            <div className="bg-white rounded-2xl p-4 sm:p-6 mb-4">
                 <h2 className="font-medium mb-3">Add Items</h2>
-                <div className="flex gap-3 items-end">
+                <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
                     <div className="flex-1">
                         <label className="block text-sm mb-1">Product Search</label>
                         <ProductSearchInput
