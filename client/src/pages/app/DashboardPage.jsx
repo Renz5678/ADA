@@ -31,17 +31,17 @@ export default function DashboardPage() {
 
     if ((!summary && fetchingSummary) || (!salesTrend && fetchingTrend)) {
         return (
-            <div className="p-6 flex flex-col gap-4 w-full max-w-[1400px] mx-auto font-body h-[calc(100vh-theme(spacing.16))] overflow-hidden">
-                <div className="flex justify-between">
+            <div className="flex flex-col gap-4 w-full max-w-[1400px] mx-auto font-body flex-1 min-h-0 overflow-hidden">
+                <div className="flex justify-between shrink-0">
                     <Skeleton className="h-8 w-32" />
                     <Skeleton className="h-8 w-48" />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
                     <Skeleton className="h-[84px] w-full rounded-2xl" />
                     <Skeleton className="h-[84px] w-full rounded-2xl" />
                     <Skeleton className="h-[84px] w-full rounded-2xl" />
                 </div>
-                <div className="flex flex-col lg:flex-row gap-4 flex-1">
+                <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0">
                     <Skeleton className="lg:w-2/3 h-full rounded-2xl" />
                     <Skeleton className="lg:w-1/3 h-full rounded-2xl" />
                 </div>
@@ -50,7 +50,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="p-6 flex flex-col gap-4 animate-fadeIn w-full max-w-[1400px] mx-auto font-body h-[calc(100vh-theme(spacing.16))] overflow-hidden">
+        <div className="flex flex-col gap-4 animate-fadeIn w-full max-w-[1400px] mx-auto font-body flex-1 min-h-0 overflow-hidden">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
                 <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Dashboard</h1>
                 

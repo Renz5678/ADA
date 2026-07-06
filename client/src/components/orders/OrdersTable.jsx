@@ -9,7 +9,7 @@ const formatCurrency = (amount) =>
 const formatDate = (dateStr) =>
   new Date(dateStr).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
 
-const OrdersTable = ({ orders, isFetching, onOpen, onDelete }) => {
+const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
   if (orders.length === 0) {
     return <div className="text-center py-10 text-gray-500">No orders found.</div>;
   }
@@ -39,6 +39,9 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete }) => {
                 </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex flex-row gap-2 justify-end">
+                    {order.status !== 'Done' && order.status !== 'Delivered' && order.status !== 'Cancelled' && (
+                        <Button variant="primary" onClick={() => onMarkDone(order.order_id)}>Mark Done</Button>
+                    )}
                     <Button variant="secondary" onClick={() => onOpen(order.order_id)}>Edit</Button>
                     <Button variant="danger" onClick={() => onDelete(order)}>Delete</Button>
                   </div>

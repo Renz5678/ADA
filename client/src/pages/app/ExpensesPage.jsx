@@ -63,7 +63,11 @@ export default function ExpensesPage() {
 
     const createMaterialMut = useMutation({
         mutationFn: createMaterial,
-        onSuccess: () => { invalidateMaterials(); setIsMaterialModalOpen(false); }
+        onSuccess: () => { 
+            invalidateMaterials(); 
+            invalidateExpenses();
+            setIsMaterialModalOpen(false); 
+        }
     });
     const updateMaterialMut = useMutation({
         mutationFn: ({ id, updates }) => updateMaterial(id, updates),
@@ -92,6 +96,7 @@ export default function ExpensesPage() {
         mutationFn: ({ materialId, data }) => createMaterialTransaction(materialId, data),
         onSuccess: () => {
             invalidateMaterials();
+            invalidateExpenses();
             setIsTxModalOpen(false);
             setTxMaterial(null);
             setTxError(null);
@@ -109,18 +114,18 @@ export default function ExpensesPage() {
 
     if ((isFetchingExpenses && !expenses) || (isFetchingMaterials && !materials)) {
         return (
-            <div className="w-full flex flex-col gap-6">
-                <Skeleton className="h-[400px] w-full rounded-2xl" />
-                <Skeleton className="h-[400px] w-full rounded-2xl" />
+            <div className="w-full flex flex-col gap-6 flex-1 min-h-0">
+                <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
+                <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
             </div>
         );
     }
 
     return (
-        <div className="w-full flex flex-col gap-6 animate-fadeIn">
+        <div className="w-full flex flex-col gap-6 animate-fadeIn flex-1 min-h-0">
             {/* Expenses Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4">
-                <div className="flex items-center justify-between">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
+                <div className="flex items-center justify-between shrink-0">
                     <h2 className="text-xl font-semibold font-headline text-[#0F1D29]">Expenses</h2>
                     <Button variant="primary" onClick={() => { setEditingExpense(null); setIsExpenseModalOpen(true); }}>
                         + New Expense
@@ -135,8 +140,8 @@ export default function ExpensesPage() {
             </div>
 
             {/* Materials Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4">
-                <div className="flex items-center justify-between">
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
+                <div className="flex items-center justify-between shrink-0">
                     <h2 className="text-xl font-semibold font-headline text-[#0F1D29]">Materials & Stock</h2>
                     <Button variant="primary" onClick={() => { setEditingMaterial(null); setIsMaterialModalOpen(true); }}>
                         + New Material

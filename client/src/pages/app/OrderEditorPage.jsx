@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation, useBlocker } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getOrderById, getOrderItemsByOrder, createOrder, createOrderItem, updateOrderItem, deleteOrderItem, updateOrder } from '#api/orders.js';
 import { useProducts } from '#hooks/useProducts.js';
@@ -98,10 +98,8 @@ export default function OrderEditorPage() {
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, [isDirty]);
 
-    const blocker = useBlocker(
-        ({ currentLocation, nextLocation }) =>
-            isDirty && currentLocation.pathname !== nextLocation.pathname
-    );
+    // Navigation blocking within the app is not supported without a data router,
+    // so we rely solely on the beforeunload event for browser-level warnings.
 
     const invalidateOrderQueries = (id) => {
         queryClient.invalidateQueries({ queryKey: ['order', id] });
@@ -180,7 +178,7 @@ export default function OrderEditorPage() {
         : Number(order?.total_amount ?? 0);
 
     if (!isNew && !order) return (
-        <div className="w-full flex flex-col gap-4 p-6">
+        <div className="w-full flex flex-col gap-4">
             <Skeleton className="h-10 w-48 mb-4" />
             <Skeleton className="h-32 w-full rounded-2xl" />
             <Skeleton className="h-[400px] w-full rounded-2xl" />
@@ -189,19 +187,6 @@ export default function OrderEditorPage() {
 
     return (
         <div className="w-full">
-            {blocker.state === "blocked" && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-2xl w-96 text-center shadow-lg border border-[#f0f0f0]">
-                        <h2 className="font-headline font-semibold text-lg text-[#0F1D29] mb-2">Unsaved Changes</h2>
-                        <p className="text-[#551E26] text-sm mb-6">You have unsaved items or details. Are you sure you want to leave? Your changes will be discarded.</p>
-                        <div className="flex gap-4 justify-center">
-                            <Button variant="secondary" onClick={() => blocker.reset()}>Keep Editing</Button>
-                            <Button variant="primary" onClick={() => blocker.proceed()}>Discard & Leave</Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-            
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-xl font-semibold">{isNew ? 'New Order' : `Order #${orderId}`}</h1>
                 <Badge label={displayStatus} bgColor={statusStyle.bgColor} textColor={statusStyle.textColor} />

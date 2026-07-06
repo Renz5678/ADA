@@ -1,7 +1,7 @@
 import { models, sequelize } from '../models/index.js';
 import { validationResult } from 'express-validator';
 
-const { Material, MaterialTransaction } = models;
+const { Material, MaterialTransaction, Expense } = models;
 
 const getMaterialTransactions = async (req, res) => {
     try {
@@ -78,6 +78,14 @@ const createMaterialTransaction = async (req, res) => {
             if (type === 'Purchase') {
                 await isMaterialToTheUser.increment('quantity', { by: Number(quantity), transaction: t });
                 await isMaterialToTheUser.update({ unit_cost }, { transaction: t });
+                
+                await Expense.create({
+                    user_id: userId,
+                    title: `Material Purchase: ${isMaterialToTheUser.material_name}`,
+                    amount: Number(quantity) * Number(unit_cost),
+                    category: 'Materials',
+                    expense_date: date_bought
+                }, { transaction: t });
             } else if (type === 'Usage') {
                 if (Number(isMaterialToTheUser.quantity) < Number(quantity)) {
                     await t.rollback();

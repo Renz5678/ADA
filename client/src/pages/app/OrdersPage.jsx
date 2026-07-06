@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOrders, useOrderStats } from '#hooks/useOrders.js';
-import { deleteOrder } from '#api/orders.js';
+import { deleteOrder, updateOrder } from '#api/orders.js';
 import OrdersTable from '#components/orders/OrdersTable.jsx';
 import Button from '#components/ui/Button.jsx';
 import Skeleton from '#components/ui/Skeleton.jsx';
@@ -31,6 +31,13 @@ export default function OrdersPage() {
         }
     });
 
+    const updateMutation = useMutation({
+        mutationFn: ({ id, updates }) => updateOrder(id, updates),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['orders'] });
+        }
+    });
+
     const handleDelete = (order) => {
         const confirmed = window.confirm(`Delete order #${order.order_id}? This can't be undone.`);
         if (confirmed) {
@@ -38,8 +45,12 @@ export default function OrdersPage() {
         }
     };
 
+    const handleMarkDone = (orderId) => {
+        updateMutation.mutate({ id: orderId, updates: { status: 'Done' } });
+    };
+
     if (isLoading) return (
-        <div className="p-6 flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-6 w-full">
             <div className="w-full flex items-center justify-between">
                 <Skeleton className="h-8 w-32" />
                 <Skeleton className="h-10 w-28" />
@@ -64,7 +75,7 @@ export default function OrdersPage() {
     };
 
     return (
-        <div className="p-6 flex flex-col gap-6 animate-fadeIn w-full">
+        <div className="flex flex-col gap-6 animate-fadeIn w-full">
             <div className="w-full flex items-center justify-between">
                 <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Orders</h1>
                 <Button variant="primary" onClick={() => navigate('/orders/new')}>+ New Order</Button>
@@ -117,6 +128,7 @@ export default function OrdersPage() {
                     isFetching={isFetching}
                     onOpen={handleOpenOrder}
                     onDelete={handleDelete}
+                    onMarkDone={handleMarkDone}
                 />
 
                 {data.totalCount > 0 && (

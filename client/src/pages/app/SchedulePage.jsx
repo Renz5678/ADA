@@ -55,14 +55,14 @@ export default function SchedulePage() {
     };
 
     if (isLoading) return (
-        <div className="p-6 w-full flex flex-col gap-6 max-w-[1400px] mx-auto">
-            <Skeleton className="h-24 w-full rounded-2xl" />
-            <Skeleton className="h-[600px] w-full rounded-2xl" />
+        <div className="w-full flex flex-col gap-6 max-w-[1400px] mx-auto flex-1 min-h-0">
+            <Skeleton className="h-24 w-full rounded-2xl shrink-0" />
+            <Skeleton className="flex-1 min-h-0 w-full rounded-2xl" />
         </div>
     );
 
     return (
-        <div className="p-6 flex flex-col gap-6 animate-fadeIn w-full max-w-[1400px] mx-auto font-body h-[calc(100vh-theme(spacing.16))] overflow-hidden">
+        <div className="flex flex-col gap-6 animate-fadeIn w-full max-w-[1400px] mx-auto font-body flex-1 min-h-0 overflow-hidden">
             <div className="shrink-0">
                 <h1 className="text-2xl font-semibold font-headline text-[#0F1D29]">Schedule Planner</h1>
                 <p className="text-gray-500 mt-1">Set your free time, flexible hours, and unavailability.</p>

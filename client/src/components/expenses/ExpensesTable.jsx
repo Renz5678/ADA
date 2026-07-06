@@ -13,9 +13,9 @@ const ExpensesTable = ({ expenses, isFetching, onEdit, onDelete }) => {
   }
 
   return (
-    <div className={`overflow-x-auto rounded-lg border border-[#c1c1c1] transition-opacity duration-150 ${isFetching ? 'opacity-60' : ''}`}>
-      <table className="min-w-full divide-y divide-[#f0f0f0] font-body">
-        <thead className="bg-[#F5F3F3]">
+    <div className={`flex-1 min-h-0 overflow-auto rounded-lg border border-[#c1c1c1] transition-opacity duration-150 ${isFetching ? 'opacity-60' : ''}`}>
+      <table className="min-w-full divide-y divide-[#f0f0f0] font-body relative">
+        <thead className="bg-[#F5F3F3] sticky top-0 z-10 shadow-[0_1px_0_0_#f0f0f0]">
           <tr>
             <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Title</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Category</th>

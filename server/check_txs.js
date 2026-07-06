@@ -1,0 +1,18 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '/home/scarecrow/dev/ADA/server/.env' });
+import { sequelize, models } from '/home/scarecrow/dev/ADA/server/src/models/index.js';
+
+async function test() {
+    try {
+        const txs = await models.MaterialTransaction.findAll({
+            order: [['createdAt', 'DESC']],
+            limit: 5
+        });
+        console.log("Recent txs:", txs.map(e => e.toJSON()));
+    } catch (e) {
+        console.error("Error:", e);
+    } finally {
+        process.exit();
+    }
+}
+test();

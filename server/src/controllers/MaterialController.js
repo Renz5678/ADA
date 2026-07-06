@@ -1,7 +1,7 @@
 import { models } from "../models/index.js";
 import { validationResult } from "express-validator";
 
-const { Material } = models;
+const { Material, Expense } = models;
 
 const getMaterials = async (req, res) => {
     try {
@@ -57,6 +57,16 @@ const createMaterial = async (req, res) => {
             unit_cost,
             quantity
         });
+        
+        if (Number(quantity) > 0) {
+            await Expense.create({
+                user_id: userId,
+                title: `Initial Stock: ${material_name}`,
+                amount: Number(quantity) * Number(unit_cost),
+                category: 'Materials',
+                expense_date: new Date().toISOString().split('T')[0]
+            });
+        }
 
         return res.status(201).json({ message: 'Material created!', data: newMaterial });
     } catch (e) {

@@ -30,9 +30,9 @@ export default function MaterialTransactionModal({ isOpen, onClose, onSave, isSa
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-50 flex justify-center items-center animate-fadeIn">
-            <div className="w-[90%] sm:w-full max-w-sm bg-white rounded-2xl p-6 flex flex-col gap-4 shadow-lg animate-zoomIn">
-                <h3 className="font-headline text-lg font-semibold text-[#0F1D29] text-center">
+        <div className="fixed inset-0 bg-[#0F1D29]/60 backdrop-blur-sm z-50 flex justify-center items-center animate-fadeIn">
+            <div className="w-[90%] sm:w-full max-w-sm bg-[#FFF7E6] border border-[#e8d5b5] rounded-3xl p-7 flex flex-col gap-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-zoomIn">
+                <h3 className="font-headline text-xl font-bold text-[#8D4A52] text-center border-b border-[#e8d5b5] pb-4">
                     Log Transaction: {targetMaterial?.material_name}
                 </h3>
 
@@ -48,7 +48,7 @@ export default function MaterialTransactionModal({ isOpen, onClose, onSave, isSa
                         <select
                             value={type}
                             onChange={(e) => setType(e.target.value)}
-                            className="border border-[#c1c1c1] rounded-lg px-3 py-2 w-full text-sm font-body bg-white"
+                            className="border border-[#e8d5b5] rounded-xl px-4 py-2.5 w-full text-sm font-body bg-white shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
                         >
                             <option value="Purchase">Purchase (Add Stock)</option>
                             <option value="Usage">Usage (Remove Stock)</option>
@@ -65,7 +65,7 @@ export default function MaterialTransactionModal({ isOpen, onClose, onSave, isSa
                             onChange={(e) => setQuantity(e.target.value)}
                             placeholder="0"
                             required
-                            className="border border-[#c1c1c1] rounded-lg px-3 py-2 w-full text-sm font-body"
+                            className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
                         />
                     </div>
 
@@ -79,7 +79,7 @@ export default function MaterialTransactionModal({ isOpen, onClose, onSave, isSa
                             onChange={(e) => setUnitCost(e.target.value)}
                             placeholder="0.00"
                             required
-                            className="border border-[#c1c1c1] rounded-lg px-3 py-2 w-full text-sm font-body"
+                            className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
                         />
                     </div>
 
@@ -90,11 +90,11 @@ export default function MaterialTransactionModal({ isOpen, onClose, onSave, isSa
                             value={dateBought}
                             onChange={(e) => setDateBought(e.target.value)}
                             required
-                            className="border border-[#c1c1c1] rounded-lg px-3 py-2 w-full text-sm font-body"
+                            className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
                         />
                     </div>
 
-                    <div className="w-full h-px bg-[#f0f0f0] my-1" />
+                    <div className="w-full h-px bg-[#e8d5b5] my-2" />
 
                     <div className="flex flex-col gap-2">
                         <Button
