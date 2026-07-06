@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import { models } from '../models/index.js';
 import { Op } from 'sequelize';
 import transporter from './mailer.js';
+import { getDeadlineReminderHtml } from './emailTemplates.js';
 
 const { Orders, Users } = models;
 
@@ -67,7 +68,8 @@ const startDeadlineReminderJob = () => {
                     from: process.env.EMAIL_USER,
                     to: user.email,
                     subject: 'ADA - Upcoming Deadlines Reminder',
-                    text: textContent
+                    text: textContent,
+                    html: getDeadlineReminderHtml(user.username, orders)
                 });
             }
 

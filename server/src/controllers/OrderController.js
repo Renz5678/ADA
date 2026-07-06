@@ -156,7 +156,7 @@ const getOrderStats = async (req, res) => {
     try {
         const userId = req.user.id;
         const totalRevenue = await Orders.sum('total_amount', {
-            where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } }
+            where: { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] } }
         });
         const activeOrdersCount = await Orders.count({
             where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } }

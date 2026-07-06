@@ -1,20 +1,56 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation, useBlocker } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getOrderById, getOrderItemsByOrder, createOrder, createOrderItem, updateOrderItem, deleteOrderItem, updateOrder } from '#api/orders.js';
 import { useProducts } from '#hooks/useProducts.js';
 import Button from '#components/ui/Button.jsx';
 import Badge from '#components/ui/Badge.jsx';
+import Skeleton from '#components/ui/Skeleton.jsx';
 import ProductSearchInput from '#components/orders/ProductSearchInput.jsx';
 import { STATUS_STYLES } from '#constants/orderStatus.js';
 
 const todayISO = () => new Date().toISOString().split('T')[0];
 
+const OrderItemRow = ({ item, onUpdate, onDelete }) => {
+    const price = Number(item.Product?.price ?? 0);
+    
+    return (
+        <tr className="border-t">
+            <td className="py-2">{item.Product?.product_name ?? `#${item.product_id}`}</td>
+            <td className="py-2">
+                <input
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={(e) => {
+                        const newQty = Number(e.target.value);
+                        if (newQty >= 1) {
+                            onUpdate(item, newQty);
+                        }
+                    }}
+                    className="border rounded-lg px-2 py-1 w-16"
+                />
+            </td>
+            <td className="py-2">₱{(price * item.quantity).toFixed(2)}</td>
+            <td className="py-2 text-right">
+                <button
+                    onClick={() => onDelete(item)}
+                    className="text-[#AB626A] hover:underline"
+                >
+                    ✕
+                </button>
+            </td>
+        </tr>
+    );
+};
+
 export default function OrderEditorPage() {
     const { orderId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const queryClient = useQueryClient();
     const isNew = orderId === undefined;
+    const isDraft = isNew || location.state?.newlyCreated;
 
     // Local state — only meaningful while isNew (before the order exists in the DB)
     const [localDate, setLocalDate] = useState(todayISO());
@@ -24,6 +60,8 @@ export default function OrderEditorPage() {
     // Add-item mini-form state
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    
+    const [localItems, setLocalItems] = useState([]);
 
     const { data: products } = useProducts();
 
@@ -43,6 +81,27 @@ export default function OrderEditorPage() {
     const displayDate = isNew ? localDate : (order?.order_date ?? '');
     const displayDeadline = isNew ? localDeadline : (order?.deadline ?? '');
     const displayStatus = isNew ? localStatus : (order?.status ?? 'Pending');
+    
+    const displayItems = isNew ? localItems : (items ?? []);
+    
+    // Dirty check for useBlocker and beforeunload
+    const isDirty = isNew && (localItems.length > 0 || localDate !== todayISO() || localDeadline !== '' || localStatus !== 'Pending');
+
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isDirty]);
+
+    const blocker = useBlocker(
+        ({ currentLocation, nextLocation }) =>
+            isDirty && currentLocation.pathname !== nextLocation.pathname
+    );
 
     const invalidateOrderQueries = (id) => {
         queryClient.invalidateQueries({ queryKey: ['order', id] });
@@ -52,29 +111,16 @@ export default function OrderEditorPage() {
 
     const addItemMutation = useMutation({
         mutationFn: async () => {
-            let currentOrderId = orderId;
-
-            if (isNew) {
-                const newOrder = await createOrder({ order_date: localDate, deadline: localDeadline || null, status: localStatus });
-                currentOrderId = newOrder.order_id;
-            }
-
             await createOrderItem({
-                order_id: currentOrderId,
+                order_id: orderId,
                 product_id: selectedProduct.product_id,
                 quantity: Number(quantity)
             });
-
-            return currentOrderId;
         },
-        onSuccess: (currentOrderId) => {
-            invalidateOrderQueries(currentOrderId);
+        onSuccess: () => {
+            invalidateOrderQueries(orderId);
             setSelectedProduct(null);
             setQuantity(1);
-
-            if (isNew) {
-                navigate(`/orders/${currentOrderId}`, { replace: true });
-            }
         }
     });
 
@@ -88,15 +134,74 @@ export default function OrderEditorPage() {
         onSuccess: () => invalidateOrderQueries(orderId)
     });
 
+    const handleUpdateItem = (item, newQty) => {
+        if (isNew) {
+            setLocalItems(prev => prev.map(i => i.order_item_id === item.order_item_id ? { ...i, quantity: newQty } : i));
+        } else {
+            updateItemMutation.mutate({ itemId: item.order_item_id, quantity: newQty });
+        }
+    };
+
+    const handleDeleteItem = (item) => {
+        if (isNew) {
+            setLocalItems(prev => prev.filter(i => i.order_item_id !== item.order_item_id));
+        } else {
+            deleteItemMutation.mutate(item.order_item_id);
+        }
+    };
+
+    const createOrderOnlyMutation = useMutation({
+        mutationFn: async () => {
+            const newOrder = await createOrder({ order_date: localDate, deadline: localDeadline || null, status: localStatus });
+            for (const item of localItems) {
+                await createOrderItem({
+                    order_id: newOrder.order_id,
+                    product_id: item.product_id,
+                    quantity: item.quantity
+                });
+            }
+            return newOrder.order_id;
+        },
+        onSuccess: (newOrderId) => {
+            queryClient.invalidateQueries({ queryKey: ['orders'] });
+            alert(`Order #${newOrderId} has been created successfully!`);
+            navigate(`/orders`);
+        }
+    });
+
     const updateDetailsMutation = useMutation({
         mutationFn: (updates) => updateOrder(orderId, updates),
         onSuccess: () => invalidateOrderQueries(orderId)
     });
 
     const statusStyle = STATUS_STYLES[displayStatus] ?? STATUS_STYLES.Pending;
+    const computedTotal = isNew 
+        ? localItems.reduce((acc, item) => acc + (item.quantity * item.price), 0)
+        : Number(order?.total_amount ?? 0);
+
+    if (!isNew && !order) return (
+        <div className="w-full flex flex-col gap-4 p-6">
+            <Skeleton className="h-10 w-48 mb-4" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-[400px] w-full rounded-2xl" />
+        </div>
+    );
 
     return (
         <div className="w-full">
+            {blocker.state === "blocked" && (
+                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-2xl w-96 text-center shadow-lg border border-[#f0f0f0]">
+                        <h2 className="font-headline font-semibold text-lg text-[#0F1D29] mb-2">Unsaved Changes</h2>
+                        <p className="text-[#551E26] text-sm mb-6">You have unsaved items or details. Are you sure you want to leave? Your changes will be discarded.</p>
+                        <div className="flex gap-4 justify-center">
+                            <Button variant="secondary" onClick={() => blocker.reset()}>Keep Editing</Button>
+                            <Button variant="primary" onClick={() => blocker.proceed()}>Discard & Leave</Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-xl font-semibold">{isNew ? 'New Order' : `Order #${orderId}`}</h1>
                 <Badge label={displayStatus} bgColor={statusStyle.bgColor} textColor={statusStyle.textColor} />
@@ -178,8 +283,51 @@ export default function OrderEditorPage() {
                     </div>
                     <Button
                         variant="primary"
-                        disabled={!selectedProduct || addItemMutation.isPending}
-                        onClick={() => addItemMutation.mutate()}
+                        disabled={!selectedProduct || addItemMutation.isPending || updateItemMutation.isPending}
+                        onClick={() => {
+                            if (isNew) {
+                                const existingItem = localItems.find(i => i.product_id === selectedProduct.product_id);
+                                if (existingItem) {
+                                    const confirmUpdate = window.confirm(`"${selectedProduct.product_name}" is already on the list. Do you want to add ${quantity} more to its quantity?`);
+                                    if (confirmUpdate) {
+                                        setLocalItems(prev => prev.map(i => i.product_id === selectedProduct.product_id 
+                                            ? { ...i, quantity: Number(i.quantity) + Number(quantity) } 
+                                            : i));
+                                        setSelectedProduct(null);
+                                        setQuantity(1);
+                                    }
+                                } else {
+                                    setLocalItems(prev => [...prev, {
+                                        order_item_id: `local-${Date.now()}`,
+                                        product_id: selectedProduct.product_id,
+                                        quantity: Number(quantity),
+                                        price: Number(selectedProduct.price),
+                                        Product: selectedProduct
+                                    }]);
+                                    setSelectedProduct(null);
+                                    setQuantity(1);
+                                }
+                            } else {
+                                const existingItem = items?.find(i => i.product_id === selectedProduct.product_id);
+                                if (existingItem) {
+                                    const confirmUpdate = window.confirm(`"${selectedProduct.product_name}" is already on the list. Do you want to add ${quantity} more to its quantity?`);
+                                    if (confirmUpdate) {
+                                        const newQty = Number(existingItem.quantity) + Number(quantity);
+                                        updateItemMutation.mutate(
+                                            { itemId: existingItem.order_item_id, quantity: newQty },
+                                            {
+                                                onSuccess: () => {
+                                                    setSelectedProduct(null);
+                                                    setQuantity(1);
+                                                }
+                                            }
+                                        );
+                                    }
+                                    return; 
+                                }
+                                addItemMutation.mutate();
+                            }
+                        }}
                     >
                         + Add Item
                     </Button>
@@ -188,7 +336,7 @@ export default function OrderEditorPage() {
 
             {/* Line items */}
             <div className="bg-white rounded-2xl p-6 mb-4">
-                {(!items || items.length === 0) ? (
+                {(!displayItems || displayItems.length === 0) ? (
                     <p className="text-center text-gray-500 py-10">
                         No items added yet — search a product code above to get started
                     </p>
@@ -203,32 +351,13 @@ export default function OrderEditorPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {items.map((item) => (
-                                <tr key={item.order_item_id} className="border-t">
-                                    <td className="py-2">{item.Product?.product_name ?? `#${item.product_id}`}</td>
-                                    <td className="py-2">
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            defaultValue={item.quantity}
-                                            onBlur={(e) => {
-                                                if (Number(e.target.value) !== item.quantity) {
-                                                    updateItemMutation.mutate({ itemId: item.order_item_id, quantity: e.target.value });
-                                                }
-                                            }}
-                                            className="border rounded-lg px-2 py-1 w-16"
-                                        />
-                                    </td>
-                                    <td className="py-2">₱{Number(item.subtotal).toFixed(2)}</td>
-                                    <td className="py-2 text-right">
-                                        <button
-                                            onClick={() => deleteItemMutation.mutate(item.order_item_id)}
-                                            className="text-[#AB626A] hover:underline"
-                                        >
-                                            ✕
-                                        </button>
-                                    </td>
-                                </tr>
+                            {displayItems.map((item) => (
+                                <OrderItemRow 
+                                    key={item.order_item_id} 
+                                    item={item} 
+                                    onUpdate={handleUpdateItem} 
+                                    onDelete={handleDeleteItem} 
+                                />
                             ))}
                         </tbody>
                     </table>
@@ -238,7 +367,7 @@ export default function OrderEditorPage() {
                     <div className="text-right">
                         <div className="text-xs uppercase text-gray-500">Total Amount</div>
                         <div className="text-2xl font-headline font-semibold text-[#8D4A52]">
-                            ₱{Number(order?.total_amount ?? 0).toFixed(2)}
+                            ₱{computedTotal.toFixed(2)}
                         </div>
                     </div>
                 </div>
@@ -246,7 +375,24 @@ export default function OrderEditorPage() {
 
             <div className="flex justify-end gap-3">
                 <Button variant="secondary" onClick={() => navigate('/orders')}>
-                    {isNew ? 'Cancel' : 'Back to Orders'}
+                    {isDraft ? 'Cancel' : 'Back to Orders'}
+                </Button>
+                <Button 
+                    variant="primary" 
+                    disabled={createOrderOnlyMutation.isPending} 
+                    onClick={() => {
+                        if (isNew) {
+                            if (localItems.length === 0) {
+                                if(!window.confirm("You haven't added any items. Are you sure you want to create an empty order?")) return;
+                            }
+                            createOrderOnlyMutation.mutate();
+                        } else {
+                            alert(`Order #${orderId} has been updated successfully!`);
+                            navigate('/orders');
+                        }
+                    }}
+                >
+                    {createOrderOnlyMutation.isPending ? 'Saving...' : (isDraft ? 'Add Order' : 'Save Order')}
                 </Button>
             </div>
         </div>

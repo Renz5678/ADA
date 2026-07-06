@@ -23,7 +23,7 @@ const getSummary = async (req, res) => {
         }
 
         const totalSales = await Orders.sum('total_amount', {
-            where: { user_id: userId, status: { [Op.ne]: 'Cancelled' }, order_date: dateFilter }
+            where: { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] }, order_date: dateFilter }
         }) || 0;
 
         const totalExpenses = await Expense.sum('amount', {
@@ -49,7 +49,7 @@ const getTopProducts = async (req, res) => {
             include: [{
                 model: Orders,
                 attributes: [],
-                where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } }
+                where: { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] } }
             }, {
                 model: Product,
                 attributes: ['product_name', 'product_code']
@@ -76,7 +76,7 @@ const getWeakProducts = async (req, res) => {
             include: [{
                 model: Orders,
                 attributes: [],
-                where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } }
+                where: { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] } }
             }, {
                 model: Product,
                 attributes: ['product_name', 'product_code']
@@ -100,7 +100,7 @@ const getSalesByMonth = async (req, res) => {
                 [sequelize.fn('date_trunc', 'month', sequelize.col('order_date')), 'month'],
                 [sequelize.fn('SUM', sequelize.col('total_amount')), 'total_sales']
             ],
-            where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } },
+            where: { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] } },
             group: [sequelize.fn('date_trunc', 'month', sequelize.col('order_date'))],
             order: [[sequelize.fn('date_trunc', 'month', sequelize.col('order_date')), 'ASC']]
         });

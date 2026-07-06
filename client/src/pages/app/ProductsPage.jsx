@@ -5,6 +5,7 @@ import { createProduct, updateProduct, deleteProduct } from '#api/product.js';
 import ProductsTable from '#components/products/ProductsTable.jsx';
 import ProductModal from '#components/products/ProductModal.jsx';
 import Button from '#components/ui/Button.jsx';
+import Skeleton from '#components/ui/Skeleton.jsx';
 
 export default function ProductsPage() {
     const queryClient = useQueryClient();
@@ -62,7 +63,15 @@ export default function ProductsPage() {
         }
     };
 
-    if (isLoading) return <div>Loading products...</div>;
+    if (isLoading) return (
+        <div className="w-full">
+            <div className="w-full flex items-center justify-between mb-4">
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="h-10 w-28" />
+            </div>
+            <Skeleton className="h-[400px] w-full rounded-2xl" />
+        </div>
+    );
     if (isError) return <div>Error: {error.message}</div>;
 
     return (

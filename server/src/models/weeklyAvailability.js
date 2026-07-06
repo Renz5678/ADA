@@ -29,6 +29,17 @@ export default (sequelize, DataTypes) => {
                 }
             }
         },
+        block_type: {
+            type: DataTypes.ENUM('Free', 'Flexible', 'Unavailable'),
+            allowNull: false,
+            defaultValue: 'Free',
+            validate: {
+                isIn: {
+                    args: [['Free', 'Flexible', 'Unavailable']],
+                    msg: 'Invalid block type'
+                }
+            }
+        },
         start_time: {
             type: DataTypes.TIME,
             allowNull: false,

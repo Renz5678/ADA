@@ -12,6 +12,7 @@ import MaterialsTable from '#components/expenses/MaterialsTable.jsx';
 import MaterialModal from '#components/expenses/MaterialModal.jsx';
 import MaterialTransactionModal from '#components/expenses/MaterialTransactionModal.jsx';
 import Button from '#components/ui/Button.jsx';
+import Skeleton from '#components/ui/Skeleton.jsx';
 
 export default function ExpensesPage() {
     const queryClient = useQueryClient();
@@ -105,6 +106,15 @@ export default function ExpensesPage() {
         setTxError(null);
         createTxMut.mutate({ materialId: data.material_id, data });
     };
+
+    if ((isFetchingExpenses && !expenses) || (isFetchingMaterials && !materials)) {
+        return (
+            <div className="w-full flex flex-col gap-6">
+                <Skeleton className="h-[400px] w-full rounded-2xl" />
+                <Skeleton className="h-[400px] w-full rounded-2xl" />
+            </div>
+        );
+    }
 
     return (
         <div className="w-full flex flex-col gap-6 animate-fadeIn">

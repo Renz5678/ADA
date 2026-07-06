@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { models } from '../models/index.js';
 import transporter from '../utils/mailer.js';
+import { getVerificationEmailHtml } from '../utils/emailTemplates.js';
 import { validationResult } from 'express-validator';
 
 const { Users } = models;
@@ -32,7 +33,8 @@ const register = async (req, res) => {
                 await transporter.sendMail({
                     to: email,
                     subject: 'OTP Verification for ADA Account Registration',
-                    text: `Good day, ${username}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes.`
+                    text: `Good day, ${username}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes.`,
+                    html: getVerificationEmailHtml(username, verification_token)
                 });
 
 
@@ -54,7 +56,8 @@ const register = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Account Verification Code',
-            text: `Hi ${username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`
+            text: `Hi ${username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
+            html: getVerificationEmailHtml(username, verification_token)
         });
 
         return res.status(201).json({ message: 'New User Created Successfully!', user: newUser });
@@ -169,7 +172,8 @@ const resendOtp = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Account Verification Code',
-            text: `Hi ${user.username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`
+            text: `Hi ${user.username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
+            html: getVerificationEmailHtml(user.username, verification_token)
         });
 
         return res.status(200).json({ message: 'New OTP sent!' });
@@ -205,7 +209,8 @@ const resetPassword = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Password Reset Code',
-            text: `Hi ${user.username},\n\nWe received a request to reset your ADA account password. Use the OTP below to proceed:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request a password reset, please ignore this email and your account will remain secure.\n\nBest regards,\nThe ADA Team`
+            text: `Hi ${user.username},\n\nWe received a request to reset your ADA account password. Use the OTP below to proceed:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request a password reset, please ignore this email and your account will remain secure.\n\nBest regards,\nThe ADA Team`,
+            html: getVerificationEmailHtml(user.username, verification_token)
         });
 
         return res.status(200).json({ message: 'OTP for password reset sent!' });

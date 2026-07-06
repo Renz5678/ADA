@@ -22,13 +22,14 @@ const createAvailability = async (req, res) => {
         if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
         const userId = req.user.id;
-        const { day_of_week, start_time, end_time } = req.body;
+        const { day_of_week, start_time, end_time, block_type } = req.body;
 
         const newAvailability = await WeeklyAvailability.create({
             user_id: userId,
             day_of_week,
             start_time,
-            end_time
+            end_time,
+            block_type
         });
 
         return res.status(201).json({ message: 'Availability created!', data: newAvailability });
@@ -44,7 +45,7 @@ const updateAvailability = async (req, res) => {
 
         const userId = req.user.id;
         const availabilityId = req.params.id;
-        const { day_of_week, start_time, end_time } = req.body;
+        const { day_of_week, start_time, end_time, block_type } = req.body;
 
         const availability = await WeeklyAvailability.findOne({
             where: { user_id: userId, availability_id: availabilityId }
@@ -56,6 +57,7 @@ const updateAvailability = async (req, res) => {
         if (day_of_week !== undefined) updates.day_of_week = day_of_week;
         if (start_time !== undefined) updates.start_time = start_time;
         if (end_time !== undefined) updates.end_time = end_time;
+        if (block_type !== undefined) updates.block_type = block_type;
 
         await availability.update(updates);
 

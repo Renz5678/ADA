@@ -5,6 +5,7 @@ import { useOrders, useOrderStats } from '#hooks/useOrders.js';
 import { deleteOrder } from '#api/orders.js';
 import OrdersTable from '#components/orders/OrdersTable.jsx';
 import Button from '#components/ui/Button.jsx';
+import Skeleton from '#components/ui/Skeleton.jsx';
 import { STATUS_STYLES } from '../../constants/orderStatus';
 
 const formatCurrency = (amount) =>
@@ -37,7 +38,19 @@ export default function OrdersPage() {
         }
     };
 
-    if (isLoading) return <div>Loading orders...</div>;
+    if (isLoading) return (
+        <div className="p-6 flex flex-col gap-6 w-full">
+            <div className="w-full flex items-center justify-between">
+                <Skeleton className="h-8 w-32" />
+                <Skeleton className="h-10 w-28" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                <Skeleton className="h-28 w-full rounded-2xl" />
+                <Skeleton className="h-28 w-full rounded-2xl" />
+            </div>
+            <Skeleton className="h-[400px] w-full rounded-2xl" />
+        </div>
+    );
     if (isError) return <div>Error: {error.message}</div>;
 
     const handleStatusChange = (e) => {
