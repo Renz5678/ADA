@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import { useState, Fragment } from 'react';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useAvailabilities } from '#hooks/useSchedule.js';
 import { createAvailability, deleteAvailability } from '#api/schedule.js';

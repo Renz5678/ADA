@@ -1,8 +1,7 @@
-import { IoSearch } from "react-icons/io5";
-import { IoMdNotificationsOutline } from "react-icons/io";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { useCurrentUser } from "#hooks/useUser.js";
 import GlobalSearch from "./GlobalSearch.jsx";
+import NotificationDropdown from "./NotificationDropdown.jsx";
 
 export default function Topbar() {
     const { data: user, isLoading } = useCurrentUser();
@@ -16,7 +15,7 @@ export default function Topbar() {
             </div>
             <div className="flex items-center gap-3 shrink-0">
                 <div className="flex items-center gap-4 pr-3 border-r border-[#e0e0e0]">
-                    <IoMdNotificationsOutline size={22} className="cursor-pointer text-gray-600 hover:text-[#8D4A52] transition" />
+                    <NotificationDropdown />
                     <AiOutlineQuestionCircle size={20} className="cursor-pointer text-gray-600 hover:text-[#8D4A52] transition hidden sm:block" />
                 </div>
                 <div className="flex flex-col justify-center min-w-0 max-w-[120px] sm:max-w-[180px]">

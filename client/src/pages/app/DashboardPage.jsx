@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAnalyticsSummary, useTopProducts, useWeakProducts, useSalesByMonth } from '#hooks/useAnalytics.js';
+import { useAnalyticsSummary, useTopProducts, useWeakProducts, useSalesByMonth, useSuggestedTasks } from '#hooks/useAnalytics.js';
 import { useScheduledOrders } from '#hooks/useOrders.js';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +28,7 @@ export default function DashboardPage() {
     const { data: weakProducts, isFetching: fetchingWeak } = useWeakProducts();
     const { data: salesTrend, isFetching: fetchingTrend } = useSalesByMonth();
     const { data: scheduledOrders, isFetching: fetchingScheduled } = useScheduledOrders();
+    const { data: suggestedTasks, isFetching: fetchingSuggestions } = useSuggestedTasks();
 
     if ((!summary && fetchingSummary) || (!salesTrend && fetchingTrend)) {
         return (
@@ -116,8 +117,43 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Right Column: Split into Deadlines (Top) and Products (Bottom) */}
+                {/* Right Column: Split into Suggested Focus, Deadlines, and Products */}
                 <div className="lg:w-1/3 flex flex-col gap-4 min-h-0 lg:max-h-full">
+                    
+                    {/* Suggested Focus */}
+                    <div className="bg-[#FFF7E6] rounded-2xl p-5 shadow-sm border border-[#e8d5b5] flex flex-col gap-3 shrink-0 transition-opacity duration-150" style={{ opacity: fetchingSuggestions ? 0.6 : 1 }}>
+                        <div className="flex items-center justify-between">
+                            <h3 className="font-headline font-semibold text-base text-[#8D4A52]">Suggested Focus</h3>
+                            <span className="flex h-2.5 w-2.5 relative">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#8D4A52] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#8D4A52]"></span>
+                            </span>
+                        </div>
+                        {suggestedTasks && suggestedTasks.length > 0 ? (
+                            <div className="flex flex-col gap-2">
+                                <div 
+                                    onClick={() => navigate(`/orders/${suggestedTasks[0].order_id}`)}
+                                    className="bg-white p-3 rounded-xl shadow-sm border border-[#f0f0f0] cursor-pointer hover:border-[#8D4A52] transition"
+                                >
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="font-semibold text-[#0F1D29]">Order #{suggestedTasks[0].order_id}</span>
+                                        <span className="text-xs font-bold text-[#8D4A52]">{formatCurrency(suggestedTasks[0].total_amount)}</span>
+                                    </div>
+                                    <div className="text-xs text-gray-500 mb-2">
+                                        Due: {formatDate(suggestedTasks[0].deadline)}
+                                    </div>
+                                    {suggestedTasks[0].scheduleSuggestion && (
+                                        <div className="text-xs font-medium text-blue-700 bg-blue-50 p-2 rounded-lg">
+                                            💡 {suggestedTasks[0].scheduleSuggestion}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="text-sm text-gray-500">You're all caught up!</div>
+                        )}
+                    </div>
+
                     {/* Upcoming Deadlines */}
                     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 flex-1 min-h-0">
                         <h3 className="font-headline font-semibold text-base text-[#0F1D29] shrink-0">Upcoming Deadlines</h3>

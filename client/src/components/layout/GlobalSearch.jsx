@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGlobalSearch } from '#hooks/useSearch.js';
 import { IoSearch } from 'react-icons/io5';

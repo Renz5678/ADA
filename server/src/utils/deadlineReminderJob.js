@@ -4,7 +4,7 @@ import { Op } from 'sequelize';
 import transporter from './mailer.js';
 import { getDeadlineReminderHtml } from './emailTemplates.js';
 
-const { Orders, Users } = models;
+const { Orders, Users, Notifications } = models;
 
 const startDeadlineReminderJob = () => {
     // Run at 8am daily
@@ -82,6 +82,17 @@ const startDeadlineReminderJob = () => {
                         text: textContent,
                         html: getDeadlineReminderHtml(user.username, orders)
                     });
+                    
+                    // Create in-app notification
+                    await Notifications.create({
+                        user_id: userId,
+                        title: 'Upcoming Deadlines',
+                        message: `You have ${orders.length} order(s) due soon.`,
+                        type: 'DEADLINE',
+                        reference_type: 'ORDER',
+                        reference_id: orders.length === 1 ? orders[0].order_id : null
+                    });
+
                     console.log(`[DeadlineJob] \u2713 Sent reminder to ${user.email} (${orders.length} order(s))`);
                     sent++;
                 } catch (emailErr) {

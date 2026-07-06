@@ -12,6 +12,7 @@ import userRouter from './src/routes/user.js';
 import analyticsRouter from './src/routes/analytics.js';
 import scheduleRouter from './src/routes/schedule.js';
 import searchRouter from './src/routes/search.js';
+import notificationRouter from './src/routes/notification.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
@@ -44,5 +45,6 @@ app.use('/user-details', userRouter);
 app.use('/analytics', analyticsRouter);
 app.use('/schedule', scheduleRouter);
 app.use('/search', searchRouter);
+app.use('/notifications', notificationRouter);
 
 export default app;

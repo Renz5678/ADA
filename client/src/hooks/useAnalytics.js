@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSummary, getTopProducts, getWeakProducts, getSalesByMonth } from "#api/analytics.js";
+import { getSummary, getTopProducts, getWeakProducts, getSalesByMonth, getSuggestedFocus } from "#api/analytics.js";
 
 export const useAnalyticsSummary = (period) => {
     return useQuery({
@@ -26,5 +26,12 @@ export const useSalesByMonth = () => {
     return useQuery({
         queryKey: ['analytics', 'sales-by-month'],
         queryFn: () => getSalesByMonth()
+    });
+};
+
+export const useSuggestedTasks = () => {
+    return useQuery({
+        queryKey: ['analytics', 'suggested-focus'],
+        queryFn: () => getSuggestedFocus()
     });
 };
