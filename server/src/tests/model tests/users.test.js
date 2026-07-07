@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes } from "sequelize";
 import UsersFactory from '../../models/users.js'
 
-const sequelize = new Sequelize('sqlite::memory:', { logging: false });
+const sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false });
 const Users = UsersFactory(sequelize, DataTypes);
 
 describe('Users model', () => {
