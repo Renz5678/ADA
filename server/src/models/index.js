@@ -13,9 +13,13 @@ import WeeklyAvailabilityFactory from '../models/weeklyAvailability.js';
 import ProductMaterialFactory from '../models/productMaterial.js';
 import NotificationFactory from '../models/notifications.js';
 
-const sequelize = process.env.NODE_ENV === 'test' 
-    ? new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false })
-    : new Sequelize({
+let sequelize;
+if (process.env.DATABASE_URL) {
+    sequelize = new Sequelize(process.env.DATABASE_URL, { dialect: 'postgres', logging: false });
+} else if (process.env.NODE_ENV === 'test') {
+    sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false });
+} else {
+    sequelize = new Sequelize({
         dialect: 'postgres',
         host: process.env.POSTGRES_HOST,
         port: Number(process.env.POSTGRES_PORT) || 5432,
@@ -24,6 +28,7 @@ const sequelize = process.env.NODE_ENV === 'test'
         database: process.env.POSTGRES_DATABASE,
         logging: false
     });
+}
 
 const models = {
     Users: UserFactory(sequelize, DataTypes),

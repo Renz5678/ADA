@@ -46,8 +46,8 @@ export default (sequelize, DataTypes) => {
         });
 
     OrderItem.associate = (models) => {
-        OrderItem.belongsTo(models.Orders, { foreignKey: 'order_id' });
-        OrderItem.belongsTo(models.Product, { foreignKey: 'product_id' });
+        OrderItem.belongsTo(models.Orders, { foreignKey: 'order_id', onDelete: 'CASCADE' });
+        OrderItem.belongsTo(models.Product, { foreignKey: 'product_id', onDelete: 'RESTRICT' });
     }
 
     return OrderItem;

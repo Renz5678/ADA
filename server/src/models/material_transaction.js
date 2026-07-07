@@ -50,7 +50,7 @@ export default (sequelize, DataTypes) => {
         });
 
     MaterialTransaction.associate = (models) => {
-        MaterialTransaction.belongsTo(models.Material, { foreignKey: 'material_id' });
+        MaterialTransaction.belongsTo(models.Material, { foreignKey: 'material_id', onDelete: 'CASCADE' });
     }
     return MaterialTransaction;
 }

@@ -57,7 +57,7 @@ export default (sequelize, DataTypes) => {
         });
 
     Orders.associate = (models) => {
-        if (models.OrderItem) Orders.hasMany(models.OrderItem, { foreignKey: 'order_id' });
+        if (models.OrderItem) Orders.hasMany(models.OrderItem, { foreignKey: 'order_id', onDelete: 'CASCADE' });
         if (models.Users) Orders.belongsTo(models.Users, { foreignKey: 'user_id' });
     };
 

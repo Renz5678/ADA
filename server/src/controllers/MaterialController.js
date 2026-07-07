@@ -157,6 +157,9 @@ const deleteMaterial = async (req, res) => {
         await material.destroy();
         return res.status(200).json({ message: 'Material deleted successfully!' });
     } catch (e) {
+        if (e.name === 'SequelizeForeignKeyConstraintError') {
+            return res.status(400).json({ message: 'Cannot delete material because it is associated with existing transactions or products.' });
+        }
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
 };

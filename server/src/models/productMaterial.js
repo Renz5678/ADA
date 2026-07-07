@@ -38,8 +38,8 @@ export default (sequelize, DataTypes) => {
     });
 
     ProductMaterial.associate = (models) => {
-        ProductMaterial.belongsTo(models.Product, { foreignKey: 'product_id' });
-        ProductMaterial.belongsTo(models.Material, { foreignKey: 'material_id' });
+        ProductMaterial.belongsTo(models.Product, { foreignKey: 'product_id', onDelete: 'CASCADE' });
+        ProductMaterial.belongsTo(models.Material, { foreignKey: 'material_id', onDelete: 'CASCADE' });
     }
 
     return ProductMaterial;
