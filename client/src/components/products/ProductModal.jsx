@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Button from '../ui/Button.jsx';
 import { getMaterials } from '#api/materials.js';
@@ -15,13 +15,13 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
     const [quantityRequired, setQuantityRequired] = useState('');
 
     // Fetch global materials for the dropdown
-    const { data: globalMaterialsData, isLoading: isLoadingGlobalMaterials } = useQuery({
+    const { data: globalMaterialsData } = useQuery({
         queryKey: ['materials', 'all'],
         queryFn: () => getMaterials(1, 1000), // fetch all
         enabled: Boolean(isOpen),
     });
 
-    const globalMaterials = globalMaterialsData?.materials || [];
+    const globalMaterials = useMemo(() => globalMaterialsData?.materials || [], [globalMaterialsData]);
 
     // Re-sync form fields whenever a different product is opened for editing (or the modal opens fresh for create)
     useEffect(() => {
