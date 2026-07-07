@@ -5,6 +5,7 @@ import { useProducts } from '#hooks/useProducts.js';
 import { createProduct, updateProduct, deleteProduct } from '#api/product.js';
 import ProductsTable from '#components/products/ProductsTable.jsx';
 import ProductModal from '#components/products/ProductModal.jsx';
+import ProductMaterialsModal from '#components/products/ProductMaterialsModal.jsx';
 import Button from '#components/ui/Button.jsx';
 import Skeleton from '#components/ui/Skeleton.jsx';
 
@@ -18,6 +19,9 @@ export default function ProductsPage() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null); // null = creating, otherwise editing this product
+
+    const [isMaterialsModalOpen, setIsMaterialsModalOpen] = useState(false);
+    const [activeProductForMaterials, setActiveProductForMaterials] = useState(null);
 
     const invalidateProducts = () => queryClient.invalidateQueries({ queryKey: ['products'] });
 
@@ -59,6 +63,11 @@ export default function ProductsPage() {
     const handleOpenEdit = (product) => {
         setEditingProduct(product);
         setIsModalOpen(true);
+    };
+
+    const handleOpenMaterials = (product) => {
+        setActiveProductForMaterials(product);
+        setIsMaterialsModalOpen(true);
     };
 
     const handleSave = (formData) => {
@@ -113,6 +122,7 @@ export default function ProductsPage() {
                     isFetching={isFetching}
                     onEdit={handleOpenEdit}
                     onDelete={handleDelete}
+                    onManageMaterials={handleOpenMaterials}
                 />
 
                 {data && data.totalPages > 1 && (
@@ -144,6 +154,15 @@ export default function ProductsPage() {
                 onSave={handleSave}
                 isSaving={createMutation.isPending || updateMutation.isPending}
                 initialProduct={editingProduct}
+            />
+
+            <ProductMaterialsModal
+                isOpen={isMaterialsModalOpen}
+                onClose={() => {
+                    setIsMaterialsModalOpen(false);
+                    setActiveProductForMaterials(null);
+                }}
+                product={activeProductForMaterials}
             />
         </div>
     );

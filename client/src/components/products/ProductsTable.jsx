@@ -4,7 +4,7 @@ import Button from '../ui/Button.jsx';
 const formatCurrency = (amount) =>
     new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
 
-const ProductsTable = ({ products, isFetching, onEdit, onDelete }) => {
+const ProductsTable = ({ products, isFetching, onEdit, onDelete, onManageMaterials }) => {
     if (products.length === 0) {
         return <div className="text-center py-10 text-gray-500">No products found.</div>;
     }
@@ -25,8 +25,9 @@ const ProductsTable = ({ products, isFetching, onEdit, onDelete }) => {
                             <span className="text-right font-semibold text-[#8D4A52]">{formatCurrency(product.price)}</span>
                         </div>
                         <div className="flex gap-2 pt-1 border-t border-[#f0f0f0]">
-                            <Button variant="secondary" onClick={() => onEdit(product)} className="flex-1">Edit</Button>
-                            <Button variant="danger" onClick={() => onDelete(product)} className="flex-1">Delete</Button>
+                            <Button variant="secondary" onClick={() => onManageMaterials?.(product)} className="flex-1 text-xs">Materials</Button>
+                            <Button variant="secondary" onClick={() => onEdit(product)} className="flex-1 text-xs">Edit</Button>
+                            <Button variant="danger" onClick={() => onDelete(product)} className="flex-1 text-xs">Delete</Button>
                         </div>
                     </div>
                 ))}
@@ -51,6 +52,7 @@ const ProductsTable = ({ products, isFetching, onEdit, onDelete }) => {
                                 <td className="px-4 py-3 text-sm text-gray-600">{formatCurrency(product.price)}</td>
                                 <td className="px-4 py-3">
                                     <div className="flex items-center justify-end gap-2">
+                                        <Button variant="secondary" onClick={() => onManageMaterials?.(product)}>Materials</Button>
                                         <Button variant="secondary" onClick={() => onEdit(product)}>Edit</Button>
                                         <Button variant="danger" onClick={() => onDelete(product)}>Delete</Button>
                                     </div>

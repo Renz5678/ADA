@@ -1,7 +1,7 @@
 import { models } from "../models/index.js";
 import { validationResult } from "express-validator";
 
-const { Product } = models;
+const { Product, ProductMaterial, sequelize } = models;
 import { Op } from 'sequelize';
 
 const getProducts = async (req, res) => {
@@ -55,7 +55,8 @@ const getProductById = async (req, res) => {
             where: {
                 user_id: userId,
                 product_id: productId
-            }
+            },
+            include: [{ model: ProductMaterial }]
         });
 
         if (!product) return res.status(404).json({ message: 'Product not found!' });
@@ -75,20 +76,37 @@ const createProduct = async (req, res) => {
 
         const userId = req.user.id;
 
-        const { product_code, product_name, price } = req.body;
+        const { product_code, product_name, price, materials } = req.body;
 
         if (!product_name || price === undefined) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
 
-        const newProduct = await Product.create({
-            user_id: userId,
-            product_code,
-            product_name,
-            price
-        });
+        const t = await sequelize.transaction();
+        try {
+            const newProduct = await Product.create({
+                user_id: userId,
+                product_code,
+                product_name,
+                price
+            }, { transaction: t });
 
-        return res.status(201).json({ message: 'Product created!', data: newProduct });
+            if (materials && Array.isArray(materials)) {
+                for (const m of materials) {
+                    await ProductMaterial.create({
+                        product_id: newProduct.product_id,
+                        material_id: m.material_id,
+                        quantity_required: m.quantity_required
+                    }, { transaction: t });
+                }
+            }
+
+            await t.commit();
+            return res.status(201).json({ message: 'Product created!', data: newProduct });
+        } catch (error) {
+            await t.rollback();
+            throw error;
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
@@ -105,7 +123,7 @@ const updateProduct = async (req, res) => {
         const userId = req.user.id;
         const productId = req.params.id;
 
-        const { product_code, product_name, price } = req.body;
+        const { product_code, product_name, price, materials } = req.body;
 
         const product = await Product.findOne({
             where: {
@@ -115,14 +133,33 @@ const updateProduct = async (req, res) => {
         });
         if (!product) return res.status(404).json({ message: 'Product not found!' });
 
-        const updates = {};
-        if (product_code !== undefined) updates.product_code = product_code;
-        if (product_name !== undefined) updates.product_name = product_name;
-        if (price !== undefined) updates.price = price;
+        const t = await sequelize.transaction();
+        try {
+            const updates = {};
+            if (product_code !== undefined) updates.product_code = product_code;
+            if (product_name !== undefined) updates.product_name = product_name;
+            if (price !== undefined) updates.price = price;
 
-        await product.update(updates)
+            await product.update(updates, { transaction: t });
 
-        return res.status(200).json({ message: 'Product updated successfully!' });
+            if (materials && Array.isArray(materials)) {
+                // Clear existing materials and insert new ones
+                await ProductMaterial.destroy({ where: { product_id: productId }, transaction: t });
+                for (const m of materials) {
+                    await ProductMaterial.create({
+                        product_id: productId,
+                        material_id: m.material_id,
+                        quantity_required: m.quantity_required
+                    }, { transaction: t });
+                }
+            }
+
+            await t.commit();
+            return res.status(200).json({ message: 'Product updated successfully!' });
+        } catch (error) {
+            await t.rollback();
+            throw error;
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }

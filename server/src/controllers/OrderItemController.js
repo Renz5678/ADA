@@ -1,7 +1,7 @@
 import { models, sequelize } from '../models/index.js';
 import { validationResult } from 'express-validator';
 
-const { OrderItem, Orders, Product } = models;
+const { OrderItem, Orders, Product, ProductMaterial, Material, MaterialTransaction } = models;
 
 const getOrderItems = async (req, res) => {
     try {
@@ -132,9 +132,34 @@ const createOrderItem = async (req, res) => {
 
         const subtotal = Number(product.price) * Number(quantity);
 
+        const productMaterials = await ProductMaterial.findAll({
+            where: { product_id: productId },
+            include: [{ model: Material, where: { user_id: userId } }]
+        });
+
         const t = await sequelize.transaction();
 
         try {
+            // Check materials and deduct
+            for (const pm of productMaterials) {
+                const requiredAmount = Number(pm.quantity_required) * Number(quantity);
+                const material = pm.Material;
+
+                if (Number(material.quantity) < requiredAmount) {
+                    await t.rollback();
+                    return res.status(400).json({ message: `Not enough stock for material: ${material.material_name}` });
+                }
+
+                await material.decrement('quantity', { by: requiredAmount, transaction: t });
+                await MaterialTransaction.create({
+                    material_id: material.material_id,
+                    type: 'Usage',
+                    quantity: requiredAmount,
+                    unit_cost: material.unit_cost,
+                    date_bought: new Date().toISOString().split('T')[0]
+                }, { transaction: t });
+            }
+
             const newOrderitem = await OrderItem.create({
                 order_id: orderId,
                 product_id: productId,
@@ -188,10 +213,53 @@ const updateOrderItem = async (req, res) => {
 
         const newSubtotal = Number(product.price) * Number(quantity);
         const subtotalDelta = newSubtotal - Number(orderItem.subtotal);
+        const quantityDelta = Number(quantity) - Number(orderItem.quantity);
+
+        const productMaterials = await ProductMaterial.findAll({
+            where: { product_id: orderItem.product_id },
+            include: [{ model: Material, where: { user_id: userId } }]
+        });
 
         const t = await sequelize.transaction();
 
         try {
+            if (quantityDelta > 0) {
+                // Deduct more materials
+                for (const pm of productMaterials) {
+                    const requiredAmount = Number(pm.quantity_required) * quantityDelta;
+                    const material = pm.Material;
+
+                    if (Number(material.quantity) < requiredAmount) {
+                        await t.rollback();
+                        return res.status(400).json({ message: `Not enough stock for material: ${material.material_name}` });
+                    }
+
+                    await material.decrement('quantity', { by: requiredAmount, transaction: t });
+                    await MaterialTransaction.create({
+                        material_id: material.material_id,
+                        type: 'Usage',
+                        quantity: requiredAmount,
+                        unit_cost: material.unit_cost,
+                        date_bought: new Date().toISOString().split('T')[0]
+                    }, { transaction: t });
+                }
+            } else if (quantityDelta < 0) {
+                // Refund materials
+                for (const pm of productMaterials) {
+                    const refundAmount = Number(pm.quantity_required) * Math.abs(quantityDelta);
+                    const material = pm.Material;
+
+                    await material.increment('quantity', { by: refundAmount, transaction: t });
+                    await MaterialTransaction.create({
+                        material_id: material.material_id,
+                        type: 'Purchase',
+                        quantity: refundAmount,
+                        unit_cost: material.unit_cost,
+                        date_bought: new Date().toISOString().split('T')[0]
+                    }, { transaction: t });
+                }
+            }
+
             await orderItem.update({ quantity, subtotal: newSubtotal }, { transaction: t });
             await order.increment('total_amount', { by: subtotalDelta, transaction: t });
 
@@ -225,9 +293,29 @@ const deleteOrderitem = async (req, res) => {
 
         const order = await Orders.findOne({ where: { order_id: orderItem.order_id } });
 
+        const productMaterials = await ProductMaterial.findAll({
+            where: { product_id: orderItem.product_id },
+            include: [{ model: Material, where: { user_id: userId } }]
+        });
+
         const t = await sequelize.transaction();
 
         try {
+            // Refund materials
+            for (const pm of productMaterials) {
+                const refundAmount = Number(pm.quantity_required) * Number(orderItem.quantity);
+                const material = pm.Material;
+
+                await material.increment('quantity', { by: refundAmount, transaction: t });
+                await MaterialTransaction.create({
+                    material_id: material.material_id,
+                    type: 'Purchase', // Using Purchase to represent restock/refund
+                    quantity: refundAmount,
+                    unit_cost: material.unit_cost,
+                    date_bought: new Date().toISOString().split('T')[0]
+                }, { transaction: t });
+            }
+
             await orderItem.destroy({ transaction: t });
 
             if (order) {

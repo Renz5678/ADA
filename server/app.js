@@ -13,6 +13,7 @@ import analyticsRouter from './src/routes/analytics.js';
 import scheduleRouter from './src/routes/schedule.js';
 import searchRouter from './src/routes/search.js';
 import notificationRouter from './src/routes/notification.js';
+import productMaterialRouter from './src/routes/productMaterial.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
@@ -36,6 +37,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authLimiter, authRouter)
 app.use(generalLimiter);
 app.use('/products', productRouter);
+app.use('/products/:productId/materials', productMaterialRouter);
 app.use('/orders', orderRouter);
 app.use('/materials', materialRouter);
 app.use('/material-transaction', materialTransactionRouter);

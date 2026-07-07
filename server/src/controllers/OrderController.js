@@ -145,8 +145,41 @@ const deleteOrder = async (req, res) => {
 
         if (!order) return res.status(404).json({ message: 'Order not found!' });
 
-        await order.destroy();
-        return res.status(200).json({ message: 'Order deleted successfully!' });
+        const { OrderItem, ProductMaterial, Material, MaterialTransaction } = models;
+        const orderItems = await OrderItem.findAll({ where: { order_id: orderId } });
+
+        const t = await sequelize.transaction();
+
+        try {
+            for (const item of orderItems) {
+                const productMaterials = await ProductMaterial.findAll({
+                    where: { product_id: item.product_id },
+                    include: [{ model: Material, where: { user_id: userId } }]
+                });
+
+                for (const pm of productMaterials) {
+                    const refundAmount = Number(pm.quantity_required) * Number(item.quantity);
+                    const material = pm.Material;
+
+                    await material.increment('quantity', { by: refundAmount, transaction: t });
+                    await MaterialTransaction.create({
+                        material_id: material.material_id,
+                        type: 'Purchase', // Refund
+                        quantity: refundAmount,
+                        unit_cost: material.unit_cost,
+                        date_bought: new Date().toISOString().split('T')[0]
+                    }, { transaction: t });
+                }
+                await item.destroy({ transaction: t });
+            }
+
+            await order.destroy({ transaction: t });
+            await t.commit();
+            return res.status(200).json({ message: 'Order deleted successfully!' });
+        } catch (error) {
+            await t.rollback();
+            return res.status(500).json({ message: 'Internal Server Error!' });
+        }
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error!' });
     }

@@ -7,7 +7,8 @@ const port = 3000;
 
 const start = async () => {
     await sequelize.authenticate();
-    console.log("Database connection has been established successfully.");
+    await sequelize.sync({ alter: true });
+    console.log("Database connection has been established and synced successfully.");
 
     startCleanUpJob();
     startDeadlineReminderJob();

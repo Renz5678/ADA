@@ -10,6 +10,8 @@ import MaterialFactory from '../models/material.js';
 import MaterialTransactionFactory from '../models/material_transaction.js';
 import ExpenseFactory from '../models/expense.js';
 import WeeklyAvailabilityFactory from '../models/weeklyAvailability.js';
+import ProductMaterialFactory from '../models/productMaterial.js';
+import NotificationFactory from '../models/notifications.js';
 
 const sequelize = process.env.NODE_ENV === 'test' 
     ? new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false })
@@ -31,7 +33,9 @@ const models = {
     Material: MaterialFactory(sequelize, DataTypes),
     MaterialTransaction: MaterialTransactionFactory(sequelize, DataTypes),
     Expense: ExpenseFactory(sequelize, DataTypes),
-    WeeklyAvailability: WeeklyAvailabilityFactory(sequelize, DataTypes)
+    WeeklyAvailability: WeeklyAvailabilityFactory(sequelize, DataTypes),
+    ProductMaterial: ProductMaterialFactory(sequelize, DataTypes),
+    Notifications: NotificationFactory(sequelize, DataTypes)
 };
 
 Object.values(models).forEach(model => {
