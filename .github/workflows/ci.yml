@@ -48,12 +48,28 @@ jobs:
       run: npm ci
       working-directory: ./server
 
+    - name: Wait for Postgres
+      run: |
+        echo "Waiting for postgres to be ready..."
+        for i in $(seq 1 30); do
+          if nc -z localhost 5432; then
+            echo "Postgres port open"
+            break
+          fi
+          sleep 1
+        done
+
     - name: Run Backend Tests
       run: npm run test
       working-directory: ./server
       env:
         DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_db
         JWT_SECRET: test_secret
+        PGHOST: localhost
+        PGUSER: test_user
+        PGPASSWORD: test_password
+        PGDATABASE: test_db
+        PGPORT: 5432
 
   build-docker:
     needs: lint-and-test

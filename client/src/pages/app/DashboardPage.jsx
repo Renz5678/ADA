@@ -52,7 +52,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="flex flex-col gap-4 animate-fadeIn w-full max-w-[1400px] mx-auto font-body flex-1 min-h-0 overflow-hidden">
+        <div className="flex flex-col gap-4 animate-fadeIn w-full max-w-[1400px] mx-auto font-body flex-1 pb-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
                 <h1 className="text-xl sm:text-2xl font-semibold font-headline text-[#0F1D29]">Dashboard</h1>
                 
@@ -92,10 +92,12 @@ export default function DashboardPage() {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0">
+            <div className="flex flex-col xl:flex-row gap-4 flex-1 items-start">
                 
-                {/* Left Column: Sales Trend (Takes more space) */}
-                <div className="lg:w-2/3 bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 min-h-0">
+                {/* Left Column: Sales Trend and Products Performance */}
+                <div className="xl:w-2/3 w-full flex flex-col gap-4">
+                    {/* Sales Trend */}
+                    <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[380px]">
                     <h3 className="font-headline font-semibold text-base text-[#0F1D29] shrink-0">Sales Trend</h3>
                     <div className={`flex-1 min-h-0 transition-opacity duration-150 ${fetchingTrend ? 'opacity-60' : ''}`}>
                         {salesTrend && salesTrend.length > 0 ? (
@@ -118,12 +120,41 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Right Column: Split into Suggested Focus, Deadlines, and Products */}
-                <div className="lg:w-1/3 flex flex-col gap-4 min-h-0 lg:max-h-full">
+                {/* Products Performance */}
+                <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[200px]">
+                    <div className="grid grid-cols-2 gap-4 h-full">
+                        <div className="flex flex-col gap-2 overflow-y-auto pr-2">
+                            <h3 className="font-headline font-semibold text-sm text-[#0F1D29] shrink-0 sticky top-0 bg-white z-10 pb-1">Top Products</h3>
+                            <div className={`flex flex-col gap-2 transition-opacity duration-150 ${fetchingTop ? 'opacity-60' : ''}`}>
+                                {topProducts && topProducts.length > 0 ? topProducts.map(p => (
+                                    <div key={p.product_id} className="flex flex-col text-xs shrink-0 border-b border-[#f0f0f0] pb-1">
+                                        <span className="text-[#0F1D29] font-medium truncate">{p.Product?.product_name || 'Unknown'}</span>
+                                        <span className="text-gray-500">{p.total_quantity} sold</span>
+                                    </div>
+                                )) : <div className="text-xs text-gray-400">No data</div>}
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2 overflow-y-auto pl-2 border-l border-[#f0f0f0]">
+                            <h3 className="font-headline font-semibold text-sm text-[#0F1D29] shrink-0 sticky top-0 bg-white z-10 pb-1">Needs Attention</h3>
+                            <div className={`flex flex-col gap-2 transition-opacity duration-150 ${fetchingWeak ? 'opacity-60' : ''}`}>
+                                {weakProducts && weakProducts.length > 0 ? weakProducts.map(p => (
+                                    <div key={p.product_id} className="flex flex-col text-xs shrink-0 border-b border-[#f0f0f0] pb-1">
+                                        <span className="text-[#0F1D29] font-medium truncate">{p.Product?.product_name || 'Unknown'}</span>
+                                        <span className="text-[#AB626A]">{p.total_quantity} sold</span>
+                                    </div>
+                                )) : <div className="text-xs text-gray-400">No data</div>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    </div>
+
+            {/* Right Column: Split into Suggested Focus and Deadlines */}
+            <div className="xl:w-1/3 w-full flex flex-col gap-4">
                     
                     {/* Suggested Focus */}
-                    <div className="bg-[#FFF7E6] rounded-2xl p-5 shadow-sm border border-[#e8d5b5] flex flex-col gap-3 shrink-0 transition-opacity duration-150" style={{ opacity: fetchingSuggestions ? 0.6 : 1 }}>
-                        <div className="flex items-center justify-between">
+                    <div className="bg-[#FFF7E6] rounded-2xl p-5 shadow-sm border border-[#e8d5b5] flex flex-col gap-3 h-[250px] transition-opacity duration-150" style={{ opacity: fetchingSuggestions ? 0.6 : 1 }}>
+                        <div className="flex items-center justify-between shrink-0">
                             <h3 className="font-headline font-semibold text-base text-[#8D4A52]">Suggested Focus</h3>
                             <span className="flex h-2.5 w-2.5 relative">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#8D4A52] opacity-75"></span>
@@ -131,7 +162,7 @@ export default function DashboardPage() {
                             </span>
                         </div>
                         {suggestedTasks && suggestedTasks.length > 0 ? (
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2 overflow-y-auto pr-1">
                                 {suggestedTasks.map((task, index) => (
                                     <div
                                         key={task.order_id}
@@ -162,7 +193,7 @@ export default function DashboardPage() {
                     </div>
 
                     {/* Upcoming Deadlines */}
-                    <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 flex-1 min-h-0">
+                    <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[200px]">
                         <h3 className="font-headline font-semibold text-base text-[#0F1D29] shrink-0">Upcoming Deadlines</h3>
                         <div className={`flex flex-col gap-2 overflow-y-auto transition-opacity duration-150 ${fetchingScheduled ? 'opacity-60' : ''}`}>
                             {scheduledOrders && scheduledOrders.length > 0 ? scheduledOrders.map(order => (
@@ -178,34 +209,6 @@ export default function DashboardPage() {
                                     <span className="text-[#8D4A52] font-semibold">{formatCurrency(order.total_amount)}</span>
                                 </div>
                             )) : <div className="text-sm text-gray-400">No upcoming tasks</div>}
-                        </div>
-                    </div>
-
-                    {/* Products Performance */}
-                    <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 flex-1 min-h-0">
-                        <div className="grid grid-cols-2 gap-4 h-full">
-                            <div className="flex flex-col gap-2 overflow-y-auto pr-2">
-                                <h3 className="font-headline font-semibold text-sm text-[#0F1D29] shrink-0 sticky top-0 bg-white z-10 pb-1">Top Products</h3>
-                                <div className={`flex flex-col gap-2 transition-opacity duration-150 ${fetchingTop ? 'opacity-60' : ''}`}>
-                                    {topProducts && topProducts.length > 0 ? topProducts.map(p => (
-                                        <div key={p.product_id} className="flex flex-col text-xs shrink-0 border-b border-[#f0f0f0] pb-1">
-                                            <span className="text-[#0F1D29] font-medium truncate">{p.Product?.product_name || 'Unknown'}</span>
-                                            <span className="text-gray-500">{p.total_quantity} sold</span>
-                                        </div>
-                                    )) : <div className="text-xs text-gray-400">No data</div>}
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2 overflow-y-auto pl-2 border-l border-[#f0f0f0]">
-                                <h3 className="font-headline font-semibold text-sm text-[#0F1D29] shrink-0 sticky top-0 bg-white z-10 pb-1">Needs Attention</h3>
-                                <div className={`flex flex-col gap-2 transition-opacity duration-150 ${fetchingWeak ? 'opacity-60' : ''}`}>
-                                    {weakProducts && weakProducts.length > 0 ? weakProducts.map(p => (
-                                        <div key={p.product_id} className="flex flex-col text-xs shrink-0 border-b border-[#f0f0f0] pb-1">
-                                            <span className="text-[#0F1D29] font-medium truncate">{p.Product?.product_name || 'Unknown'}</span>
-                                            <span className="text-[#AB626A]">{p.total_quantity} sold</span>
-                                        </div>
-                                    )) : <div className="text-xs text-gray-400">No data</div>}
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

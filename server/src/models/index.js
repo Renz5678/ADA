@@ -14,20 +14,21 @@ import ProductMaterialFactory from '../models/productMaterial.js';
 import NotificationFactory from '../models/notifications.js';
 
 let sequelize;
-if (process.env.DATABASE_URL) {
-    sequelize = new Sequelize(process.env.DATABASE_URL, { dialect: 'postgres', logging: false });
-} else if (process.env.NODE_ENV === 'test') {
-    sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false });
-} else {
-    sequelize = new Sequelize({
-        dialect: 'postgres',
-        host: process.env.POSTGRES_HOST,
-        port: Number(process.env.POSTGRES_PORT) || 5432,
-        username: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DATABASE,
-        logging: false
-    });
+
+const connectionString = process.env.DATABASE_URL ||
+  `postgres://${process.env.POSTGRES_USER || process.env.PGUSER || 'test_user'}:` +
+  `${process.env.POSTGRES_PASSWORD || process.env.PGPASSWORD || 'test_password'}@` +
+  `${process.env.POSTGRES_HOST || process.env.PGHOST || 'localhost'}:` +
+  `${process.env.POSTGRES_PORT || process.env.PGPORT || 5432}/` +
+  `${process.env.POSTGRES_DATABASE || process.env.POSTGRES_DB || process.env.PGDATABASE || 'test_db'}`;
+
+sequelize = new Sequelize(connectionString, {
+    dialect: 'postgres',
+    logging: false
+});
+
+if (process.env.NODE_ENV === 'test') {
+    console.log('DB connection string:', connectionString);
 }
 
 const models = {
