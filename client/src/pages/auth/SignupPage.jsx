@@ -168,12 +168,13 @@ export default function SignupPage({ onStart, onStop }) {
                             </label>
 
                             {/* Password */}
-                            <label className="flex flex-col gap-0.5">
-                                <span className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
+                            <div className="flex flex-col gap-0.5">
+                                <label htmlFor="password" className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
                                     <MdLockOutline /> Password
-                                </span>
+                                </label>
                                 <div className="relative">
                                     <input
+                                        id="password"
                                         name="password"
                                         value={form.password}
                                         onChange={handleChange}
@@ -196,15 +197,16 @@ export default function SignupPage({ onStart, onStop }) {
                                     password={form.password}
                                     visible={passwordFocused || form.password.length > 0}
                                 />
-                            </label>
+                            </div>
 
                             {/* Confirm Password */}
-                            <label className="flex flex-col gap-0.5">
-                                <span className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
+                            <div className="flex flex-col gap-0.5">
+                                <label htmlFor="confirmPassword" className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
                                     <FaCheck /> Confirm Password
-                                </span>
+                                </label>
                                 <div className="relative">
                                     <input
+                                        id="confirmPassword"
                                         name="confirmPassword"
                                         value={form.confirmPassword}
                                         onChange={handleChange}
@@ -226,7 +228,7 @@ export default function SignupPage({ onStart, onStop }) {
                                     message={<span className="flex items-center gap-1">Passwords match <FaCheck /></span>}
                                     visible={form.confirmPassword.length > 0 && passwordsMatch}
                                 />
-                            </label>
+                            </div>
 
                             {/* Terms */}
                             <label className="flex items-start gap-2 cursor-pointer">

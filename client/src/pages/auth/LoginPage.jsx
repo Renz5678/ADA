@@ -112,11 +112,11 @@ export default function LoginPage({ onStart, onStop }) {
                         </label>
 
                         {/* Password */}
-                        <label className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1">
                             <span className="font-medium text-sm flex items-center justify-between">
-                                <span className="flex items-center gap-2">
+                                <label htmlFor="password" className="flex items-center gap-2">
                                     <MdLockOutline /> Password
-                                </span>
+                                </label>
                                 <button
                                     type="button"
                                     onClick={handleForgotPassword}
@@ -127,6 +127,7 @@ export default function LoginPage({ onStart, onStop }) {
                             </span>
                             <div className="relative">
                                 <input
+                                    id="password"
                                     name="password"
                                     type={showPassword ? "text" : "password"}
                                     value={form.password}
@@ -143,7 +144,7 @@ export default function LoginPage({ onStart, onStop }) {
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                             </div>
-                        </label>
+                        </div>
 
                         {/* Global error */}
                         {error && (
