@@ -3,8 +3,9 @@ import { useAnalyticsSummary, useTopProducts, useWeakProducts, useSalesByMonth, 
 import { useScheduledOrders } from '#hooks/useOrders.js';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import { MdLocalFireDepartment, MdFlashOn, MdPushPin, MdLightbulb } from 'react-icons/md';
+import { MdLocalFireDepartment, MdFlashOn, MdPushPin, MdLightbulb, MdHelpOutline } from 'react-icons/md';
 import Skeleton from '#components/ui/Skeleton.jsx';
+import InfoTooltip from '#components/ui/Tooltip.jsx';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
@@ -57,7 +58,7 @@ export default function DashboardPage() {
                 <h1 className="text-xl sm:text-2xl font-semibold font-headline text-[#0F1D29]">Dashboard</h1>
                 
                 <div className="flex bg-[#f0f0f0] rounded-lg p-1">
-                    {['today', 'week', 'month'].map(p => (
+                    {['today', 'week', 'month', 'all time'].map(p => (
                         <button
                             key={p}
                             onClick={() => setPeriod(p)}
@@ -72,19 +73,34 @@ export default function DashboardPage() {
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-1 transition-opacity duration-150" style={{ opacity: fetchingSummary ? 0.6 : 1 }}>
-                    <span className="text-xs font-label uppercase text-gray-500">Total Sales</span>
+                    <div className="flex items-center gap-1.5 text-xs font-label uppercase text-gray-500">
+                        Total Sales
+                        <InfoTooltip content="Total revenue earned from completed and delivered orders.">
+                            <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[15px] h-[15px]" />
+                        </InfoTooltip>
+                    </div>
                     <span className="text-2xl font-headline font-semibold text-[#8D4A52]">
                         {summary ? formatCurrency(summary.totalSales) : '...'}
                     </span>
                 </div>
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-1 transition-opacity duration-150" style={{ opacity: fetchingSummary ? 0.6 : 1 }}>
-                    <span className="text-xs font-label uppercase text-gray-500">Total Expenses</span>
+                    <div className="flex items-center gap-1.5 text-xs font-label uppercase text-gray-500">
+                        Total Expenses
+                        <InfoTooltip content="Sum of all your recorded business expenses (e.g. software, materials).">
+                            <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[15px] h-[15px]" />
+                        </InfoTooltip>
+                    </div>
                     <span className="text-2xl font-headline font-semibold text-[#0F1D29]">
                         {summary ? formatCurrency(summary.totalExpenses) : '...'}
                     </span>
                 </div>
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-1 transition-opacity duration-150" style={{ opacity: fetchingSummary ? 0.6 : 1 }}>
-                    <span className="text-xs font-label uppercase text-gray-500">Net Profit</span>
+                    <div className="flex items-center gap-1.5 text-xs font-label uppercase text-gray-500">
+                        Net Profit
+                        <InfoTooltip content="Your Total Sales minus your Total Expenses for the selected period.">
+                            <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[15px] h-[15px]" />
+                        </InfoTooltip>
+                    </div>
                     <span className="text-2xl font-headline font-semibold text-[#0F1D29]">
                         {summary ? formatCurrency(summary.netProfit) : '...'}
                     </span>
@@ -98,7 +114,12 @@ export default function DashboardPage() {
                 <div className="xl:w-2/3 w-full flex flex-col gap-4">
                     {/* Sales Trend */}
                     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[380px]">
-                    <h3 className="font-headline font-semibold text-base text-[#0F1D29] shrink-0">Sales Trend</h3>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                        <h3 className="font-headline font-semibold text-base text-[#0F1D29]">Sales Trend</h3>
+                        <InfoTooltip content="A chronological view of your sales performance month over month.">
+                            <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[16px] h-[16px]" />
+                        </InfoTooltip>
+                    </div>
                     <div className={`flex-1 min-h-0 transition-opacity duration-150 ${fetchingTrend ? 'opacity-60' : ''}`}>
                         {salesTrend && salesTrend.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
@@ -122,10 +143,15 @@ export default function DashboardPage() {
 
                 {/* Products Performance */}
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[200px]">
-                    <div className="grid grid-cols-2 gap-4 h-full">
-                        <div className="flex flex-col gap-2 overflow-y-auto pr-2">
-                            <h3 className="font-headline font-semibold text-sm text-[#0F1D29] shrink-0 sticky top-0 bg-white z-10 pb-1">Top Products</h3>
-                            <div className={`flex flex-col gap-2 transition-opacity duration-150 ${fetchingTop ? 'opacity-60' : ''}`}>
+                    <div className="grid grid-cols-2 gap-4 h-full min-h-0">
+                        <div className="flex flex-col min-h-0 pr-2">
+                            <div className="flex items-center gap-1.5 shrink-0 pb-2 z-20">
+                                <h3 className="font-headline font-semibold text-sm text-[#0F1D29]">Top Products</h3>
+                                <InfoTooltip content="Your best-selling products by total quantity sold.">
+                                    <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[15px] h-[15px]" />
+                                </InfoTooltip>
+                            </div>
+                            <div className={`flex flex-col gap-2 overflow-y-auto transition-opacity duration-150 pb-2 ${fetchingTop ? 'opacity-60' : ''}`}>
                                 {topProducts && topProducts.length > 0 ? topProducts.map(p => (
                                     <div key={p.product_id} className="flex flex-col text-xs shrink-0 border-b border-[#f0f0f0] pb-1">
                                         <span className="text-[#0F1D29] font-medium truncate">{p.Product?.product_name || 'Unknown'}</span>
@@ -134,9 +160,14 @@ export default function DashboardPage() {
                                 )) : <div className="text-xs text-gray-400">No data</div>}
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2 overflow-y-auto pl-2 border-l border-[#f0f0f0]">
-                            <h3 className="font-headline font-semibold text-sm text-[#0F1D29] shrink-0 sticky top-0 bg-white z-10 pb-1">Needs Attention</h3>
-                            <div className={`flex flex-col gap-2 transition-opacity duration-150 ${fetchingWeak ? 'opacity-60' : ''}`}>
+                        <div className="flex flex-col min-h-0 pl-2 border-l border-[#f0f0f0]">
+                            <div className="flex items-center gap-1.5 shrink-0 pb-2 z-20">
+                                <h3 className="font-headline font-semibold text-sm text-[#0F1D29]">Needs Attention</h3>
+                                <InfoTooltip content="Products with the lowest sales volume that may need marketing or pricing adjustments.">
+                                    <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[15px] h-[15px]" />
+                                </InfoTooltip>
+                            </div>
+                            <div className={`flex flex-col gap-2 overflow-y-auto transition-opacity duration-150 pb-2 ${fetchingWeak ? 'opacity-60' : ''}`}>
                                 {weakProducts && weakProducts.length > 0 ? weakProducts.map(p => (
                                     <div key={p.product_id} className="flex flex-col text-xs shrink-0 border-b border-[#f0f0f0] pb-1">
                                         <span className="text-[#0F1D29] font-medium truncate">{p.Product?.product_name || 'Unknown'}</span>
@@ -155,7 +186,12 @@ export default function DashboardPage() {
                     {/* Suggested Focus */}
                     <div className="bg-[#FFF7E6] rounded-2xl p-5 shadow-sm border border-[#e8d5b5] flex flex-col gap-3 h-[250px] transition-opacity duration-150" style={{ opacity: fetchingSuggestions ? 0.6 : 1 }}>
                         <div className="flex items-center justify-between shrink-0">
-                            <h3 className="font-headline font-semibold text-base text-[#8D4A52]">Suggested Focus</h3>
+                            <div className="flex items-center gap-1.5">
+                                <h3 className="font-headline font-semibold text-base text-[#8D4A52]">Suggested Focus</h3>
+                                <InfoTooltip content="AI-prioritized active tasks based on order value, deadlines, and your weekly availability.">
+                                    <MdHelpOutline className="text-[#8D4A52]/60 hover:text-[#8D4A52] transition-colors w-[16px] h-[16px]" />
+                                </InfoTooltip>
+                            </div>
                             <span className="flex h-2.5 w-2.5 relative">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#8D4A52] opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#8D4A52]"></span>
@@ -194,7 +230,12 @@ export default function DashboardPage() {
 
                     {/* Upcoming Deadlines */}
                     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[200px]">
-                        <h3 className="font-headline font-semibold text-base text-[#0F1D29] shrink-0">Upcoming Deadlines</h3>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                            <h3 className="font-headline font-semibold text-base text-[#0F1D29]">Upcoming Deadlines</h3>
+                            <InfoTooltip content="Active orders with deadlines approaching soon.">
+                                <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[16px] h-[16px]" />
+                            </InfoTooltip>
+                        </div>
                         <div className={`flex flex-col gap-2 overflow-y-auto transition-opacity duration-150 ${fetchingScheduled ? 'opacity-60' : ''}`}>
                             {scheduledOrders && scheduledOrders.length > 0 ? scheduledOrders.map(order => (
                                 <div 

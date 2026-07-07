@@ -194,7 +194,7 @@ const getOrderStats = async (req, res) => {
             where: { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] } }
         });
         const activeOrdersCount = await Orders.count({
-            where: { user_id: userId, status: { [Op.ne]: 'Cancelled' } }
+            where: { user_id: userId, status: { [Op.notIn]: ['Cancelled', 'Done', 'Delivered'] } }
         });
 
         return res.status(200).json({

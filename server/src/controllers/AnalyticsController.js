@@ -23,12 +23,20 @@ const getSummary = async (req, res) => {
             dateFilter = { [Op.gte]: startOfMonth };
         }
 
+        const salesWhere = { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] } };
+        const expensesWhere = { user_id: userId };
+        
+        if (period !== 'all time') {
+            salesWhere.order_date = dateFilter;
+            expensesWhere.expense_date = dateFilter;
+        }
+
         const totalSales = await Orders.sum('total_amount', {
-            where: { user_id: userId, status: { [Op.in]: ['Done', 'Delivered'] }, order_date: dateFilter }
+            where: salesWhere
         }) || 0;
 
         const totalExpenses = await Expense.sum('amount', {
-            where: { user_id: userId, expense_date: dateFilter }
+            where: expensesWhere
         }) || 0;
 
         const netProfit = totalSales - totalExpenses;

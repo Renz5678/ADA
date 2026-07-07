@@ -1,5 +1,6 @@
 import express from 'express';
-import cors from 'cors'
+import cors from 'cors';
+import helmet from 'helmet';
 
 import authRouter from './src/routes/auth.js';
 import productRouter from './src/routes/product.js';
@@ -19,8 +20,9 @@ import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
 const app = express();
 
+app.use(helmet());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
     methods: ['GET', 'PUT', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -48,5 +50,13 @@ app.use('/analytics', analyticsRouter);
 app.use('/schedule', scheduleRouter);
 app.use('/search', searchRouter);
 app.use('/notifications', notificationRouter);
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+        error: 'Internal Server Error',
+        message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message
+    });
+});
 
 export default app;

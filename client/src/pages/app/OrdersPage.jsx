@@ -97,7 +97,7 @@ export default function OrdersPage() {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-2">
-                    <span className="text-sm font-label uppercase text-gray-500">Total Revenue (Active)</span>
+                    <span className="text-sm font-label uppercase text-gray-500">Total Revenue</span>
                     <span className="text-2xl font-headline font-semibold text-[#8D4A52]">
                         {stats ? formatCurrency(stats.totalRevenue) : '...'}
                     </span>
