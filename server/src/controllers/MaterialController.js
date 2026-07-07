@@ -19,9 +19,11 @@ const getMaterials = async (req, res) => {
                 offset,
                 order: [['material_name', 'ASC']]
             });
+            const totalQuantity = await Material.sum('quantity', { where: whereClause }) || 0;
             return res.status(200).json({
                 materials: rows,
                 totalCount: count,
+                totalQuantity,
                 totalPages: Math.ceil(count / limit),
                 currentPage: page
             });

@@ -205,7 +205,14 @@ export default function ExpensesPage() {
             {/* Materials Card */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#f0f0f0] flex flex-col gap-4 flex-1 min-h-0">
                 <div className="flex items-center justify-between shrink-0">
-                    <h2 className="text-lg sm:text-xl font-semibold font-headline text-[#0F1D29]">Materials & Stock</h2>
+                    <h2 className="text-lg sm:text-xl font-semibold font-headline text-[#0F1D29] flex items-center gap-3">
+                        Materials & Stock
+                        {materialsData?.totalQuantity !== undefined && (
+                            <span className="text-xs sm:text-sm bg-[#8D4A52] text-white px-2 py-1 rounded-md shadow-sm font-medium">
+                                Total Items: {materialsData.totalQuantity}
+                            </span>
+                        )}
+                    </h2>
                     <Button variant="primary" onClick={() => { setEditingMaterial(null); setIsMaterialModalOpen(true); }}>
                         + New Material
                     </Button>

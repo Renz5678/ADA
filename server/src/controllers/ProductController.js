@@ -1,7 +1,7 @@
-import { models } from "../models/index.js";
+import { models, sequelize } from "../models/index.js";
 import { validationResult } from "express-validator";
 
-const { Product, ProductMaterial, sequelize } = models;
+const { Product, ProductMaterial } = models;
 import { Op } from 'sequelize';
 
 const getProducts = async (req, res) => {
@@ -26,7 +26,9 @@ const getProducts = async (req, res) => {
                 where: whereClause,
                 limit,
                 offset,
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                include: [{ model: ProductMaterial }],
+                distinct: true
             });
             return res.status(200).json({
                 products: rows,
@@ -37,7 +39,8 @@ const getProducts = async (req, res) => {
         } else {
             const products = await Product.findAll({
                 where: whereClause,
-                order: [['product_name', 'ASC']]
+                order: [['product_name', 'ASC']],
+                include: [{ model: ProductMaterial }]
             });
             return res.status(200).json(products);
         }

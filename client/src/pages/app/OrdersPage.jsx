@@ -29,6 +29,7 @@ export default function OrdersPage() {
         mutationFn: deleteOrder,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
+            queryClient.invalidateQueries({ queryKey: ['materials'] });
             toast.success('Order deleted.');
         },
         onError: (err) => toast.error(err.response?.data?.message || 'Failed to delete order.')

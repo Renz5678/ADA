@@ -17,7 +17,7 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
         enabled: Boolean(isOpen && product?.product_id),
     });
 
-    const productMaterials = productMaterialsData?.data || [];
+    const productMaterials = productMaterialsData || [];
 
     // Fetch global materials for the dropdown
     const { data: globalMaterialsData, isLoading: isLoadingGlobalMaterials } = useQuery({

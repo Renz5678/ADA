@@ -106,6 +106,7 @@ export default function OrderEditorPage() {
         queryClient.invalidateQueries({ queryKey: ['order', id] });
         queryClient.invalidateQueries({ queryKey: ['order-items', id] });
         queryClient.invalidateQueries({ queryKey: ['orders'] }); // so the list page total/status refreshes too
+        queryClient.invalidateQueries({ queryKey: ['materials'] });
     };
 
     const addItemMutation = useMutation({
@@ -163,6 +164,7 @@ export default function OrderEditorPage() {
         },
         onSuccess: (newOrderId) => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
+            queryClient.invalidateQueries({ queryKey: ['materials'] });
             toast.success(`Order #${newOrderId} created successfully!`);
             navigate(`/orders`);
         },
