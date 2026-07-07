@@ -68,18 +68,24 @@ const createMaterial = async (req, res) => {
 
         const userId = req.user.id;
 
-        const { material_code, material_name, unit_cost, quantity } = req.body;
+        const { material_code, material_name, unit_cost, quantity, low_stock_threshold } = req.body;
 
         if (!material_name || unit_cost === undefined || quantity === undefined) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
+
+        // Default threshold = 20% of initial quantity if not provided
+        const threshold = low_stock_threshold !== undefined
+            ? Number(low_stock_threshold)
+            : Number(quantity) * 0.20;
 
         const newMaterial = await Material.create({
             user_id: userId,
             material_code,
             material_name,
             unit_cost,
-            quantity
+            quantity,
+            low_stock_threshold: threshold
         });
         
         if (Number(quantity) > 0) {
@@ -108,7 +114,7 @@ const updateMaterial = async (req, res) => {
         const userId = req.user.id;
         const materialId = req.params.id;
 
-        const { material_code, material_name, unit_cost, quantity } = req.body;
+        const { material_code, material_name, unit_cost, quantity, low_stock_threshold } = req.body;
 
         const material = await Material.findOne({
             where: {
@@ -124,6 +130,7 @@ const updateMaterial = async (req, res) => {
         if (material_name !== undefined) updates.material_name = material_name;
         if (unit_cost !== undefined) updates.unit_cost = unit_cost;
         if (quantity !== undefined) updates.quantity = quantity;
+        if (low_stock_threshold !== undefined) updates.low_stock_threshold = low_stock_threshold;
 
         await material.update(updates);
 

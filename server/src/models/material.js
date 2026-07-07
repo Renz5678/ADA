@@ -47,6 +47,11 @@ export default (sequelize, DataTypes) => {
             validate: {
                 notNull: { msg: 'Quantity must not be null' }
             }
+        },
+        low_stock_threshold: {
+            type: DataTypes.DECIMAL(10, 2),
+            allowNull: true,
+            defaultValue: null
         }
     },
         {

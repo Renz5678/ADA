@@ -1,13 +1,13 @@
 import Navitem from "./Navitem"
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdMenu, MdClose, MdOutlineCalendarToday } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdMenu, MdClose, MdOutlineCalendarToday, MdLogout } from "react-icons/md";
 
 const navItems = {
     "Dashboard": { name: "Dashboard", icon: MdOutlineDashboard, path: "/dashboard" },
     "Orders": { name: "Orders", icon: MdOutlineReceiptLong, path: "/orders" },
     "Products": { name: "Products", icon: MdOutlineCases, path: "/products" },
-    "Expenses": { name: "Expenses", icon: MdOutlineShoppingCart, path: "/expenses" },
+    "Finances": { name: "Finances", icon: MdOutlineShoppingCart, path: "/expenses" },
     "Schedule": { name: "Schedule", icon: MdOutlineCalendarToday, path: "/schedule" },
 }
 
@@ -15,6 +15,11 @@ export default function Sidebar() {
     const navigate = useNavigate();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        navigate("/login");
+    };
 
     return (
         <>
@@ -60,7 +65,7 @@ export default function Sidebar() {
                         <Navitem
                             key={name}
                             navName={name}
-                            isActive={location.pathname === path}
+                            isActive={location.pathname.startsWith(path)}
                             onClick={() => {
                                 navigate(path);
                                 setIsOpen(false);
@@ -68,6 +73,16 @@ export default function Sidebar() {
                             icon={icon}
                         />
                     ))}
+                </div>
+
+                <div className="mt-auto mb-4">
+                    <button
+                        onClick={handleLogout}
+                        className="w-full h-14 transition duration-300 ease-in items-center p-4 cursor-pointer font-body flex gap-2 text-[#E8F2FF] hover:bg-[#FFB2B9] hover:text-[#71333C] hover:scale-95"
+                    >
+                        <MdLogout size={20} />
+                        Logout
+                    </button>
                 </div>
             </div>
         </>

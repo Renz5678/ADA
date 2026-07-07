@@ -7,6 +7,7 @@ import { deleteOrder, updateOrder } from '#api/orders.js';
 import OrdersTable from '#components/orders/OrdersTable.jsx';
 import Button from '#components/ui/Button.jsx';
 import Skeleton from '#components/ui/Skeleton.jsx';
+import ConfirmModal from '#components/ui/ConfirmModal.jsx';
 import { STATUS_STYLES } from '../../constants/orderStatus';
 
 const formatCurrency = (amount) =>
@@ -19,6 +20,10 @@ export default function OrdersPage() {
     const limit = 10;
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
+
+    const openConfirm = (title, message, onConfirm) => setConfirmState({ isOpen: true, title, message, onConfirm });
+    const closeConfirm = () => setConfirmState(s => ({ ...s, isOpen: false }));
 
     const { data: stats } = useOrderStats();
     const { data, isLoading, isError, error, isFetching } = useOrders(page, limit, statusFilter, searchQuery);
@@ -30,6 +35,7 @@ export default function OrdersPage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
             queryClient.invalidateQueries({ queryKey: ['materials'] });
+            closeConfirm();
             toast.success('Order deleted.');
         },
         onError: (err) => toast.error(err.response?.data?.message || 'Failed to delete order.')
@@ -45,10 +51,11 @@ export default function OrdersPage() {
     });
 
     const handleDelete = (order) => {
-        const confirmed = window.confirm(`Delete order #${order.order_id}? This can't be undone.`);
-        if (confirmed) {
-            deleteMutation.mutate(order.order_id);
-        }
+        openConfirm(
+            `Delete Order #${order.order_id}?`,
+            `This will permanently delete this order and refund all material stock. This can't be undone.`,
+            () => deleteMutation.mutate(order.order_id)
+        );
     };
 
     const handleMarkDone = (orderId) => {
@@ -159,6 +166,7 @@ export default function OrdersPage() {
                     </div>
                 )}
             </div>
+            <ConfirmModal isOpen={confirmState.isOpen} onClose={closeConfirm} onConfirm={confirmState.onConfirm} title={confirmState.title} message={confirmState.message} />
         </div>
     );
 }

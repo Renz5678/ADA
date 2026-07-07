@@ -8,12 +8,17 @@ import ProductModal from '#components/products/ProductModal.jsx';
 import ProductMaterialsModal from '#components/products/ProductMaterialsModal.jsx';
 import Button from '#components/ui/Button.jsx';
 import Skeleton from '#components/ui/Skeleton.jsx';
+import ConfirmModal from '#components/ui/ConfirmModal.jsx';
 
 export default function ProductsPage() {
     const queryClient = useQueryClient();
     const [page, setPage] = useState(1);
     const limit = 10;
     const [searchQuery, setSearchQuery] = useState('');
+    const [confirmState, setConfirmState] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
+
+    const openConfirm = (title, message, onConfirm) => setConfirmState({ isOpen: true, title, message, onConfirm });
+    const closeConfirm = () => setConfirmState(s => ({ ...s, isOpen: false }));
 
     const { data, isLoading, isError, error, isFetching } = useProducts(page, limit, searchQuery);
 
@@ -50,6 +55,7 @@ export default function ProductsPage() {
         mutationFn: deleteProduct,
         onSuccess: () => {
             invalidateProducts();
+            closeConfirm();
             toast.success('Product deleted.');
         },
         onError: (err) => toast.error(err.response?.data?.message || 'Failed to delete product.')
@@ -79,10 +85,11 @@ export default function ProductsPage() {
     };
 
     const handleDelete = (product) => {
-        const confirmed = window.confirm(`Delete "${product.product_name}" (${product.product_code})? This can't be undone.`);
-        if (confirmed) {
-            deleteMutation.mutate(product.product_id);
-        }
+        openConfirm(
+            `Delete "${product.product_name}"?`,
+            `This will permanently delete this product (${product.product_code}). This can't be undone.`,
+            () => deleteMutation.mutate(product.product_id)
+        );
     };
 
     if (isLoading) return (
@@ -164,6 +171,7 @@ export default function ProductsPage() {
                 }}
                 product={activeProductForMaterials}
             />
+            <ConfirmModal isOpen={confirmState.isOpen} onClose={closeConfirm} onConfirm={confirmState.onConfirm} title={confirmState.title} message={confirmState.message} />
         </div>
     );
 }

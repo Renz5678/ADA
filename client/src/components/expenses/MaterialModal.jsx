@@ -8,6 +8,7 @@ export default function MaterialModal({ isOpen, onClose, onSave, isSaving, initi
     const [materialName, setMaterialName] = useState('');
     const [unitCost, setUnitCost] = useState('');
     const [quantity, setQuantity] = useState('');
+    const [lowStockThreshold, setLowStockThreshold] = useState('');
 
     useEffect(() => {
         if (isOpen) {
@@ -15,6 +16,7 @@ export default function MaterialModal({ isOpen, onClose, onSave, isSaving, initi
             setMaterialName(initialMaterial?.material_name ?? '');
             setUnitCost(initialMaterial?.unit_cost ?? '');
             setQuantity(initialMaterial?.quantity ?? '');
+            setLowStockThreshold(initialMaterial?.low_stock_threshold ?? '');
         }
     }, [isOpen, initialMaterial]);
 
@@ -26,7 +28,8 @@ export default function MaterialModal({ isOpen, onClose, onSave, isSaving, initi
             material_code: materialCode,
             material_name: materialName,
             unit_cost: Number(unitCost),
-            quantity: Number(quantity)
+            quantity: Number(quantity),
+            low_stock_threshold: lowStockThreshold !== '' ? Number(lowStockThreshold) : undefined
         });
     };
 
@@ -79,15 +82,28 @@ export default function MaterialModal({ isOpen, onClose, onSave, isSaving, initi
                     <div>
                         <label className="block text-sm mb-1 font-label text-[#0F1D29]">Current Quantity</label>
                         <input
-                            type="number"
-                            min="0"
-                            step="0.01"
+                            type="number" min="0" step="0.01"
                             value={quantity}
-                            onChange={(e) => setQuantity(e.target.value)}
-                            placeholder="0"
-                            required
+                            onChange={(e) => !isEditing && setQuantity(e.target.value)}
+                            readOnly={isEditing}
+                            placeholder="0" required
+                            className={`border border-[#e8d5b5] rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm outline-none transition ${
+                                isEditing ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52]'
+                            }`}
+                        />
+                        {isEditing && <p className="text-xs text-gray-400 mt-1">Use &ldquo;Log Tx&rdquo; to adjust quantity and maintain transaction history.</p>}
+                    </div>
+
+                    <div>
+                        <label className="block text-sm mb-1 font-label text-[#0F1D29]">Low Stock Threshold</label>
+                        <input
+                            type="number" min="0" step="0.01"
+                            value={lowStockThreshold}
+                            onChange={(e) => setLowStockThreshold(e.target.value)}
+                            placeholder="e.g. 10 (defaults to 20% of initial qty)"
                             className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
                         />
+                        <p className="text-xs text-gray-400 mt-1">A notification fires when stock drops to or below this level.</p>
                     </div>
 
                     <div className="w-full h-px bg-[#e8d5b5] my-2" />

@@ -34,6 +34,7 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
         mutationFn: (data) => addProductMaterial(product.product_id, data),
         onSuccess: () => {
             invalidateProductMaterials();
+            queryClient.invalidateQueries({ queryKey: ['products'] });
             setSelectedMaterialId('');
             setQuantityRequired('');
             toast.success('Material added to product!');
@@ -45,6 +46,7 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
         mutationFn: (materialId) => removeProductMaterial(product.product_id, materialId),
         onSuccess: () => {
             invalidateProductMaterials();
+            queryClient.invalidateQueries({ queryKey: ['products'] });
             toast.success('Material removed from product!');
         },
         onError: (err) => toast.error(err.response?.data?.message || 'Failed to remove material.')

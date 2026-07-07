@@ -1,5 +1,5 @@
 import { FaGoogle, FaCheck, FaEye, FaEyeSlash } from "react-icons/fa";
-import { MdOutlineMailOutline, MdLockOutline } from "react-icons/md";
+import { MdOutlineMailOutline, MdLockOutline, MdClose } from "react-icons/md";
 import { IoMdPerson, IoMdBusiness } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -23,7 +23,7 @@ function PasswordRulesList({ password, visible }) {
                 const passed = test(password);
                 return (
                     <li key={label} className={`flex items-center gap-1.5 text-[11px] ${passed ? "text-green-500" : "text-red-400"}`}>
-                        <span>{passed ? "✓" : "✗"}</span>
+                        <span>{passed ? <FaCheck className="w-2 h-2" /> : <MdClose className="w-3 h-3" />}</span>
                         <span>{label}</span>
                     </li>
                 );
@@ -223,7 +223,7 @@ export default function SignupPage({ onStart, onStop }) {
                                 </div>
                                 <FieldError message={form.confirmPassword && !passwordsMatch ? "Passwords do not match" : null} />
                                 <FieldSuccess
-                                    message="Passwords match ✓"
+                                    message={<span className="flex items-center gap-1">Passwords match <FaCheck /></span>}
                                     visible={form.confirmPassword.length > 0 && passwordsMatch}
                                 />
                             </label>

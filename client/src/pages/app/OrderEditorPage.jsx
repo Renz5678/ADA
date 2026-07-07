@@ -9,6 +9,7 @@ import Badge from '#components/ui/Badge.jsx';
 import Skeleton from '#components/ui/Skeleton.jsx';
 import ProductSearchInput from '#components/orders/ProductSearchInput.jsx';
 import { STATUS_STYLES } from '#constants/orderStatus.js';
+import { MdClose, MdWarning } from 'react-icons/md';
 
 const todayISO = () => new Date().toISOString().split('T')[0];
 
@@ -36,9 +37,9 @@ const OrderItemRow = ({ item, onUpdate, onDelete }) => {
             <td className="py-2 text-right">
                 <button
                     onClick={() => onDelete(item)}
-                    className="text-[#AB626A] hover:underline"
+                    className="text-[#AB626A] hover:text-[#7a3e46]"
                 >
-                    ✕
+                    <MdClose />
                 </button>
             </td>
         </tr>
@@ -57,6 +58,7 @@ export default function OrderEditorPage() {
     const [localDate, setLocalDate] = useState(todayISO());
     const [localDeadline, setLocalDeadline] = useState('');
     const [localStatus, setLocalStatus] = useState('Pending');
+    const [localCustomerName, setLocalCustomerName] = useState('');
 
     // Add-item mini-form state
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -152,7 +154,7 @@ export default function OrderEditorPage() {
 
     const createOrderOnlyMutation = useMutation({
         mutationFn: async () => {
-            const newOrder = await createOrder({ order_date: localDate, deadline: localDeadline || null, status: localStatus });
+            const newOrder = await createOrder({ order_date: localDate, deadline: localDeadline || null, status: localStatus, customer_name: localCustomerName || null });
             for (const item of localItems) {
                 await createOrderItem({
                     order_id: newOrder.order_id,
@@ -166,7 +168,7 @@ export default function OrderEditorPage() {
             queryClient.invalidateQueries({ queryKey: ['orders'] });
             queryClient.invalidateQueries({ queryKey: ['materials'] });
             toast.success(`Order #${newOrderId} created successfully!`);
-            navigate(`/orders`);
+            navigate('/orders/' + newOrderId);
         },
         onError: (err) => toast.error(err.response?.data?.message || 'Failed to create order.')
     });
@@ -208,6 +210,19 @@ export default function OrderEditorPage() {
 
             {/* Order details */}
             <div className="bg-white rounded-2xl p-4 sm:p-6 mb-4 flex flex-col sm:flex-row gap-4 sm:gap-6">
+                <div className="flex-1">
+                    <label className="block text-sm mb-1">Customer Name <span className="text-gray-400 text-xs">(optional)</span></label>
+                    <input
+                        type="text"
+                        value={isNew ? localCustomerName : (order?.customer_name ?? '')}
+                        onChange={(e) => {
+                            if (isNew) setLocalCustomerName(e.target.value);
+                            else updateDetailsMutation.mutate({ customer_name: e.target.value || null });
+                        }}
+                        placeholder="e.g. Maria Santos"
+                        className="border rounded-lg px-3 py-2 w-full"
+                    />
+                </div>
                 <div className="flex-1">
                     <label className="block text-sm mb-1">Order Date</label>
                     <input
@@ -340,6 +355,12 @@ export default function OrderEditorPage() {
                         No items added yet — search a product code above to get started
                     </p>
                 ) : (
+                    <>
+                    {isNew && (
+                        <div className="mb-3 px-3 py-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs rounded-lg flex items-center gap-1">
+                            <MdWarning /> Stock will be checked when you click &ldquo;Add Order&rdquo;. Ensure materials are stocked.
+                        </div>
+                    )}
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="text-left text-xs text-gray-500 uppercase">
@@ -360,6 +381,7 @@ export default function OrderEditorPage() {
                             ))}
                         </tbody>
                     </table>
+                    </>
                 )}
 
                 <div className="flex justify-end mt-4 pt-4 border-t">

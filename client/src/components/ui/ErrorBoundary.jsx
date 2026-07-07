@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdWarning } from 'react-icons/md';
 
 export default class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -19,7 +20,7 @@ export default class ErrorBoundary extends React.Component {
             return (
                 <div className="flex flex-col items-center justify-center h-full w-full p-8 gap-6 text-center bg-[#FFF7E6]">
                     <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-3xl">
-                        ⚠️
+                        <MdWarning className="text-red-500" />
                     </div>
                     <div className="flex flex-col gap-2">
                         <h2 className="text-xl font-headline font-semibold text-[#0F1D29]">Something went wrong</h2>

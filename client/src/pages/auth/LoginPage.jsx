@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
-import { MdOutlineMailOutline, MdLockOutline } from "react-icons/md";
+import { MdOutlineMailOutline, MdLockOutline, MdCheck } from "react-icons/md";
 
 import Icon from "#components/ui/Icon.jsx";
 import { login, forgotPassword } from "#api/auth.js";
@@ -105,8 +105,8 @@ export default function LoginPage({ onStart, onStop }) {
                                 className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA]"
                             />
                             {form.email && (
-                                <p className={`text-xs mt-1 ${isValidEmail ? "text-green-500" : "text-red-500"}`}>
-                                    {isValidEmail ? "Valid email ✓" : "Please enter a valid email address"}
+                                <p className={`text-xs mt-1 ${isValidEmail ? "text-green-500 flex items-center gap-1" : "text-red-500"}`}>
+                                    {isValidEmail ? <><MdCheck /> Valid email</> : "Please enter a valid email address"}
                                 </p>
                             )}
                         </label>

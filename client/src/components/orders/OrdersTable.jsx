@@ -1,5 +1,6 @@
 // src/components/orders/OrdersTable.jsx
 import Badge from '../ui/Badge.jsx';
+import { MdAssignment } from 'react-icons/md';
 import Button from '../ui/Button.jsx';
 import { STATUS_STYLES } from '../../constants/orderStatus';
 
@@ -11,7 +12,13 @@ const formatDate = (dateStr) =>
 
 const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
   if (orders.length === 0) {
-    return <div className="text-center py-10 text-gray-500">No orders found.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-3">
+        <div className="text-5xl text-gray-400"><MdAssignment /></div>
+        <p className="text-gray-500 font-body text-sm">No orders yet.</p>
+        <p className="text-gray-400 text-xs">Create your first order using the button above.</p>
+      </div>
+    );
   }
 
   return (
@@ -24,7 +31,10 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
           return (
             <div key={order.order_id} className="bg-white rounded-xl border border-[#e8d5b5] p-4 flex flex-col gap-3 shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="font-headline font-semibold text-[#0F1D29]">Order #{order.order_id}</span>
+                <div className="flex flex-col">
+                  <span className="font-headline font-semibold text-[#0F1D29]">Order #{order.order_id}</span>
+                  {order.customer_name && <span className="text-xs text-gray-500 font-body">{order.customer_name}</span>}
+                </div>
                 <Badge label={order.status} bgColor={statusStyle.bgColor} textColor={statusStyle.textColor} />
               </div>
               <div className="grid grid-cols-2 gap-1 text-sm">
@@ -37,7 +47,7 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
                 {order.status !== 'Done' && order.status !== 'Delivered' && order.status !== 'Cancelled' && (
                   <Button variant="primary" onClick={() => onMarkDone(order.order_id)} className="flex-1">Mark Done</Button>
                 )}
-                <Button variant="secondary" onClick={() => onOpen(order.order_id)} className="flex-1">Edit</Button>
+                <Button variant="secondary" onClick={() => onOpen(order.order_id)} className="flex-1">Open</Button>
                 <Button variant="danger" onClick={() => onDelete(order)} className="flex-1">Delete</Button>
               </div>
             </div>
@@ -62,7 +72,12 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
               const statusStyle = STATUS_STYLES[order.status] ?? STATUS_STYLES.Pending;
               return (
                 <tr key={order.order_id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm text-gray-900">#{order.order_id}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span className="text-sm text-gray-900">#{order.order_id}</span>
+                      {order.customer_name && <span className="text-xs text-gray-400">{order.customer_name}</span>}
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-sm text-gray-600">{formatDate(order.order_date)}</td>
                   <td className="px-4 py-3 text-sm text-gray-900">{formatCurrency(order.total_amount)}</td>
                   <td className="px-4 py-3">
@@ -73,7 +88,7 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
                       {order.status !== 'Done' && order.status !== 'Delivered' && order.status !== 'Cancelled' && (
                         <Button variant="primary" onClick={() => onMarkDone(order.order_id)}>Mark Done</Button>
                       )}
-                      <Button variant="secondary" onClick={() => onOpen(order.order_id)}>Edit</Button>
+                      <Button variant="secondary" onClick={() => onOpen(order.order_id)}>Open</Button>
                       <Button variant="danger" onClick={() => onDelete(order)}>Delete</Button>
                     </div>
                   </td>

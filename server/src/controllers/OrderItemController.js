@@ -1,7 +1,7 @@
 import { models, sequelize } from '../models/index.js';
 import { validationResult } from 'express-validator';
 
-const { OrderItem, Orders, Product, ProductMaterial, Material, MaterialTransaction } = models;
+const { OrderItem, Orders, Product, ProductMaterial, Material, MaterialTransaction, Notifications } = models;
 
 const getOrderItems = async (req, res) => {
     try {
@@ -158,6 +158,21 @@ const createOrderItem = async (req, res) => {
                     unit_cost: material.unit_cost,
                     date_bought: new Date().toISOString().split('T')[0]
                 }, { transaction: t });
+
+                // Low-stock notification check
+                const updatedQty = Number(material.quantity) - requiredAmount;
+                const threshold = Number(material.low_stock_threshold);
+                if (threshold > 0 && updatedQty <= threshold) {
+                    await Notifications.create({
+                        user_id: userId,
+                        title: 'Low Stock Alert',
+                        message: `"${material.material_name}" is running low — only ${updatedQty.toFixed(2)} units remaining (threshold: ${threshold}).`,
+                        type: 'STOCK',
+                        reference_id: material.material_id,
+                        reference_type: 'MATERIAL',
+                        is_read: false
+                    }, { transaction: t });
+                }
             }
 
             const newOrderitem = await OrderItem.create({
@@ -242,6 +257,21 @@ const updateOrderItem = async (req, res) => {
                         unit_cost: material.unit_cost,
                         date_bought: new Date().toISOString().split('T')[0]
                     }, { transaction: t });
+
+                    // Low-stock notification check
+                    const updatedQty = Number(material.quantity) - requiredAmount;
+                    const threshold = Number(material.low_stock_threshold);
+                    if (threshold > 0 && updatedQty <= threshold) {
+                        await Notifications.create({
+                            user_id: userId,
+                            title: 'Low Stock Alert',
+                            message: `"${material.material_name}" is running low — only ${updatedQty.toFixed(2)} units remaining (threshold: ${threshold}).`,
+                            type: 'STOCK',
+                            reference_id: material.material_id,
+                            reference_type: 'MATERIAL',
+                            is_read: false
+                        }, { transaction: t });
+                    }
                 }
             } else if (quantityDelta < 0) {
                 // Refund materials

@@ -1,11 +1,18 @@
 import Button from '../ui/Button.jsx';
+import { MdScience } from 'react-icons/md';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
 
 const MaterialsTable = ({ materials, isFetching, onEdit, onDelete, onTransaction }) => {
   if (!materials || materials.length === 0) {
-    return <div className="text-center py-10 text-gray-500 font-body">No materials found.</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-3">
+        <div className="text-5xl text-gray-400"><MdScience /></div>
+        <p className="text-gray-500 font-body text-sm">No materials yet.</p>
+        <p className="text-gray-400 text-xs">Add your first material using the button above.</p>
+      </div>
+    );
   }
 
   return (

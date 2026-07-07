@@ -86,6 +86,7 @@ export default function ExpenseModal({ isOpen, onClose, onSave, isSaving, initia
                             type="date"
                             value={expenseDate}
                             onChange={(e) => setExpenseDate(e.target.value)}
+                            max={new Date().toISOString().split('T')[0]}
                             required
                             className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
                         />

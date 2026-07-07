@@ -3,6 +3,7 @@ import { useAnalyticsSummary, useTopProducts, useWeakProducts, useSalesByMonth, 
 import { useScheduledOrders } from '#hooks/useOrders.js';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import { MdLocalFireDepartment, MdFlashOn, MdPushPin, MdLightbulb } from 'react-icons/md';
 import Skeleton from '#components/ui/Skeleton.jsx';
 
 const formatCurrency = (amount) =>
@@ -131,23 +132,29 @@ export default function DashboardPage() {
                         </div>
                         {suggestedTasks && suggestedTasks.length > 0 ? (
                             <div className="flex flex-col gap-2">
-                                <div 
-                                    onClick={() => navigate(`/orders/${suggestedTasks[0].order_id}`)}
-                                    className="bg-white p-3 rounded-xl shadow-sm border border-[#f0f0f0] cursor-pointer hover:border-[#8D4A52] transition"
-                                >
-                                    <div className="flex justify-between items-center mb-1">
-                                        <span className="font-semibold text-[#0F1D29]">Order #{suggestedTasks[0].order_id}</span>
-                                        <span className="text-xs font-bold text-[#8D4A52]">{formatCurrency(suggestedTasks[0].total_amount)}</span>
-                                    </div>
-                                    <div className="text-xs text-gray-500 mb-2">
-                                        Due: {formatDate(suggestedTasks[0].deadline)}
-                                    </div>
-                                    {suggestedTasks[0].scheduleSuggestion && (
-                                        <div className="text-xs font-medium text-blue-700 bg-blue-50 p-2 rounded-lg">
-                                            💡 {suggestedTasks[0].scheduleSuggestion}
+                                {suggestedTasks.map((task, index) => (
+                                    <div
+                                        key={task.order_id}
+                                        onClick={() => navigate(`/orders/${task.order_id}`)}
+                                        className="bg-white p-3 rounded-xl shadow-sm border border-[#f0f0f0] cursor-pointer hover:border-[#8D4A52] transition"
+                                    >
+                                        <div className="flex justify-between items-center mb-1">
+                                            <div className="flex items-center gap-1.5">
+                                                <span className="text-sm flex items-center justify-center">
+                                                    {index === 0 ? <MdLocalFireDepartment className="text-orange-500" /> : index === 1 ? <MdFlashOn className="text-yellow-500" /> : <MdPushPin className="text-blue-500" />}
+                                                </span>
+                                                <span className="font-semibold text-[#0F1D29] text-sm">Order #{task.order_id}</span>
+                                            </div>
+                                            <span className="text-xs font-bold text-[#8D4A52]">{formatCurrency(task.total_amount)}</span>
                                         </div>
-                                    )}
-                                </div>
+                                        <div className="text-xs text-gray-500 mb-1">Due: {formatDate(task.deadline)}</div>
+                                        {task.scheduleSuggestion && (
+                                            <div className="text-xs font-medium text-blue-700 bg-blue-50 p-2 rounded-lg flex items-center gap-1">
+                                                <MdLightbulb /> {task.scheduleSuggestion}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         ) : (
                             <div className="text-sm text-gray-500">You're all caught up!</div>

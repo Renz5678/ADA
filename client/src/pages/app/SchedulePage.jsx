@@ -1,4 +1,5 @@
 import { useState, Fragment } from 'react';
+import toast from 'react-hot-toast';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useAvailabilities } from '#hooks/useSchedule.js';
 import { createAvailability, deleteAvailability } from '#api/schedule.js';
@@ -40,6 +41,22 @@ export default function SchedulePage() {
 
     const handleAdd = (e) => {
         e.preventDefault();
+        if (startTime >= endTime) {
+            toast.error('End time must be after start time.');
+            return;
+        }
+        if (availabilities) {
+            const hasOverlap = availabilities.some(b => {
+                if (b.day_of_week !== dayOfWeek) return false;
+                const bStart = b.start_time.slice(0, 5);
+                const bEnd = b.end_time.slice(0, 5);
+                return startTime < bEnd && endTime > bStart;
+            });
+            if (hasOverlap) {
+                toast.error('This block overlaps with an existing block on that day.');
+                return;
+            }
+        }
         addMutation.mutate({ day_of_week: dayOfWeek, start_time: startTime, end_time: endTime, block_type: blockType });
     };
 

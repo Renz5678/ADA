@@ -83,11 +83,12 @@ const createOrder = async (req, res) => {
 
         const userId = req.user.id;
 
-        const { order_date, status, deadline } = req.body;
+        const { order_date, status, deadline, customer_name } = req.body;
         const newOrder = await Orders.create({
             user_id: userId,
             order_date,
             deadline: deadline || null,
+            customer_name: customer_name || null,
             total_amount: 0,
             status
         });
@@ -107,7 +108,7 @@ const updateOrder = async (req, res) => {
 
         const userId = req.user.id;
         const orderId = req.params.id;
-        const { order_date, status, deadline } = req.body;
+        const { order_date, status, deadline, customer_name } = req.body;
 
         const order = await Orders.findOne({
             where: {
@@ -122,6 +123,7 @@ const updateOrder = async (req, res) => {
         if (order_date !== undefined) updates.order_date = order_date;
         if (status !== undefined) updates.status = status;
         if (deadline !== undefined) updates.deadline = deadline;
+        if (customer_name !== undefined) updates.customer_name = customer_name;
 
         await order.update(updates);
 

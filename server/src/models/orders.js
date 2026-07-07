@@ -18,6 +18,10 @@ export default (sequelize, DataTypes) => {
                 key: 'user_id'
             }
         },
+        customer_name: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         order_date: {
             type: DataTypes.DATEONLY,
             allowNull: false,
