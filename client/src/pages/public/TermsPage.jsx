@@ -8,9 +8,9 @@ export default function TermsPage() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="min-h-screen bg-[#FFF7E6] flex justify-center py-12 px-4 sm:px-6 lg:px-8"
+            className="h-screen w-screen overflow-y-auto bg-[#FFF7E6] flex justify-center py-12 px-4 sm:px-6 lg:px-8"
         >
-            <div className="w-full max-w-3xl bg-white rounded-2xl p-8 sm:p-12 shadow-sm font-body text-[#0F1D29]">
+            <div className="w-full max-w-3xl bg-white rounded-2xl p-8 sm:p-12 shadow-sm font-body text-[#0F1D29] my-auto h-fit">
                 <div className="flex items-center gap-4 mb-8 pb-8 border-b border-[#e5e7eb]">
                     <Icon height={2.5} width={2.5} />
                     <h1 className="font-headline text-3xl font-semibold text-[#0F1D29]">
