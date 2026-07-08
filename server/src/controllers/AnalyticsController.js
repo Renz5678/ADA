@@ -156,7 +156,7 @@ const getSuggestedFocus = async (req, res) => {
 
         // Append schedule suggestion to the very top task
         if (topTasks.length > 0 && availabilities.length > 0) {
-            const freeBlock = availabilities.find(a => a.block_type === 'Free Time') || availabilities[0];
+            const freeBlock = availabilities.find(a => a.block_type === 'Free') || availabilities[0];
             topTasks[0].dataValues.scheduleSuggestion = `Suggested time to work on this: ${freeBlock.start_time} - ${freeBlock.end_time}`;
         }
 

@@ -29,7 +29,7 @@ const getOrders = async (req, res) => {
             whereClause[Op.and].push(
                 sequelize.where(
                     sequelize.cast(sequelize.col('order_id'), 'varchar'),
-                    { [Op.iLike]: `%${req.query.search}%` }
+                    { [Op.like]: `%${req.query.search}%` }
                 )
             );
         }

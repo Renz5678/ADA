@@ -112,6 +112,7 @@ export const getDeadlineReminderHtml = (username, orders) => {
             border-radius: 16px;
             padding: 40px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
         }
         .logo {
             font-family: 'Manrope', Arial, sans-serif;
@@ -119,29 +120,29 @@ export const getDeadlineReminderHtml = (username, orders) => {
             font-weight: bold;
             color: #0F1D29;
             margin-bottom: 8px;
-            text-align: center;
         }
         .subtitle {
             color: #551E26;
             font-size: 14px;
             margin-bottom: 32px;
-            text-align: center;
         }
         .content {
             font-size: 16px;
             line-height: 1.6;
             color: #333333;
+            text-align: left;
         }
         .order-card {
             background-color: #FFF7E6;
-            border-left: 4px solid #8D4A52;
-            border-radius: 8px;
-            padding: 16px;
+            border: 2px dashed #CBA0AA;
+            border-radius: 12px;
+            padding: 24px;
             margin: 16px 0;
+            text-align: left;
         }
         .order-header {
             font-weight: bold;
-            color: #0F1D29;
+            color: #8D4A52;
             font-size: 18px;
             margin-bottom: 8px;
         }
@@ -183,7 +184,115 @@ export const getDeadlineReminderHtml = (username, orders) => {
             ${ordersHtml}
             
             <div class="btn-container">
-                <a href="http://localhost:5173/dashboard" class="btn">View Dashboard</a>
+                <a href="https://ada-pied-iota.vercel.app/dashboard" class="btn">View Dashboard</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} ADA. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+};
+
+export const getScheduleReminderHtml = (username, taskName, startTime) => {
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Work Sans', Arial, sans-serif;
+            background-color: #FFF7E6;
+            margin: 0;
+            padding: 0;
+            color: #0F1D29;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .logo {
+            font-family: 'Manrope', Arial, sans-serif;
+            font-size: 32px;
+            font-weight: bold;
+            color: #0F1D29;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #551E26;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        .content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333333;
+            text-align: left;
+        }
+        .task-card {
+            background-color: #FFF7E6;
+            border: 2px dashed #CBA0AA;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+            text-align: center;
+        }
+        .task-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #8D4A52;
+            margin-bottom: 8px;
+        }
+        .task-time {
+            color: #551E26;
+            font-size: 16px;
+        }
+        .btn-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+        .btn {
+            background-color: #8D4A52;
+            color: #ffffff !important;
+            padding: 12px 24px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #888888;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">ADA</div>
+        <div class="subtitle">Create. Sell. Track</div>
+        
+        <div class="content">
+            <p>Hi <strong>${username}</strong>,</p>
+            <p>Your scheduled work block is starting in <strong>5 minutes</strong> (${startTime}).</p>
+            <p>Based on your current priorities and deadlines, we suggest you focus on the following task:</p>
+            
+            <div class="task-card">
+                <div class="task-title">${taskName}</div>
+                <div class="task-time">Starts at ${startTime}</div>
+            </div>
+            
+            <div class="btn-container">
+                <a href="https://ada-pied-iota.vercel.app/tasks" class="btn">View My Tasks</a>
             </div>
         </div>
         
