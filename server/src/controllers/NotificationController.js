@@ -6,7 +6,7 @@ const NotificationController = {
     // Get all notifications for the current user
     async getNotifications(req, res) {
         try {
-            const { user_id } = req.user;
+            const user_id = req.user.id;
             const notifications = await Notifications.findAll({
                 where: { user_id },
                 order: [['createdAt', 'DESC']],
@@ -22,7 +22,7 @@ const NotificationController = {
     // Get unread notification count
     async getUnreadCount(req, res) {
         try {
-            const { user_id } = req.user;
+            const user_id = req.user.id;
             const count = await Notifications.count({
                 where: { user_id, is_read: false }
             });
@@ -37,7 +37,7 @@ const NotificationController = {
     async markAsRead(req, res) {
         try {
             const { id } = req.params;
-            const { user_id } = req.user;
+            const user_id = req.user.id;
             
             const notification = await Notifications.findOne({
                 where: { notification_id: id, user_id }
@@ -60,7 +60,7 @@ const NotificationController = {
     // Mark all notifications as read for the user
     async markAllAsRead(req, res) {
         try {
-            const { user_id } = req.user;
+            const user_id = req.user.id;
             await Notifications.update(
                 { is_read: true },
                 { where: { user_id, is_read: false } }
