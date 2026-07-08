@@ -19,6 +19,14 @@ import ProductsPage from "#pages/app/ProductsPage.jsx";
 import OrderEditorPage from "#pages/app/OrderEditorPage.jsx";
 import SchedulePage from "#pages/app/SchedulePage.jsx";
 
+// Client imports
+import ClientLoginPage from "#pages/client/auth/ClientLoginPage.jsx";
+import ClientRegisterPage from "#pages/client/auth/ClientRegisterPage.jsx";
+import ClientLayout from "#components/layout/ClientLayout.jsx";
+import ClientProtectedRoute from "#components/ClientProtectedRoute.jsx";
+import ClientDashboardPage from "#pages/client/DashboardPage.jsx";
+import ClientOrdersPage from "#pages/client/OrdersPage.jsx";
+
 export default function AppRouter({ onStart, onStop }) {
     return (
         <Routes>
@@ -41,6 +49,17 @@ export default function AppRouter({ onStart, onStop }) {
                     <Route path="/orders/:orderId" element={<OrderEditorPage />} />
                     <Route path="/products" element={<ProductsPage />} />
                     <Route path="/schedule" element={<SchedulePage />} />
+                </Route>
+            </Route>
+
+            {/* Client Routes */}
+            <Route path="/client/login" element={<ClientLoginPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/client/register" element={<ClientRegisterPage onStart={onStart} onStop={onStop} />} />
+            
+            <Route element={<ClientProtectedRoute />}>
+                <Route element={<ClientLayout />}>
+                    <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+                    <Route path="/client/orders" element={<ClientOrdersPage />} />
                 </Route>
             </Route>
         </Routes>

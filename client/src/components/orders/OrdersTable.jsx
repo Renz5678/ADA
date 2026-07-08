@@ -10,7 +10,7 @@ const formatCurrency = (amount) =>
 const formatDate = (dateStr) =>
   new Date(dateStr).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' });
 
-const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
+const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone, onUpdateStatus }) => {
   if (orders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3">
@@ -44,7 +44,13 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
                 <span className="text-right font-semibold text-[#8D4A52]">{formatCurrency(order.total_amount)}</span>
               </div>
               <div className="flex gap-2 pt-1 border-t border-[#f0f0f0]">
-                {order.status !== 'Done' && order.status !== 'Delivered' && order.status !== 'Cancelled' && (
+                {order.status === 'Awaiting Freelancer Confirmation' && (
+                  <>
+                    <Button variant="primary" onClick={() => onUpdateStatus(order.order_id, 'Pending')} className="flex-1">Confirm</Button>
+                    <Button variant="danger" onClick={() => onUpdateStatus(order.order_id, 'Cancelled')} className="flex-1">Decline</Button>
+                  </>
+                )}
+                {order.status !== 'Done' && order.status !== 'Delivered' && order.status !== 'Cancelled' && order.status !== 'Awaiting Freelancer Confirmation' && (
                   <Button variant="primary" onClick={() => onMarkDone(order.order_id)} className="flex-1">Mark Done</Button>
                 )}
                 <Button variant="secondary" onClick={() => onOpen(order.order_id)} className="flex-1">Open</Button>
@@ -85,7 +91,13 @@ const OrdersTable = ({ orders, isFetching, onOpen, onDelete, onMarkDone }) => {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex flex-row gap-2 justify-end">
-                      {order.status !== 'Done' && order.status !== 'Delivered' && order.status !== 'Cancelled' && (
+                      {order.status === 'Awaiting Freelancer Confirmation' && (
+                        <>
+                          <Button variant="primary" onClick={() => onUpdateStatus(order.order_id, 'Pending')}>Confirm</Button>
+                          <Button variant="danger" onClick={() => onUpdateStatus(order.order_id, 'Cancelled')}>Decline</Button>
+                        </>
+                      )}
+                      {order.status !== 'Done' && order.status !== 'Delivered' && order.status !== 'Cancelled' && order.status !== 'Awaiting Freelancer Confirmation' && (
                         <Button variant="primary" onClick={() => onMarkDone(order.order_id)}>Mark Done</Button>
                       )}
                       <Button variant="secondary" onClick={() => onOpen(order.order_id)}>Open</Button>

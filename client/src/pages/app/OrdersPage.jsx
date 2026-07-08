@@ -142,6 +142,7 @@ export default function OrdersPage() {
                     onOpen={handleOpenOrder}
                     onDelete={handleDelete}
                     onMarkDone={handleMarkDone}
+                    onUpdateStatus={(id, status) => updateMutation.mutate({ id, updates: { status } })}
                 />
 
                 {data.totalPages > 1 && (
