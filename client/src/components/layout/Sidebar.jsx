@@ -27,9 +27,9 @@ export default function Sidebar() {
             {/* Hamburger — only below lg */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="lg:hidden fixed top-4 left-4 z-50 text-white bg-[#0F1D29] p-1.5 rounded-lg shadow-md"
+                className="lg:hidden fixed top-0 left-4 h-14 sm:h-16 z-50 flex items-center text-[#0F1D29]"
             >
-                <MdMenu size={22} />
+                <MdMenu size={26} />
             </button>
 
             {/* Backdrop */}

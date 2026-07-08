@@ -53,7 +53,7 @@ export default function GlobalSearch() {
                 onFocus={() => {
                     if (query.length > 0) setIsOpen(true);
                 }}
-                className="w-full h-full bg-[#F5F3F3] rounded-4xl p-4 pl-11 focus:outline-[#FFECED] font-body font-medium"
+                className="w-full h-full bg-[#F5F3F3] rounded-4xl p-4 pl-11 focus:outline-[#FFECED] font-body font-medium placeholder-transparent sm:placeholder-gray-400"
                 placeholder="Search orders, products, expenses..."
             />
 
