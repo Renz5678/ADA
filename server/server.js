@@ -3,7 +3,7 @@ import { sequelize } from "./src/models/index.js";
 import startCleanUpJob from './src/utils/cleanUpJob.js';
 import startDeadlineReminderJob from './src/utils/deadlineReminderJob.js';
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const start = async () => {
     await sequelize.authenticate();

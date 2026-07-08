@@ -1,11 +1,17 @@
-export default function Icon({ height, width }) {
+import iconPng from "../../assets/icon.png";
+import iconLightPng from "../../assets/iconLight.png";
+
+export default function Icon({ height, width, className = "", variant = "light" }) {
+    const src = variant === "light" ? iconLightPng : iconPng;
     return (
-        <div
-            className="bg-[#8D4A52] rounded-lg"
+        <img
+            src={src}
+            alt="ADA Icon"
+            className={`object-contain ${className}`}
             style={{
-                height: `${height}rem`,
-                width: `${width}rem`,
+                height: height ? `${height}rem` : "auto",
+                width: width ? `${width}rem` : "auto",
             }}
-        ></div>
+        />
     );
 }

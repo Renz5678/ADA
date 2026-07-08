@@ -2,6 +2,7 @@ import Navitem from "./Navitem"
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdMenu, MdClose, MdOutlineCalendarToday, MdLogout } from "react-icons/md";
+import Icon from "#components/ui/Icon.jsx";
 
 const navItems = {
     "Dashboard": { name: "Dashboard", icon: MdOutlineDashboard, path: "/dashboard" },
@@ -53,7 +54,8 @@ export default function Sidebar() {
                     <MdClose size={24} />
                 </button>
 
-                <div className="font-headline text-white font-semibold text-3xl lg:text-4xl text-left p-2">
+                <div className="font-headline text-white font-semibold text-3xl lg:text-4xl text-left p-2 flex items-center gap-3">
+                    <Icon height={2.5} width={2.5} variant="dark" />
                     ADA
                 </div>
                 <div className="font-body text-[#BAC8D8] font-medium px-2 text-xs lg:text-sm">
