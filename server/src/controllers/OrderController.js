@@ -36,6 +36,10 @@ const getOrders = async (req, res) => {
 
         const { count, rows } = await Orders.findAndCountAll({
             where: whereClause,
+            include: [{
+                model: models.Clients,
+                attributes: ['name', 'email']
+            }],
             order: [['order_date', 'DESC']],
             limit,
             offset
@@ -63,7 +67,11 @@ const getOrderById = async (req, res) => {
             where: {
                 user_id: userId,
                 order_id: orderId
-            }
+            },
+            include: [{
+                model: models.Clients,
+                attributes: ['name', 'email']
+            }]
         });
 
         if (!order) return res.status(404).json({ message: 'Order not found!' });

@@ -13,6 +13,7 @@ import WeeklyAvailabilityFactory from '../models/weeklyAvailability.js';
 import ProductMaterialFactory from '../models/productMaterial.js';
 import NotificationFactory from '../models/notifications.js';
 import TaskFactory from '../models/tasks.js';
+import ClientFactory from '../models/clients.js';
 
 let sequelize;
 
@@ -47,7 +48,8 @@ const models = {
     WeeklyAvailability: WeeklyAvailabilityFactory(sequelize, DataTypes),
     ProductMaterial: ProductMaterialFactory(sequelize, DataTypes),
     Notifications: NotificationFactory(sequelize, DataTypes),
-    Tasks: TaskFactory(sequelize, DataTypes)
+    Tasks: TaskFactory(sequelize, DataTypes),
+    Clients: ClientFactory(sequelize, DataTypes)
 };
 
 Object.values(models).forEach(model => {

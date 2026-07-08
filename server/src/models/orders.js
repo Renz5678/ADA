@@ -22,6 +22,14 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        client_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'Clients',
+                key: 'client_id'
+            }
+        },
         order_date: {
             type: DataTypes.DATEONLY,
             allowNull: false,
@@ -41,12 +49,13 @@ export default (sequelize, DataTypes) => {
             allowNull: true
         },
         status: {
-            type: DataTypes.ENUM('Pending', 'Done', 'Delivered', 'Cancelled'),
+            type: DataTypes.ENUM('Awaiting Freelancer Confirmation', 'Pending', 'Done', 'Delivered', 'Cancelled'),
             allowNull: false,
+            defaultValue: 'Pending',
             validate: {
                 notNull: { msg: 'Status must not be null' },
                 isIn: {
-                    args: [['Pending', 'Done', 'Delivered', 'Cancelled']],
+                    args: [['Awaiting Freelancer Confirmation', 'Pending', 'Done', 'Delivered', 'Cancelled']],
                     msg: 'Invalid status'
                 }
             }
@@ -59,6 +68,7 @@ export default (sequelize, DataTypes) => {
     Orders.associate = (models) => {
         if (models.OrderItem) Orders.hasMany(models.OrderItem, { foreignKey: 'order_id', onDelete: 'CASCADE' });
         if (models.Users) Orders.belongsTo(models.Users, { foreignKey: 'user_id' });
+        if (models.Clients) Orders.belongsTo(models.Clients, { foreignKey: 'client_id' });
     };
 
     return Orders;

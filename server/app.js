@@ -3,6 +3,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 
 import authRouter from './src/routes/auth.js';
+import clientAuthRouter from './src/routes/clientAuth.js';
+import clientBusinessesRouter from './src/routes/clientBusinesses.js';
+import clientOrdersRouter from './src/routes/clientOrders.js';
 import productRouter from './src/routes/product.js';
 import orderRouter from './src/routes/order.js';
 import materialRouter from './src/routes/material.js';
@@ -45,7 +48,10 @@ app.get('/', (req, res) => {
     })
 });
 
-app.use('/auth', authLimiter, authRouter)
+app.use('/auth', authLimiter, authRouter);
+app.use('/client-auth', authLimiter, clientAuthRouter);
+app.use('/client-businesses', clientBusinessesRouter);
+app.use('/client-orders', clientOrdersRouter);
 app.use(generalLimiter);
 app.use('/products', productRouter);
 app.use('/products/:productId/materials', productMaterialRouter);
