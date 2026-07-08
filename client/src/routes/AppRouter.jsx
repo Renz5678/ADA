@@ -6,6 +6,8 @@ import LoginPage from "#pages/auth/LoginPage.jsx";
 import VerifyOTPPage from "#pages/auth/VerifyOTPPage.jsx";
 import ProtectedRoute from "#components/ProtectedRoute.jsx";
 import ForgotPasswordPage from "#pages/auth/ForgotPasswordPage.jsx";
+import TermsPage from "#pages/public/TermsPage.jsx";
+import PrivacyPage from "#pages/public/PrivacyPage.jsx";
 
 
 import DashboardPage from "#pages/app/DashboardPage.jsx";
@@ -23,6 +25,8 @@ export default function AppRouter({ onStart, onStop }) {
             <Route path="/signup" element={<SignupPage onStart={onStart} onStop={onStop} />} />
             <Route path="/reset-password" element={<ForgotPasswordPage onStart={onStart} onStop={onStop} />} />
             <Route path="/verify-otp" element={<VerifyOTPPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
 
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
