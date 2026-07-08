@@ -88,7 +88,7 @@ export default function OrdersPage() {
     };
 
     return (
-        <div className="flex flex-col gap-6 animate-fadeIn w-full flex-1 min-h-0">
+        <div className="flex flex-col gap-6 animate-fadeIn w-full max-w-[1200px] mx-auto flex-1 min-h-0">
             <div className="w-full flex items-center justify-between">
                 <h1 className="text-xl sm:text-2xl font-semibold font-headline text-[#0F1D29]">Orders</h1>
                 <Button variant="primary" onClick={() => navigate('/orders/new')}>+ New Order</Button>

@@ -202,7 +202,7 @@ export default function OrderEditorPage() {
     );
 
     return (
-        <div className="w-full">
+        <div className="w-full max-w-[1200px] mx-auto pb-8">
             <div className="flex items-center justify-between mb-4">
                 <h1 className="text-lg sm:text-xl font-semibold">{isNew ? 'New Order' : `Order #${orderId}`}</h1>
                 <Badge label={displayStatus} bgColor={statusStyle.bgColor} textColor={statusStyle.textColor} />
