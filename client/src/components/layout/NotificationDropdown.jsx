@@ -58,7 +58,7 @@ export default function NotificationDropdown() {
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-lg border border-[#f0f0f0] overflow-hidden z-50">
+                <div className="absolute right-[-10px] sm:right-0 mt-3 w-[90vw] max-w-[340px] sm:max-w-none sm:w-96 bg-white rounded-xl shadow-lg border border-[#f0f0f0] overflow-hidden z-50">
                     <div className="flex justify-between items-center p-4 border-b border-[#f0f0f0] bg-gray-50">
                         <h3 className="font-headline font-semibold text-[#0F1D29]">Notifications</h3>
                         {unreadCount > 0 && (

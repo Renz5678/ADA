@@ -1,10 +1,11 @@
 import express from 'express';
 
-import { getUsernameAndBusinessName } from '../controllers/UserController.js';
+import { getUsernameAndBusinessName, updateBusinessName } from '../controllers/UserController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
 const userRouter = express.Router();
 
 userRouter.get('/', authMiddleware, getUsernameAndBusinessName);
+userRouter.patch('/business-name', authMiddleware, updateBusinessName);
 
 export default userRouter;
