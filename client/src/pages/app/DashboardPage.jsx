@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { MdLocalFireDepartment, MdFlashOn, MdPushPin, MdLightbulb, MdHelpOutline } from 'react-icons/md';
 import Skeleton from '#components/ui/Skeleton.jsx';
 import InfoTooltip from '#components/ui/Tooltip.jsx';
+import ErrorBoundary from '#components/ui/ErrorBoundary.jsx';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
@@ -113,6 +114,7 @@ export default function DashboardPage() {
                 {/* Left Column: Sales Trend and Products Performance */}
                 <div className="xl:w-2/3 w-full flex flex-col gap-4">
                     {/* Sales Trend */}
+                    <ErrorBoundary>
                     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[380px]">
                     <div className="flex items-center gap-1.5 shrink-0">
                         <h3 className="font-headline font-semibold text-base text-[#0F1D29]">Sales Trend</h3>
@@ -140,8 +142,10 @@ export default function DashboardPage() {
                         )}
                     </div>
                 </div>
+                </ErrorBoundary>
 
                 {/* Products Performance */}
+                <ErrorBoundary>
                 <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[200px]">
                     <div className="grid grid-cols-2 gap-4 h-full min-h-0">
                         <div className="flex flex-col min-h-0 pr-2">
@@ -178,12 +182,14 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
+                </ErrorBoundary>
                     </div>
 
             {/* Right Column: Split into Suggested Focus and Deadlines */}
             <div className="xl:w-1/3 w-full flex flex-col gap-4">
                     
                     {/* Suggested Focus */}
+                    <ErrorBoundary>
                     <div className="bg-[#FFF7E6] rounded-2xl p-5 shadow-sm border border-[#e8d5b5] flex flex-col gap-3 h-[250px] transition-opacity duration-150" style={{ opacity: fetchingSuggestions ? 0.6 : 1 }}>
                         <div className="flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-1.5">
@@ -227,8 +233,10 @@ export default function DashboardPage() {
                             <div className="text-sm text-gray-500">You're all caught up!</div>
                         )}
                     </div>
+                    </ErrorBoundary>
 
                     {/* Upcoming Deadlines */}
+                    <ErrorBoundary>
                     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[200px]">
                         <div className="flex items-center gap-1.5 shrink-0">
                             <h3 className="font-headline font-semibold text-base text-[#0F1D29]">Upcoming Deadlines</h3>
@@ -252,6 +260,7 @@ export default function DashboardPage() {
                             )) : <div className="text-sm text-gray-400">No upcoming tasks</div>}
                         </div>
                     </div>
+                    </ErrorBoundary>
                 </div>
             </div>
         </div>

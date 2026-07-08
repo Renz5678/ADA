@@ -15,6 +15,7 @@ import scheduleRouter from './src/routes/schedule.js';
 import searchRouter from './src/routes/search.js';
 import notificationRouter from './src/routes/notification.js';
 import productMaterialRouter from './src/routes/productMaterial.js';
+import taskRouter from './src/routes/task.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
@@ -58,9 +59,16 @@ app.use('/analytics', analyticsRouter);
 app.use('/schedule', scheduleRouter);
 app.use('/search', searchRouter);
 app.use('/notifications', notificationRouter);
+app.use('/tasks', taskRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
+    if (err.name === 'SequelizeForeignKeyConstraintError') {
+        return res.status(400).json({
+            error: 'Constraint Error',
+            message: 'This record cannot be modified or deleted because it is tied to another existing record.'
+        });
+    }
     res.status(err.status || 500).json({
         error: 'Internal Server Error',
         message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message

@@ -82,7 +82,6 @@ const createOrder = async (req, res) => {
         }
 
         const userId = req.user.id;
-
         const { order_date, status, deadline, customer_name } = req.body;
         const newOrder = await Orders.create({
             user_id: userId,
@@ -93,8 +92,20 @@ const createOrder = async (req, res) => {
             status
         });
 
+        const { Tasks } = models;
+        if (Tasks) {
+            await Tasks.create({
+                user_id: userId,
+                title: `Fulfill Order #${newOrder.order_id}`,
+                deadline: deadline || null,
+                status: 'Not Started',
+                related_order_id: newOrder.order_id
+            });
+        }
+
         return res.status(201).json({ message: 'Order created!', data: newOrder });
     } catch (e) {
+        console.error('Error creating order:', e);
         return res.status(500).json({ message: 'Internal Server Error!' });
     }
 };

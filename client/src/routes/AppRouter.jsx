@@ -12,6 +12,8 @@ import PrivacyPage from "#pages/public/PrivacyPage.jsx";
 
 import DashboardPage from "#pages/app/DashboardPage.jsx";
 import ExpensesPage from "#pages/app/ExpensesPage.jsx";
+import MaterialsPage from "#pages/app/MaterialsPage.jsx";
+import TasksPage from "#pages/app/TasksPage.jsx";
 import OrdersPage from "#pages/app/OrdersPage.jsx";
 import ProductsPage from "#pages/app/ProductsPage.jsx";
 import OrderEditorPage from "#pages/app/OrderEditorPage.jsx";
@@ -31,7 +33,9 @@ export default function AppRouter({ onStart, onStop }) {
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
                     <Route path="/dashboard" element={<DashboardPage />} />
+                    <Route path="/tasks" element={<TasksPage />} />
                     <Route path="/expenses" element={<ExpensesPage />} />
+                    <Route path="/materials" element={<MaterialsPage />} />
                     <Route path="/orders" element={<OrdersPage />} />
                     <Route path="/orders/new" element={<OrderEditorPage />} />
                     <Route path="/orders/:orderId" element={<OrderEditorPage />} />

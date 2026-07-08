@@ -124,58 +124,43 @@ const getSuggestedFocus = async (req, res) => {
     try {
         const userId = req.user.id;
         
-        // 1. Calculate Average Order Value
-        const avgResult = await Orders.findOne({
-            attributes: [[sequelize.fn('AVG', sequelize.col('total_amount')), 'avg_amount']],
-            where: { user_id: userId }
-        });
-        const averageOrderValue = avgResult?.dataValues?.avg_amount ? parseFloat(avgResult.dataValues.avg_amount) : 0;
+        const { Tasks } = models;
+        if (!Tasks) return res.status(200).json([]);
 
-        // 2. Fetch all active orders
-        const activeOrders = await Orders.findAll({
+        // Fetch top 3 active tasks
+        const topTasks = await Tasks.findAll({
             where: {
                 user_id: userId,
-                status: { [Op.notIn]: ['Done', 'Delivered', 'Cancelled'] }
+                status: { [Op.notIn]: ['Done', 'Cancelled'] }
             },
             include: [{
-                model: OrderItem,
-                include: [Product]
-            }]
+                model: Orders,
+                include: [{
+                    model: OrderItem,
+                    include: [Product]
+                }]
+            }],
+            order: [['priority_score', 'DESC'], ['deadline', 'ASC']],
+            limit: 3
         });
 
-        if (!activeOrders.length) {
+        if (!topTasks.length) {
             return res.status(200).json([]);
         }
 
-        // 3. Get next available block
+        // Get next available block
         const todayName = new Date().toLocaleString('en-US', { weekday: 'long' });
         const availabilities = await WeeklyAvailability.findAll({
             where: { user_id: userId, day_of_week: todayName }
         });
 
-        // 4. Calculate scores
-        const scoredOrders = activeOrders.map(order => {
-            const score = calculatePriorityScore(order, averageOrderValue);
-            return {
-                ...order.toJSON(),
-                priorityScore: score
-            };
-        });
-
-        // Sort descending by score
-        scoredOrders.sort((a, b) => b.priorityScore - a.priorityScore);
-
-        // Take top 3
-        const topOrders = scoredOrders.slice(0, 3);
-
-        // Append schedule suggestion to the very top order
-        if (topOrders.length > 0 && availabilities.length > 0) {
-            // Find a 'Free Time' or any block today
+        // Append schedule suggestion to the very top task
+        if (topTasks.length > 0 && availabilities.length > 0) {
             const freeBlock = availabilities.find(a => a.block_type === 'Free Time') || availabilities[0];
-            topOrders[0].scheduleSuggestion = `Suggested time to work on this: ${freeBlock.start_time} - ${freeBlock.end_time}`;
+            topTasks[0].dataValues.scheduleSuggestion = `Suggested time to work on this: ${freeBlock.start_time} - ${freeBlock.end_time}`;
         }
 
-        return res.status(200).json(topOrders);
+        return res.status(200).json(topTasks);
     } catch (error) {
         console.error('Error in getSuggestedFocus:', error);
         return res.status(500).json({ message: 'Internal Server Error' });

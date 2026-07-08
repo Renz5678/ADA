@@ -1,17 +1,17 @@
 /**
  * priorityEngine.js
- * Calculates a Priority Score for an order based on deadline proximity, value, and status.
+ * Calculates a Priority Score based on deadline proximity, value, and status.
  */
 
-export const calculatePriorityScore = (order, averageOrderValue) => {
+export const calculatePriorityScore = (item, averageOrderValue) => {
     let score = 0;
     
     // 1. Deadline Proximity (max 80 points)
-    if (order.deadline) {
+    if (item.deadline) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
-        const deadlineDate = new Date(order.deadline);
+        const deadlineDate = new Date(item.deadline);
         deadlineDate.setHours(0, 0, 0, 0);
         
         const diffTime = deadlineDate.getTime() - today.getTime();
@@ -30,11 +30,9 @@ export const calculatePriorityScore = (order, averageOrderValue) => {
         }
     }
 
-    // 2. Order Value (max 20 points)
-    // Compare total_amount to the average order value to grant bonus points.
-    // E.g., if order is 2x average, it gets max 20 pts.
-    if (order.total_amount && averageOrderValue) {
-        const ratio = parseFloat(order.total_amount) / averageOrderValue;
+    // 2. Item Value (max 20 points)
+    if (item.total_amount && averageOrderValue) {
+        const ratio = parseFloat(item.total_amount) / averageOrderValue;
         if (ratio >= 2) {
             score += 20;
         } else if (ratio >= 1.5) {
@@ -47,9 +45,9 @@ export const calculatePriorityScore = (order, averageOrderValue) => {
     }
 
     // 3. Status Weight (max 10 points)
-    if (order.status === 'Pending') {
+    if (item.status === 'Pending' || item.status === 'Not Started') {
         score += 10;
-    } else if (order.status === 'In Progress') {
+    } else if (item.status === 'In Progress') {
         score += 5;
     }
 
