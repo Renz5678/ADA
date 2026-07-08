@@ -6,3 +6,4 @@ export const verifyOtp = (data) => api.post('auth/verify-otp', data);
 export const resendOtp = (data) => api.post('auth/resend-otp', data);
 export const forgotPassword = (data) => api.post('auth/reset-password', data);
 export const confirmResetPassword = (data) => api.post('auth/confirm-reset-password', data);
+export const googleLogin = (data) => api.post('auth/google', data);

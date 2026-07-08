@@ -4,7 +4,8 @@ import { IoMdPerson, IoMdBusiness } from "react-icons/io";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { signup } from "#api/auth.js";
+import { useGoogleLogin } from '@react-oauth/google';
+import { signup, googleLogin } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
 
 const PASSWORD_RULES = [
@@ -52,6 +53,24 @@ export default function SignupPage({ onStart, onStop }) {
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const handleGoogleAuth = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            onStart("Creating account with Google...");
+            setLoading(true);
+            try {
+                const res = await googleLogin({ token: tokenResponse.access_token });
+                localStorage.setItem("token", res.data.token);
+                navigate("/dashboard");
+            } catch (err) {
+                setError(err.response?.data?.message || "Google Signup failed.");
+            } finally {
+                setLoading(false);
+                onStop();
+            }
+        },
+        onError: () => setError("Google Signup Failed")
+    });
 
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
     const allRulesPassed = PASSWORD_RULES.every(({ test }) => test(form.password));
@@ -266,6 +285,7 @@ export default function SignupPage({ onStart, onStop }) {
                             <span className="text-[#CBA0AA] text-xs">or continue with</span>
                             <button
                                 type="button"
+                                onClick={() => handleGoogleAuth()}
                                 className="w-4/5 border border-[#c1c1c1] rounded-lg h-9 flex justify-center items-center gap-3 hover:bg-[#0F1D29] hover:text-white transition duration-150 text-xs"
                             >
                                 <FaGoogle /> Google

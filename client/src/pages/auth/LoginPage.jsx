@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { MdOutlineMailOutline, MdLockOutline, MdCheck } from "react-icons/md";
+import { useGoogleLogin } from '@react-oauth/google';
 
 import Icon from "#components/ui/Icon.jsx";
-import { login, forgotPassword } from "#api/auth.js";
+import { login, forgotPassword, googleLogin } from "#api/auth.js";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -16,6 +17,24 @@ export default function LoginPage({ onStart, onStop }) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleGoogleAuth = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            onStart("Logging in with Google...");
+            setIsSubmitting(true);
+            try {
+                const res = await googleLogin({ token: tokenResponse.access_token });
+                localStorage.setItem("token", res.data.token);
+                navigate("/dashboard");
+            } catch (err) {
+                setError(err.response?.data?.message || "Google Login failed.");
+            } finally {
+                setIsSubmitting(false);
+                onStop();
+            }
+        },
+        onError: () => setError("Google Login Failed")
+    });
 
     const isValidEmail = EMAIL_REGEX.test(form.email);
     const canSubmit = isValidEmail && form.password.length > 0 && !isSubmitting;
@@ -165,6 +184,7 @@ export default function LoginPage({ onStart, onStop }) {
                         <span className="text-[#CBA0AA] text-sm">or continue with</span>
                         <button
                             type="button"
+                            onClick={() => handleGoogleAuth()}
                             className="w-[80%] border border-[#c1c1c1] h-10 rounded-lg flex justify-center items-center gap-4 hover:bg-[#0F1D29] hover:text-white transition duration-150"
                         >
                             <FaGoogle /> Google

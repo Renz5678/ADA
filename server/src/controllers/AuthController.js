@@ -1,7 +1,10 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
+import { OAuth2Client } from 'google-auth-library';
 import { models } from '../models/index.js';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 import transporter from '../utils/mailer.js';
 import { getVerificationEmailHtml } from '../utils/emailTemplates.js';
 import { validationResult } from 'express-validator';
@@ -253,4 +256,49 @@ const confirmResetPassword = async (req, res) => {
     }
 };
 
-export { register, login, verifyOtp, resendOtp, resetPassword, confirmResetPassword };
+const googleLogin = async (req, res) => {
+    try {
+        const { token } = req.body;
+        
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!userInfoRes.ok) {
+            return res.status(401).json({ message: 'Invalid Google Token' });
+        }
+        
+        const payload = await userInfoRes.json();
+        const { email, name } = payload;
+
+        let userResult = await Users.findOne({ where: { email } });
+
+        if (!userResult) {
+            userResult = await Users.create({
+                username: name,
+                business_name: 'My Business',
+                email: email,
+                password: crypto.randomBytes(16).toString('hex'),
+                is_verified: true,
+                verification_token: null,
+                otp_expires_at: null
+            });
+        } else if (!userResult.is_verified) {
+            userResult.is_verified = true;
+            await userResult.save();
+        }
+
+        const jwtToken = jwt.sign(
+            { id: userResult.user_id, email: userResult.email },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+        );
+
+        return res.status(200).json({ message: 'Login valid!', token: jwtToken });
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+export { register, login, verifyOtp, resendOtp, resetPassword, confirmResetPassword, googleLogin };
