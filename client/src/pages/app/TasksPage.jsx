@@ -1,7 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { api } from '#api/index.js';
+import api from '#api/axiosInstance.js';
 import Skeleton from '#components/ui/Skeleton.jsx';
 import { MdCheckCircle, MdRadioButtonUnchecked, MdAccessTime, MdDeleteOutline } from 'react-icons/md';
 
