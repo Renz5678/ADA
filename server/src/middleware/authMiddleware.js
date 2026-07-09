@@ -12,6 +12,11 @@ const authMiddleware = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        
+        if (decoded.role === 'client') {
+            return res.status(403).json({ message: 'Forbidden: Freelancer access only!' });
+        }
+        
         req.user = decoded;
         next();
     } catch (error) {

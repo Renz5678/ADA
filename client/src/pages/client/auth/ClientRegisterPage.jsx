@@ -13,17 +13,13 @@ export default function ClientRegisterPage({ onStart, onStop }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // In a real app, freelancer_id might come from a URL parameter/query
-    const queryParams = new URLSearchParams(location.search);
-    const initialFreelancerId = queryParams.get("freelancer_id") || "";
-
-    const [form, setForm] = useState({ name: "", email: "", password: "", freelancer_id: initialFreelancerId });
+    const [form, setForm] = useState({ name: "", email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isValidEmail = EMAIL_REGEX.test(form.email);
-    const canSubmit = isValidEmail && form.password.length > 0 && form.name.length > 0 && form.freelancer_id && !isSubmitting;
+    const canSubmit = isValidEmail && form.password.length > 0 && form.name.length > 0 && !isSubmitting;
 
     const handleChange = (e) => {
         setError("");
@@ -41,11 +37,9 @@ export default function ClientRegisterPage({ onStart, onStop }) {
             await registerClient({
                 name: form.name,
                 email: form.email,
-                password: form.password,
-                freelancer_id: parseInt(form.freelancer_id, 10)
+                password: form.password
             });
-            // Auto login or just navigate
-            navigate("/client/login");
+            navigate("/client/verify-otp", { state: { email: form.email } });
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed. Please try again.");
         } finally {
@@ -111,21 +105,6 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                                     {isValidEmail ? <><MdCheck /> Valid email</> : "Please enter a valid email address"}
                                 </p>
                             )}
-                        </label>
-
-                        {/* Freelancer ID */}
-                        <label className="flex flex-col gap-1">
-                            <span className="font-medium text-sm flex items-center gap-2">
-                                <MdPersonOutline /> Freelancer Invite Code (ID)
-                            </span>
-                            <input
-                                name="freelancer_id"
-                                type="number"
-                                value={form.freelancer_id}
-                                onChange={handleChange}
-                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA]"
-                                placeholder="e.g. 1"
-                            />
                         </label>
 
                         {/* Password */}

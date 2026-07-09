@@ -4,10 +4,19 @@ export const clientRegisterValidator = [
     body('name').notEmpty().withMessage('Name must not be empty').isString().withMessage('Name must be a string'),
     body('email').notEmpty().withMessage('Email must not be empty').isEmail().withMessage('Please provide a valid email'),
     body('password').notEmpty().withMessage('Password must not be empty').isString().withMessage('Password must be a string'),
-    body('freelancer_id').notEmpty().withMessage('Freelancer ID is required').isInt().withMessage('Freelancer ID must be an integer')
+    body('freelancer_id').optional({ checkFalsy: true }).isInt().withMessage('Freelancer ID must be an integer')
 ];
 
 export const clientLoginValidator = [
     body('email').notEmpty().withMessage('Email must not be empty').isEmail().withMessage('Please provide a valid email'),
     body('password').notEmpty().withMessage('Password must not be empty').isString().withMessage('Password must be a string')
+];
+
+export const clientVerifyOtpValidator = [
+    body('email').notEmpty().withMessage('Email must not be empty').isEmail().withMessage('Please provide a valid email'),
+    body('verification_token').notEmpty().withMessage('OTP must not be empty').isString().withMessage('OTP must be a string')
+];
+
+export const clientResendOtpValidator = [
+    body('email').notEmpty().withMessage('Email must not be empty').isEmail().withMessage('Please provide a valid email')
 ];

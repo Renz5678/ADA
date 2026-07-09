@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import AppLayout from "#components/layout/AppLayout.jsx";
 import SignupPage from "#pages/auth/SignupPage.jsx";
@@ -8,6 +8,7 @@ import ProtectedRoute from "#components/ProtectedRoute.jsx";
 import ForgotPasswordPage from "#pages/auth/ForgotPasswordPage.jsx";
 import TermsPage from "#pages/public/TermsPage.jsx";
 import PrivacyPage from "#pages/public/PrivacyPage.jsx";
+import LandingPage from "#pages/public/LandingPage.jsx";
 
 
 import DashboardPage from "#pages/app/DashboardPage.jsx";
@@ -22,6 +23,7 @@ import SchedulePage from "#pages/app/SchedulePage.jsx";
 // Client imports
 import ClientLoginPage from "#pages/client/auth/ClientLoginPage.jsx";
 import ClientRegisterPage from "#pages/client/auth/ClientRegisterPage.jsx";
+import ClientVerifyOTPPage from "#pages/client/auth/ClientVerifyOTPPage.jsx";
 import ClientLayout from "#components/layout/ClientLayout.jsx";
 import ClientProtectedRoute from "#components/ClientProtectedRoute.jsx";
 import ClientDashboardPage from "#pages/client/DashboardPage.jsx";
@@ -30,7 +32,7 @@ import ClientOrdersPage from "#pages/client/OrdersPage.jsx";
 export default function AppRouter({ onStart, onStop }) {
     return (
         <Routes>
-            <Route path="/" element={<LoginPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage onStart={onStart} onStop={onStop} />} />
             <Route path="/signup" element={<SignupPage onStart={onStart} onStop={onStop} />} />
             <Route path="/reset-password" element={<ForgotPasswordPage onStart={onStart} onStop={onStop} />} />
@@ -53,8 +55,10 @@ export default function AppRouter({ onStart, onStop }) {
             </Route>
 
             {/* Client Routes */}
+            <Route path="/client" element={<Navigate to="/client/login" replace />} />
             <Route path="/client/login" element={<ClientLoginPage onStart={onStart} onStop={onStop} />} />
             <Route path="/client/register" element={<ClientRegisterPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/client/verify-otp" element={<ClientVerifyOTPPage onStart={onStart} onStop={onStop} />} />
             
             <Route element={<ClientProtectedRoute />}>
                 <Route element={<ClientLayout />}>

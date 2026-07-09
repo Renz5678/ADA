@@ -12,6 +12,16 @@ export const loginClient = async (data) => {
     return response.data;
 };
 
+export const verifyClientOtp = async (data) => {
+    const response = await clientApi.post('/client-auth/verify-otp', data);
+    return response.data;
+};
+
+export const resendClientOtp = async (data) => {
+    const response = await clientApi.post('/client-auth/resend-otp', data);
+    return response.data;
+};
+
 // Client Businesses (Directory)
 export const getBusinesses = async () => {
     const response = await clientApi.get('/client-businesses');

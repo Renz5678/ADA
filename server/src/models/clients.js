@@ -13,7 +13,7 @@ export default (sequelize, DataTypes) => {
         },
         freelancer_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Users',
                 key: 'user_id'
@@ -47,6 +47,14 @@ export default (sequelize, DataTypes) => {
         is_verified: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        verification_token: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        otp_expires_at: {
+            type: DataTypes.DATE,
+            allowNull: true
         }
     }, {
         sequelize,
