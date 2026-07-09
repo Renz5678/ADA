@@ -21,6 +21,7 @@ export default function ClientOrdersPage() {
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b">
                         <tr>
                             <th className="px-6 py-4">Order ID</th>
+                            <th className="px-6 py-4">Items</th>
                             <th className="px-6 py-4">Freelancer</th>
                             <th className="px-6 py-4">Status</th>
                             <th className="px-6 py-4">Total Amount</th>
@@ -30,13 +31,35 @@ export default function ClientOrdersPage() {
                     <tbody>
                         {orders?.length === 0 && (
                             <tr>
-                                <td colSpan="5" className="px-6 py-4 text-center">No orders found.</td>
+                                <td colSpan="6" className="px-6 py-4 text-center">No orders found.</td>
                             </tr>
                         )}
                         {orders?.map((order) => (
                             <tr key={order.order_id} className="bg-white border-b hover:bg-gray-50">
                                 <td className="px-6 py-4 font-medium text-gray-900">
                                     #{order.order_id}
+                                </td>
+                                <td className="px-6 py-4">
+                                    {order.OrderItems && order.OrderItems.length > 0 ? (
+                                        <div className="flex -space-x-2 overflow-hidden items-center group">
+                                            {order.OrderItems.slice(0, 3).map((item, idx) => (
+                                                item.Product?.image_url ? (
+                                                    <img key={idx} className="inline-block h-8 w-8 sm:h-10 sm:w-10 rounded-full ring-2 ring-white object-cover group-hover:scale-105 transition-transform" src={item.Product.image_url} alt={item.Product?.product_name || "Product"} title={item.Product?.product_name} />
+                                                ) : (
+                                                    <div key={idx} className="inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full ring-2 ring-white items-center justify-center bg-gray-200 text-xs font-medium text-gray-500 z-10" title={item.Product?.product_name}>
+                                                        {item.Product?.product_name?.charAt(0) || "P"}
+                                                    </div>
+                                                )
+                                            ))}
+                                            {order.OrderItems.length > 3 && (
+                                                <div className="inline-flex h-8 w-8 sm:h-10 sm:w-10 rounded-full ring-2 ring-white items-center justify-center bg-gray-100 text-xs font-medium text-gray-500 z-10">
+                                                    +{order.OrderItems.length - 3}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <span className="text-gray-400 italic">No items</span>
+                                    )}
                                 </td>
                                 <td className="px-6 py-4">
                                     {order.User?.business_name || "Unknown"}

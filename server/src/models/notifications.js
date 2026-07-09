@@ -51,6 +51,7 @@ export default (sequelize, DataTypes) => {
 
     Notifications.associate = (models) => {
         Notifications.belongsTo(models.Users, { foreignKey: 'user_id' });
+        Notifications.belongsTo(models.Clients, { foreignKey: 'client_id' });
     };
 
     return Notifications;

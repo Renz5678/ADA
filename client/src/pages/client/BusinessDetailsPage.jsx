@@ -197,28 +197,15 @@ export default function BusinessDetailsPage() {
                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
                             className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
                         >
-                            {selectedProduct.image_url && (
-                                <div className="w-full h-64 sm:h-80 bg-gray-100 relative shrink-0">
-                                    <img src={selectedProduct.image_url} className="w-full h-full object-cover" alt={selectedProduct.product_name} />
-                                    <button 
-                                        onClick={() => setSelectedProduct(null)}
-                                        className="absolute top-4 right-4 bg-white/80 backdrop-blur text-gray-800 p-2 rounded-full hover:bg-white transition-colors"
-                                    >
-                                        <MdClose size={20} />
-                                    </button>
-                                </div>
-                            )}
-                            <div className="p-6 sm:p-8 flex flex-col overflow-y-auto">
-                                {!selectedProduct.image_url && (
-                                    <button 
-                                        onClick={() => setSelectedProduct(null)}
-                                        className="absolute top-6 right-6 text-gray-400 hover:text-gray-800 transition-colors"
-                                    >
-                                        <MdClose size={24} />
-                                    </button>
-                                )}
+                            <div className="p-6 sm:p-8 flex flex-col overflow-y-auto relative">
+                                <button 
+                                    onClick={() => setSelectedProduct(null)}
+                                    className="absolute top-6 right-6 text-gray-400 hover:text-gray-800 transition-colors z-10"
+                                >
+                                    <MdClose size={24} />
+                                </button>
                                 
-                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pr-8">
                                     <h2 className="text-2xl sm:text-3xl font-headline font-bold text-[#0F1D29]">{selectedProduct.product_name}</h2>
                                     <span className="text-2xl font-bold shrink-0" style={{ color: themeColor }}>₱{parseFloat(selectedProduct.price).toFixed(2)}</span>
                                 </div>
@@ -229,13 +216,20 @@ export default function BusinessDetailsPage() {
                                     </div>
                                 )}
 
-                                <div className="mb-8">
-                                    <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Description</h3>
-                                    {selectedProduct.description ? (
-                                        <p className="text-gray-600 leading-relaxed whitespace-pre-line">{selectedProduct.description}</p>
-                                    ) : (
-                                        <p className="text-gray-400 italic">No description available.</p>
+                                <div className="flex flex-col md:flex-row gap-6 mb-8">
+                                    {selectedProduct.image_url && (
+                                        <div className="w-full md:w-1/3 shrink-0 rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 shadow-sm flex items-center justify-center">
+                                            <img src={selectedProduct.image_url} className="w-full h-auto object-cover max-h-64 rounded-2xl" alt={selectedProduct.product_name} />
+                                        </div>
                                     )}
+                                    <div className="flex-1">
+                                        <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-2">Description</h3>
+                                        {selectedProduct.description ? (
+                                            <p className="text-gray-600 leading-relaxed whitespace-pre-line">{selectedProduct.description}</p>
+                                        ) : (
+                                            <p className="text-gray-400 italic">No description available.</p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="mt-auto flex flex-col sm:flex-row items-center gap-4 pt-6 border-t border-gray-100">

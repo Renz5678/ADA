@@ -22,7 +22,7 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
     const inputs = useRef([]);
 
     useEffect(() => {
-        if (!email) navigate("/client/register", { replace: true });
+        if (!email) navigate("/register-client", { replace: true });
     }, [email, navigate]);
 
     useEffect(() => {
@@ -101,7 +101,7 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
         onStart("Verifying your code...");
         try {
             await verifyClientOtp({ email, verification_token: code });
-            navigate("/client/login");
+            navigate("/login-client");
         } catch (err) {
             const status = err.response?.status;
             const retryAfter = err.response?.headers?.["retry-after"];
@@ -115,7 +115,7 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
                     message: "Your verification code has expired. Request a new one to continue.",
                     actions: [
                         { label: "Resend Code", onClick: handleResendOtp, variant: "primary" },
-                        { label: "Go Back", onClick: () => navigate("/client/register"), variant: "secondary" }
+                        { label: "Go Back", onClick: () => navigate("/register-client"), variant: "secondary" }
                     ]
                 });
             } else if (status === 404) {

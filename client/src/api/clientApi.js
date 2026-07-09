@@ -18,8 +18,8 @@ clientApi.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('client_token');
-            if (window.location.pathname !== '/client/login') {
-                window.location.href = '/client/login';
+            if (window.location.pathname !== '/login-client') {
+                window.location.href = '/login-client';
             }
         }
         return Promise.reject(error);

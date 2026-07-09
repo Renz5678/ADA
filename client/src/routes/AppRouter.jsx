@@ -58,10 +58,10 @@ export default function AppRouter({ onStart, onStop }) {
             </Route>
 
             {/* Client Routes */}
-            <Route path="/client" element={<Navigate to="/client/login" replace />} />
-            <Route path="/client/login" element={<ClientLoginPage onStart={onStart} onStop={onStop} />} />
-            <Route path="/client/register" element={<ClientRegisterPage onStart={onStart} onStop={onStop} />} />
-            <Route path="/client/verify-otp" element={<ClientVerifyOTPPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/client" element={<Navigate to="/login-client" replace />} />
+            <Route path="/login-client" element={<ClientLoginPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/register-client" element={<ClientRegisterPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/verify-otp-client" element={<ClientVerifyOTPPage onStart={onStart} onStop={onStop} />} />
             
             <Route element={<ClientProtectedRoute />}>
                 <Route element={<ClientLayout />}>

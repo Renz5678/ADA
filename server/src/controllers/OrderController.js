@@ -140,7 +140,24 @@ const updateOrder = async (req, res) => {
 
         const updates = {};
         if (order_date !== undefined) updates.order_date = order_date;
-        if (status !== undefined) updates.status = status;
+        
+        if (status !== undefined && status !== order.status) {
+            updates.status = status;
+            
+            if (order.client_id) {
+                await models.Notifications.create({
+                    client_id: order.client_id,
+                    title: 'Order Status Updated',
+                    message: `Your order #${order.order_id} has been updated to: ${status}`,
+                    type: 'INFO',
+                    reference_id: order.order_id,
+                    reference_type: 'ORDER'
+                });
+            }
+        } else if (status !== undefined) {
+            updates.status = status;
+        }
+
         if (deadline !== undefined) updates.deadline = deadline;
         if (customer_name !== undefined) updates.customer_name = customer_name;
 

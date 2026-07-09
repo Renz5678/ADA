@@ -164,7 +164,7 @@ export default function ClientLoginPage({ onStart, onStop }) {
 
                 <p className="font-label">
                     Don't have an account?{" "}
-                    <Link to="/client/register" className="font-semibold text-[#8D4A52]">
+                    <Link to="/register-client" className="font-semibold text-[#8D4A52]">
                         Sign up here
                     </Link>
                 </p>

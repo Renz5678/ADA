@@ -57,7 +57,7 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                 email: form.email,
                 password: form.password
             });
-            navigate("/client/verify-otp", { state: { email: form.email } });
+            navigate("/verify-otp-client", { state: { email: form.email } });
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed. Please try again.");
         } finally {
@@ -181,7 +181,7 @@ export default function ClientRegisterPage({ onStart, onStop }) {
 
                 <p className="font-label">
                     Already have an account?{" "}
-                    <Link to="/client/login" className="font-semibold text-[#8D4A52]">
+                    <Link to="/login-client" className="font-semibold text-[#8D4A52]">
                         Login here
                     </Link>
                 </p>

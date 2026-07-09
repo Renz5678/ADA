@@ -10,10 +10,19 @@ export const getClientOrders = async (req, res) => {
 
         const orders = await Orders.findAll({
             where: { client_id },
-            include: [{
-                model: Users,
-                attributes: ['business_name', 'email']
-            }],
+            include: [
+                {
+                    model: Users,
+                    attributes: ['business_name', 'email']
+                },
+                {
+                    model: models.OrderItem,
+                    include: [{
+                        model: models.Product,
+                        attributes: ['product_name', 'image_url']
+                    }]
+                }
+            ],
             order: [['createdAt', 'DESC']]
         });
 
