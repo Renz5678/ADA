@@ -1,5 +1,4 @@
 import clientApi from "./clientApi.js";
-import api from "./axiosInstance.js";
 
 // Client Auth (Uses unauthenticated instance or generic one, but let's use clientApi without token requirement for register/login)
 export const registerClient = async (data) => {

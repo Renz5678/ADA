@@ -12,7 +12,11 @@ export default (sequelize, DataTypes) => {
         },
         user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
+        },
+        client_id: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
         title: {
             type: DataTypes.STRING,

@@ -79,10 +79,24 @@ const createProduct = async (req, res) => {
 
         const userId = req.user.id;
 
-        const { product_code, product_name, price, materials } = req.body;
+        const { product_code, product_name, price, description, estimated_days } = req.body;
+        let materials = req.body.materials;
 
         if (!product_name || price === undefined) {
             return res.status(400).json({ message: 'Missing required fields' });
+        }
+        
+        if (typeof materials === 'string') {
+            try {
+                materials = JSON.parse(materials);
+            } catch (e) {
+                materials = [];
+            }
+        }
+        
+        let image_url = null;
+        if (req.file && req.file.path) {
+            image_url = req.file.path;
         }
 
         const t = await sequelize.transaction();
@@ -91,7 +105,10 @@ const createProduct = async (req, res) => {
                 user_id: userId,
                 product_code,
                 product_name,
-                price
+                price,
+                description: description || null,
+                estimated_days: estimated_days ? parseInt(estimated_days, 10) : null,
+                image_url
             }, { transaction: t });
 
             if (materials && Array.isArray(materials)) {
@@ -126,7 +143,8 @@ const updateProduct = async (req, res) => {
         const userId = req.user.id;
         const productId = req.params.id;
 
-        const { product_code, product_name, price, materials } = req.body;
+        const { product_code, product_name, price, description, estimated_days } = req.body;
+        let materials = req.body.materials;
 
         const product = await Product.findOne({
             where: {
@@ -135,6 +153,14 @@ const updateProduct = async (req, res) => {
             }
         });
         if (!product) return res.status(404).json({ message: 'Product not found!' });
+        
+        if (typeof materials === 'string') {
+            try {
+                materials = JSON.parse(materials);
+            } catch (e) {
+                materials = [];
+            }
+        }
 
         const t = await sequelize.transaction();
         try {
@@ -142,6 +168,9 @@ const updateProduct = async (req, res) => {
             if (product_code !== undefined) updates.product_code = product_code;
             if (product_name !== undefined) updates.product_name = product_name;
             if (price !== undefined) updates.price = price;
+            if (description !== undefined) updates.description = description || null;
+            if (estimated_days !== undefined) updates.estimated_days = estimated_days ? parseInt(estimated_days, 10) : null;
+            if (req.file && req.file.path) updates.image_url = req.file.path;
 
             await product.update(updates, { transaction: t });
 

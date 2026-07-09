@@ -55,6 +55,26 @@ export default (sequelize, DataTypes) => {
         otp_expires_at: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        profile_picture: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        banner_image: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        bio: {
+            type: DataTypes.STRING(200),
+            allowNull: true
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        theme_color: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     },
         {

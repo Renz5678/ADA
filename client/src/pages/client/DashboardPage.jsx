@@ -93,15 +93,22 @@ export default function ClientDashboardPage() {
                                     
                                     <div className="z-10">
                                         <div className="flex items-center gap-3 mb-2">
-                                            <div className="w-10 h-10 rounded-full bg-[#0F1D29] text-white flex items-center justify-center font-bold text-lg">
-                                                {business.business_name.charAt(0).toUpperCase()}
-                                            </div>
-                                            <h3 className="text-xl font-headline font-bold text-[#0F1D29] group-hover:text-[#8D4A52] transition-colors line-clamp-1">
+                                            {business.profile_picture ? (
+                                                <img src={business.profile_picture} alt={business.business_name} className="w-12 h-12 rounded-full object-cover shrink-0 border border-gray-200" />
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-full bg-[#0F1D29] text-white flex items-center justify-center font-bold text-lg shrink-0">
+                                                    {business.business_name.charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                            <h3 className="text-xl font-headline font-bold text-[#0F1D29] group-hover:text-[#8D4A52] transition-colors line-clamp-1 break-all">
                                                 {business.business_name}
                                             </h3>
                                         </div>
                                         <p className="text-gray-500 text-sm mt-3 font-medium">@{business.username}</p>
-                                        <p className="text-gray-400 text-xs mt-1">{business.email}</p>
+                                        <p className="text-gray-400 text-xs mt-1 mb-2">{business.email}</p>
+                                        {business.bio && (
+                                            <p className="text-gray-600 text-sm italic line-clamp-2 mt-2 break-words">"{business.bio}"</p>
+                                        )}
                                     </div>
                                     
                                     <div className="mt-6 flex justify-between items-center z-10 pt-4 border-t border-gray-100">

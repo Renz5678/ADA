@@ -5,7 +5,7 @@ const { Users, Product } = models;
 export const getAllBusinesses = async (req, res) => {
     try {
         const businesses = await Users.findAll({
-            attributes: ['user_id', 'business_name', 'username', 'email'],
+            attributes: ['user_id', 'business_name', 'username', 'email', 'profile_picture', 'bio'],
             where: {
                 is_verified: true
             }
@@ -22,14 +22,14 @@ export const getBusinessDetails = async (req, res) => {
         const { id } = req.params;
         
         const business = await Users.findOne({
-            attributes: ['user_id', 'business_name', 'username', 'email'],
+            attributes: ['user_id', 'business_name', 'username', 'email', 'profile_picture', 'banner_image', 'bio', 'description', 'theme_color'],
             where: {
                 user_id: id,
                 is_verified: true
             },
             include: [{
                 model: Product,
-                attributes: ['product_id', 'product_name', 'price']
+                attributes: ['product_id', 'product_name', 'price', 'image_url', 'description', 'estimated_days']
             }]
         });
 

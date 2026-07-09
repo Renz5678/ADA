@@ -9,6 +9,9 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
     const [productCode, setProductCode] = useState('');
     const [productName, setProductName] = useState('');
     const [price, setPrice] = useState('');
+    const [description, setDescription] = useState('');
+    const [estimatedDays, setEstimatedDays] = useState('');
+    const [image, setImage] = useState(null);
     const [materials, setMaterials] = useState([]);
     
     const [selectedMaterialId, setSelectedMaterialId] = useState('');
@@ -29,6 +32,9 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
             setProductCode(initialProduct?.product_code ?? '');
             setProductName(initialProduct?.product_name ?? '');
             setPrice(initialProduct?.price ?? '');
+            setDescription(initialProduct?.description ?? '');
+            setEstimatedDays(initialProduct?.estimated_days ?? '');
+            setImage(null);
             
             // Re-sync existing materials if editing
             if (initialProduct?.ProductMaterials) {
@@ -72,64 +78,112 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave({
-            product_code: productCode,
-            product_name: productName,
-            price: Number(price),
-            materials: materials.map(m => ({
-                material_id: m.material_id,
-                quantity_required: Number(m.quantity_required)
-            }))
-        });
+        
+        const formData = new FormData();
+        formData.append('product_code', productCode);
+        formData.append('product_name', productName);
+        formData.append('price', price);
+        
+        if (description) formData.append('description', description);
+        if (estimatedDays) formData.append('estimated_days', estimatedDays);
+        if (image) formData.append('image', image);
+        
+        formData.append('materials', JSON.stringify(materials.map(m => ({
+            material_id: m.material_id,
+            quantity_required: Number(m.quantity_required)
+        }))));
+
+        onSave(formData);
     };
 
     return (
-        <div className="fixed inset-0 bg-[#0F1D29]/60 backdrop-blur-sm z-50 flex justify-center items-center animate-fadeIn">
-            <div className="w-[90%] sm:w-[600px] max-w-2xl bg-[#FFF7E6] border border-[#e8d5b5] rounded-3xl p-7 flex flex-col gap-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-zoomIn max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-[#0F1D29]/60 backdrop-blur-sm z-50 flex justify-center items-center animate-fadeIn p-4">
+            <div className="w-full sm:w-[600px] max-w-2xl bg-[#FFF7E6] border border-[#e8d5b5] rounded-3xl p-6 flex flex-col gap-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-zoomIn max-h-[95vh] overflow-hidden">
                 <h3 className="font-headline text-xl font-bold text-[#8D4A52] text-center border-b border-[#e8d5b5] pb-4 shrink-0">
                     {isEditing ? 'Edit Product' : 'New Product'}
                 </h3>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-3 overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin' }}>
+                    
                     <div>
-                        <label className="block text-sm mb-1 font-label text-[#0F1D29]">Product Code</label>
+                        <label className="block text-sm mb-1 font-label text-[#0F1D29]">Product Image (Optional)</label>
                         <input
-                            type="text"
-                            value={productCode}
-                            onChange={(e) => setProductCode(e.target.value)}
-                            placeholder="e.g. CP01"
-                            required
+                            type="file"
+                            accept="image/jpeg, image/png, image/webp"
+                            onChange={(e) => setImage(e.target.files[0])}
+                            className="w-full text-sm font-body file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#8D4A52] file:text-white hover:file:bg-[#6b353d]"
+                        />
+                        {isEditing && initialProduct?.image_url && !image && (
+                            <p className="text-xs text-gray-500 mt-1">Current image will be kept unless you upload a new one.</p>
+                        )}
+                    </div>
+
+                    <div className="flex gap-3 flex-col sm:flex-row">
+                        <div className="flex-1">
+                            <label className="block text-sm mb-1 font-label text-[#0F1D29]">Product Code</label>
+                            <input
+                                type="text"
+                                value={productCode}
+                                onChange={(e) => setProductCode(e.target.value)}
+                                placeholder="e.g. CP01"
+                                required
+                                className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
+                            />
+                        </div>
+
+                        <div className="flex-1">
+                            <label className="block text-sm mb-1 font-label text-[#0F1D29]">Product Name</label>
+                            <input
+                                type="text"
+                                value={productName}
+                                onChange={(e) => setProductName(e.target.value)}
+                                placeholder="e.g. Custom Portrait"
+                                required
+                                className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex gap-3 flex-col sm:flex-row">
+                        <div className="flex-1">
+                            <label className="block text-sm mb-1 font-label text-[#0F1D29]">Price (₱)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                placeholder="0.00"
+                                required
+                                className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
+                            />
+                        </div>
+                        
+                        <div className="flex-1">
+                            <label className="block text-sm mb-1 font-label text-[#0F1D29]">Estimated Days (Optional)</label>
+                            <input
+                                type="number"
+                                min="1"
+                                value={estimatedDays}
+                                onChange={(e) => setEstimatedDays(e.target.value)}
+                                placeholder="e.g. 5"
+                                className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm mb-1 font-label text-[#0F1D29]">Description (Optional)</label>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Describe your product..."
+                            rows={3}
                             className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm mb-1 font-label text-[#0F1D29]">Product Name</label>
-                        <input
-                            type="text"
-                            value={productName}
-                            onChange={(e) => setProductName(e.target.value)}
-                            placeholder="e.g. Custom Portrait Ink"
-                            required
-                            className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm mb-1 font-label text-[#0F1D29]">Price</label>
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            placeholder="0.00"
-                            required
-                            className="border border-[#e8d5b5] bg-white rounded-xl px-4 py-2.5 w-full text-sm font-body shadow-sm focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] outline-none transition"
-                        />
-                    </div>
-
-                    <div className="w-full h-px bg-[#e8d5b5] my-2" />
+                    <div className="w-full h-px bg-[#e8d5b5] my-1" />
 
                     <div>
                         <label className="block text-sm mb-2 font-label text-[#0F1D29] font-semibold">Bill of Materials (Optional)</label>
@@ -197,7 +251,7 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
                         </div>
                     </div>
 
-                    <div className="w-full h-px bg-[#e8d5b5] my-2" />
+                    <div className="w-full h-px bg-[#e8d5b5] my-1" />
 
                     <div className="flex flex-col gap-2 shrink-0">
                         <Button

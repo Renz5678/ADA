@@ -40,6 +40,21 @@ export default (sequelize, DataTypes) => {
             validate: {
                 notNull: { msg: 'Price must not be null' },
             }
+        },
+        image_url: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        description: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        estimated_days: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            validate: {
+                min: { args: [0], msg: 'Estimated days cannot be negative' }
+            }
         }
     },
         {

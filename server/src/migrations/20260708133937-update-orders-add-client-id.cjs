@@ -2,19 +2,31 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.addColumn('Orders', 'client_id', {
-      type: Sequelize.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'Clients',
-        key: 'client_id'
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'SET NULL'
-    });
+    try {
+      await queryInterface.addColumn('Orders', 'client_id', {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Clients',
+          key: 'client_id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      });
+    } catch (error) {
+      if (!error.message.includes('already exists')) {
+        throw error;
+      }
+    }
 
     if (queryInterface.sequelize.getDialect() === 'postgres') {
-      await queryInterface.sequelize.query(`ALTER TYPE "enum_Orders_status" ADD VALUE 'Awaiting Freelancer Confirmation'`);
+      try {
+        await queryInterface.sequelize.query(`ALTER TYPE "enum_Orders_status" ADD VALUE 'Awaiting Freelancer Confirmation'`);
+      } catch (error) {
+        if (!error.message.includes('already exists')) {
+          throw error;
+        }
+      }
     }
   },
   async down(queryInterface, Sequelize) {
