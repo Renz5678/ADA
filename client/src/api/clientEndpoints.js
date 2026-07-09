@@ -33,6 +33,11 @@ export const getBusinesses = async () => {
     return response.data.businesses;
 };
 
+export const getBusinessDetails = async (id) => {
+    const response = await clientApi.get(`/client-businesses/${id}`);
+    return response.data;
+};
+
 // Client Orders
 export const getClientOrders = async () => {
     const response = await clientApi.get('/client-orders');

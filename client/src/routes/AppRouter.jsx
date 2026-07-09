@@ -28,6 +28,8 @@ import ClientLayout from "#components/layout/ClientLayout.jsx";
 import ClientProtectedRoute from "#components/ClientProtectedRoute.jsx";
 import ClientDashboardPage from "#pages/client/DashboardPage.jsx";
 import ClientOrdersPage from "#pages/client/OrdersPage.jsx";
+import ClientSettingsPage from "#pages/client/SettingsPage.jsx";
+import BusinessDetailsPage from "#pages/client/BusinessDetailsPage.jsx";
 
 export default function AppRouter({ onStart, onStop }) {
     return (
@@ -63,6 +65,7 @@ export default function AppRouter({ onStart, onStop }) {
             <Route element={<ClientProtectedRoute />}>
                 <Route element={<ClientLayout />}>
                     <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+                    <Route path="/client/business/:id" element={<BusinessDetailsPage />} />
                     <Route path="/client/orders" element={<ClientOrdersPage />} />
                 </Route>
             </Route>
