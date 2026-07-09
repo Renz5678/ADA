@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import { MdOutlineMailOutline, MdLockOutline, MdCheck, MdPersonOutline } from "react-icons/md";
+import { useGoogleLogin } from '@react-oauth/google';
 
 import Icon from "#components/ui/Icon.jsx";
-import { registerClient } from "#api/clientEndpoints.js";
+import { registerClient, googleLoginClient } from "#api/clientEndpoints.js";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -17,6 +18,24 @@ export default function ClientRegisterPage({ onStart, onStop }) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleGoogleAuth = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            if (onStart) onStart("Registering with Google...");
+            setIsSubmitting(true);
+            try {
+                const res = await googleLoginClient({ token: tokenResponse.access_token });
+                localStorage.setItem("client_token", res.token);
+                navigate("/client/dashboard");
+            } catch (err) {
+                setError(err.response?.data?.message || "Google Signup failed.");
+            } finally {
+                setIsSubmitting(false);
+                if (onStop) onStop();
+            }
+        },
+        onError: () => setError("Google Signup Failed")
+    });
 
     const isValidEmail = EMAIL_REGEX.test(form.email);
     const canSubmit = isValidEmail && form.password.length > 0 && form.name.length > 0 && !isSubmitting;
@@ -147,6 +166,18 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                             {isSubmitting ? "Registering..." : "Register"}
                         </button>
                     </form>
+
+                    {/* Divider + OAuth */}
+                    <div className="flex flex-col w-full items-center gap-3 mt-6">
+                        <span className="text-[#CBA0AA] text-sm">or sign up with</span>
+                        <button
+                            type="button"
+                            onClick={() => handleGoogleAuth()}
+                            className="w-[80%] border border-[#c1c1c1] h-10 rounded-lg flex justify-center items-center gap-4 hover:bg-[#0F1D29] hover:text-white transition duration-150"
+                        >
+                            <FaGoogle /> Google
+                        </button>
+                    </div>
                 </div>
 
                 <p className="font-label">

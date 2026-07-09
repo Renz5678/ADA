@@ -178,3 +178,48 @@ export const resendOtp = async (req, res) => {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+export const googleLoginClient = async (req, res) => {
+    try {
+        const { token, freelancer_id } = req.body;
+        
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!userInfoRes.ok) {
+            return res.status(401).json({ message: 'Invalid Google Token' });
+        }
+        
+        const payload = await userInfoRes.json();
+        const { email, name } = payload;
+
+        let clientResult = await Clients.findOne({ where: { email } });
+
+        if (!clientResult) {
+            clientResult = await Clients.create({
+                name: name,
+                email: email,
+                password: crypto.randomBytes(16).toString('hex'),
+                freelancer_id: freelancer_id || null,
+                is_verified: true,
+                verification_token: null,
+                otp_expires_at: null
+            });
+        } else if (!clientResult.is_verified) {
+            clientResult.is_verified = true;
+            await clientResult.save();
+        }
+
+        const jwtToken = jwt.sign(
+            { id: clientResult.client_id, email: clientResult.email, role: 'client' },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+        );
+
+        return res.status(200).json({ message: 'Login valid!', token: jwtToken });
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    }
+};

@@ -22,6 +22,11 @@ export const resendClientOtp = async (data) => {
     return response.data;
 };
 
+export const googleLoginClient = async (data) => {
+    const response = await clientApi.post('/client-auth/google', data);
+    return response.data;
+};
+
 // Client Businesses (Directory)
 export const getBusinesses = async () => {
     const response = await clientApi.get('/client-businesses');
