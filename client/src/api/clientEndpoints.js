@@ -35,7 +35,7 @@ export const getBusinesses = async () => {
 
 export const getBusinessDetails = async (id) => {
     const response = await clientApi.get(`/client-businesses/${id}`);
-    return response.data;
+    return response.data.business;
 };
 
 // Client Orders

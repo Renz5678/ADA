@@ -28,7 +28,6 @@ import ClientLayout from "#components/layout/ClientLayout.jsx";
 import ClientProtectedRoute from "#components/ClientProtectedRoute.jsx";
 import ClientDashboardPage from "#pages/client/DashboardPage.jsx";
 import ClientOrdersPage from "#pages/client/OrdersPage.jsx";
-import ClientSettingsPage from "#pages/client/SettingsPage.jsx";
 import BusinessDetailsPage from "#pages/client/BusinessDetailsPage.jsx";
 
 export default function AppRouter({ onStart, onStop }) {
