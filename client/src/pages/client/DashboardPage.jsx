@@ -131,7 +131,7 @@ export default function ClientDashboardPage() {
                         <h2 className="text-xl font-bold text-[#0F1D29] mb-4">Request Order from {selectedBusiness.business_name}</h2>
                         <form onSubmit={handleRequestOrder} className="flex flex-col gap-4">
                             <label className="flex flex-col gap-1 text-sm font-medium">
-                                Estimated Total Amount ($)
+                                Estimated Total Amount (₱)
                                 <input
                                     type="number"
                                     min="0"

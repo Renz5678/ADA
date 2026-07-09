@@ -52,7 +52,7 @@ export default function ClientOrdersPage() {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4">
-                                    ${Number(order.total_amount).toFixed(2)}
+                                    ₱{Number(order.total_amount).toFixed(2)}
                                 </td>
                                 <td className="px-6 py-4">
                                     {order.deadline ? new Date(order.deadline).toLocaleDateString() : "-"}

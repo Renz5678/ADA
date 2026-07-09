@@ -101,7 +101,7 @@ export default function BusinessDetailsPage() {
                             
                             <div className="mt-auto pt-4 flex items-center justify-between">
                                 <span className="text-gray-500 text-sm">Price</span>
-                                <span className="text-xl font-bold text-[#8D4A52]">${parseFloat(product.price).toFixed(2)}</span>
+                                <span className="text-xl font-bold text-[#8D4A52]">₱{parseFloat(product.price).toFixed(2)}</span>
                             </div>
                         </motion.div>
                     ))}
@@ -127,7 +127,7 @@ export default function BusinessDetailsPage() {
                         
                         <form onSubmit={handleRequestOrder} className="flex flex-col gap-5">
                             <label className="flex flex-col gap-2 text-sm font-medium text-gray-700">
-                                Estimated Total Amount ($)
+                                Estimated Total Amount (₱)
                                 <input
                                     type="number"
                                     min="0"
