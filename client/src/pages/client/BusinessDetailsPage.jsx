@@ -59,19 +59,19 @@ export default function BusinessDetailsPage() {
                 </Link>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 z-10 relative">
-                    <div className="flex items-center gap-5">
-                        <div className="w-20 h-20 rounded-2xl bg-[#0F1D29] text-white flex items-center justify-center font-headline font-bold text-4xl shadow-md">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#0F1D29] text-white flex items-center justify-center font-headline font-bold text-3xl sm:text-4xl shadow-md shrink-0">
                             {business.business_name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                            <h1 className="text-3xl font-headline font-bold text-[#0F1D29]">{business.business_name}</h1>
-                            <p className="text-gray-500 font-body mt-1">@{business.username} • {business.email}</p>
+                            <h1 className="text-2xl sm:text-3xl font-headline font-bold text-[#0F1D29] break-words">{business.business_name}</h1>
+                            <p className="text-gray-500 font-body mt-1 break-all sm:break-normal">@{business.username} • {business.email}</p>
                         </div>
                     </div>
                     
                     <button
                         onClick={() => setIsOrdering(true)}
-                        className="bg-[#8D4A52] text-white px-8 py-3 rounded-full font-medium hover:bg-[#0F1D29] transition-colors shadow-md"
+                        className="w-full md:w-auto bg-[#8D4A52] text-white px-8 py-3 rounded-full font-medium hover:bg-[#0F1D29] transition-colors shadow-md shrink-0 text-center"
                     >
                         Request Order
                     </button>
@@ -148,18 +148,18 @@ export default function BusinessDetailsPage() {
                                     className="border border-gray-300 rounded-xl px-4 py-3 outline-none focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] transition-all"
                                 />
                             </label>
-                            <div className="flex gap-3 mt-6">
+                            <div className="flex flex-col sm:flex-row gap-3 mt-6">
                                 <button 
                                     type="button" 
                                     onClick={() => setIsOrdering(false)} 
-                                    className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors"
+                                    className="w-full sm:flex-1 px-4 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button 
                                     type="submit" 
                                     disabled={createOrderMut.isPending} 
-                                    className="flex-1 px-4 py-3 bg-[#0F1D29] text-white font-medium rounded-xl hover:bg-[#8D4A52] transition-colors disabled:opacity-70"
+                                    className="w-full sm:flex-1 px-4 py-3 bg-[#0F1D29] text-white font-medium rounded-xl hover:bg-[#8D4A52] transition-colors disabled:opacity-70"
                                 >
                                     {createOrderMut.isPending ? "Sending..." : "Send Request"}
                                 </button>

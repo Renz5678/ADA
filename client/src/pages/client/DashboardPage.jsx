@@ -112,7 +112,7 @@ export default function ClientDashboardPage() {
                                                 setSelectedBusiness(business);
                                                 setIsOrdering(true);
                                             }}
-                                            className="bg-[#0F1D29] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#8D4A52] transition-colors"
+                                            className="bg-[#0F1D29] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#8D4A52] transition-colors shrink-0"
                                         >
                                             Quick Request
                                         </button>
@@ -151,9 +151,9 @@ export default function ClientDashboardPage() {
                                     className="border rounded-md px-3 py-2 outline-none focus:border-[#CBA0AA]"
                                 />
                             </label>
-                            <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={() => setIsOrdering(false)} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md">Cancel</button>
-                                <button type="submit" disabled={createOrderMut.isPending} className="px-4 py-2 bg-[#8D4A52] text-white rounded-md hover:bg-[#0F1D29] transition">
+                            <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                                <button type="button" onClick={() => setIsOrdering(false)} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md w-full sm:w-auto">Cancel</button>
+                                <button type="submit" disabled={createOrderMut.isPending} className="px-4 py-2 bg-[#8D4A52] text-white rounded-md hover:bg-[#0F1D29] transition w-full sm:w-auto">
                                     {createOrderMut.isPending ? "Submitting..." : "Submit Request"}
                                 </button>
                             </div>
