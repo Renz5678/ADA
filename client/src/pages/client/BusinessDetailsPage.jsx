@@ -92,48 +92,56 @@ export default function BusinessDetailsPage() {
 
     return (
         <div className="flex flex-col w-full h-full p-4 lg:p-8 overflow-y-auto">
+            {/* Navigation outside the card to make it cleaner */}
+            <div className="mb-4">
+                <Link to="/client/dashboard" className="inline-flex items-center gap-2 text-[#0F1D29] transition-colors font-body text-sm hover:text-[#8D4A52] font-semibold w-max">
+                    <MdArrowBack /> Back to Directory
+                </Link>
+            </div>
+
             {/* Header / Profile Section */}
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E5E7EB] shadow-sm relative mb-8 w-full shrink-0">
-                <div className="absolute top-0 left-0 w-full h-32 overflow-hidden rounded-t-3xl z-0">
+            <div className="bg-white rounded-3xl border border-[#E5E7EB] shadow-sm relative mb-8 w-full shrink-0 flex flex-col">
+                <div className="w-full h-40 sm:h-52 overflow-hidden rounded-t-3xl relative">
                     {business.banner_image ? (
-                        <img src={business.banner_image} className="w-full h-full object-cover opacity-30" alt="banner" />
+                        <img src={business.banner_image} className="w-full h-full object-cover" alt="banner" />
                     ) : (
-                        <div className="w-full h-full bg-gradient-to-bl from-[#FFF7E6] to-transparent opacity-60 pointer-events-none"></div>
+                        <div className="w-full h-full bg-gradient-to-r from-[#FFF7E6] to-[#F3E8E0]"></div>
                     )}
                 </div>
                 
-                <div className="z-10 relative flex flex-col w-full mt-2">
-                    <Link to="/client/dashboard" className="inline-flex items-center gap-2 text-gray-500 transition-colors font-body text-sm mb-6 hover:opacity-80 w-max">
-                        <MdArrowBack /> Back to Directory
-                    </Link>
-
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 w-full">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 w-full">
-                            {business.profile_picture ? (
-                                <img src={business.profile_picture} alt={business.business_name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover shadow-md shrink-0 border border-gray-200" />
-                            ) : (
-                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#0F1D29] text-white flex items-center justify-center font-headline font-bold text-3xl sm:text-4xl shadow-md shrink-0">
-                                    {business.business_name ? business.business_name.charAt(0).toUpperCase() : "B"}
-                                </div>
-                            )}
-                            <div className="flex-1">
-                                <h1 className="text-2xl sm:text-3xl font-headline font-bold text-[#0F1D29] break-words">{business.business_name || "Unknown Business"}</h1>
-                                <p className="text-gray-500 font-body mt-1 break-all sm:break-normal">@{business.username} • {business.email}</p>
-                                {business.bio && <p className="text-gray-600 font-body text-sm italic mt-2">"{business.bio}"</p>}
+                <div className="px-6 sm:px-8 pb-6 sm:pb-8 flex flex-col w-full">
+                    {/* Top Row: Profile Pic + Action Button */}
+                    <div className="flex justify-between items-end w-full relative z-10 -mt-10 sm:-mt-12 mb-4">
+                        {business.profile_picture ? (
+                            <img src={business.profile_picture} alt={business.business_name} className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-sm shrink-0 border-4 border-white bg-white" />
+                        ) : (
+                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#0F1D29] text-white flex items-center justify-center font-headline font-bold text-4xl shadow-sm shrink-0 border-4 border-white">
+                                {business.business_name ? business.business_name.charAt(0).toUpperCase() : "B"}
                             </div>
-                        </div>
+                        )}
                         
-                        <button
-                            onClick={() => setIsCartOpen(true)}
-                            style={{ backgroundColor: themeColor }}
-                            className="w-full md:w-auto text-white px-8 py-3 rounded-full font-medium shadow-md shrink-0 text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-4 md:mt-0"
-                        >
-                            <MdShoppingCart size={20} />
-                            View Cart {cartItems.length > 0 && `(${cartItems.length})`}
-                        </button>
+                        <div className="w-auto flex shrink-0">
+                            <button
+                                onClick={() => setIsCartOpen(true)}
+                                style={{ backgroundColor: themeColor }}
+                                className="text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-medium shadow-md text-center hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                            >
+                                <MdShoppingCart size={20} />
+                                <span className="hidden sm:inline">View Cart</span>
+                                {cartItems.length > 0 && <span>({cartItems.length})</span>}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Business Name and Info */}
+                    <div className="flex flex-col w-full">
+                        <h1 className="text-2xl sm:text-3xl font-headline font-bold text-[#0F1D29] break-words leading-tight">{business.business_name || "Unknown Business"}</h1>
+                        <p className="text-gray-500 font-body mt-1 break-all sm:break-normal text-sm sm:text-base">@{business.username} • {business.email}</p>
                     </div>
                     
-                    <div className="mt-8 pt-6 border-t border-gray-100 w-full">
+                    {business.bio && <p className="text-gray-600 font-body text-base italic mt-4 max-w-4xl leading-relaxed">"{business.bio}"</p>}
+
+                    <div className="mt-6 pt-6 border-t border-gray-100 w-full">
                         <h3 className="text-lg font-headline font-semibold text-[#0F1D29] mb-3">About the Business</h3>
                         {business.description ? (
                             <p className="text-gray-600 font-body text-sm whitespace-pre-line leading-relaxed max-w-4xl">{business.description}</p>
@@ -159,22 +167,25 @@ export default function BusinessDetailsPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.2 }}
                             onClick={() => { setSelectedProduct(product); setQuantityToAdd(1); }}
-                            className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-md hover:border-[#CBA0AA] transition-all duration-300 flex flex-col cursor-pointer overflow-hidden group"
+                            className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#CBA0AA] transition-all duration-300 flex flex-col cursor-pointer overflow-hidden group"
                         >
                             {product.image_url ? (
-                                <div className="w-full h-40 bg-gray-100 rounded-xl mb-4 overflow-hidden relative">
+                                <div className="w-full h-48 bg-gray-100 overflow-hidden relative shrink-0">
                                     <img src={product.image_url} alt={product.product_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                 </div>
                             ) : (
-                                <div className="w-12 h-12 rounded-full bg-[#FFF7E6] text-[#8D4A52] flex items-center justify-center mb-4">
-                                    <MdOutlineLocalOffer size={24} />
+                                <div className="w-full h-48 bg-[#FFF7E6] text-[#8D4A52] flex flex-col items-center justify-center shrink-0">
+                                    <MdOutlineLocalOffer size={40} className="mb-2 opacity-50" />
+                                    <span className="text-xs font-medium opacity-60 uppercase tracking-widest">No Image</span>
                                 </div>
                             )}
-                            <h3 className="text-lg font-bold text-[#0F1D29] mb-1 line-clamp-2 group-hover:text-[#8D4A52] transition-colors">{product.product_name}</h3>
-                            
-                            <div className="mt-auto pt-4 flex items-center justify-between">
-                                <span className="text-gray-500 text-sm font-medium">Price</span>
-                                <span className="text-xl font-bold" style={{ color: themeColor }}>₱{parseFloat(product.price).toFixed(2)}</span>
+                            <div className="p-5 flex flex-col flex-1">
+                                <h3 className="text-lg font-bold text-[#0F1D29] mb-1 line-clamp-2 group-hover:text-[#8D4A52] transition-colors">{product.product_name}</h3>
+                                
+                                <div className="mt-auto pt-4 flex items-center justify-between">
+                                    <span className="text-gray-500 text-sm font-medium">Price</span>
+                                    <span className="text-xl font-bold" style={{ color: themeColor }}>₱{parseFloat(product.price).toFixed(2)}</span>
+                                </div>
                             </div>
                         </motion.div>
                     ))}

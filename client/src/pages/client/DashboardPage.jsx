@@ -87,7 +87,7 @@ export default function ClientDashboardPage() {
                             transition={{ duration: 0.3, delay: idx * 0.05 }}
                         >
                             <Link to={`/client/business/${business.user_id}`} className="block h-full group">
-                                <div className="bg-white border border-[#E5E7EB] rounded-2xl p-6 flex flex-col justify-between h-full shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-[#CBA0AA] transition-all duration-300 relative overflow-hidden">
+                                <div className="bg-white border border-[#E5E7EB] rounded-2xl p-6 flex flex-col justify-between h-full shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-gray-300 transition-all duration-300 relative overflow-hidden">
                                     {/* Subtle gradient background decoration */}
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#FFF7E6] to-transparent opacity-50 rounded-bl-full pointer-events-none"></div>
                                     
