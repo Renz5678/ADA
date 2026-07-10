@@ -25,6 +25,7 @@ import profileRoutes from './src/routes/profileRoutes.js';
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
 const app = express();
+app.set('trust proxy', 1);
 
 app.use(helmet());
 const allowedOrigins = [
