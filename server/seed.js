@@ -1,5 +1,4 @@
 import { sequelize, models } from './src/models/index.js';
-import bcrypt from 'bcrypt';
 
 const { Users, Product, Orders, OrderItem, Material, MaterialTransaction, Expense, ProductMaterial } = models;
 

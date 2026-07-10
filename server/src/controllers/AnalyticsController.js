@@ -1,6 +1,5 @@
 import { models, sequelize } from '../models/index.js';
 import { Op } from 'sequelize';
-import { calculatePriorityScore } from '../utils/priorityEngine.js';
 
 const { Orders, OrderItem, Expense, Product, WeeklyAvailability } = models;
 

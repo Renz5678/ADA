@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 dotenv.config({ path: '/home/scarecrow/dev/ADA/server/.env' });
-import { sequelize, models } from '/home/scarecrow/dev/ADA/server/src/models/index.js';
+import { models } from '/home/scarecrow/dev/ADA/server/src/models/index.js';
 
 async function testApi() {
     try {

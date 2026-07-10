@@ -1,7 +1,6 @@
 import { Sequelize, DataTypes } from "sequelize";
 import UsersFactory from '../../models/users.js';
 import ClientsFactory from '../../models/clients.js';
-import bcrypt from 'bcrypt';
 
 const sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false });
 

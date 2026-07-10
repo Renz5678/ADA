@@ -8,7 +8,7 @@ describe('Schedule Reminder Job', () => {
     let testUser;
     let testOrder;
     let testTask;
-    let testBlock;
+
 
     beforeAll(async () => {
         await sequelize.sync({ force: true });
@@ -64,7 +64,7 @@ describe('Schedule Reminder Job', () => {
         const targetTimeStr = `${targetDate.getHours().toString().padStart(2, '0')}:${targetDate.getMinutes().toString().padStart(2, '0')}`;
 
         // Create the availability block
-        testBlock = await WeeklyAvailability.create({
+        await WeeklyAvailability.create({
             user_id: testUser.user_id,
             day_of_week: todayName,
             start_time: targetTimeStr,

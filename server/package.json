@@ -41,7 +41,10 @@
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@babel/preset-env": "^8.0.2",
+    "@eslint/js": "^10.0.1",
     "babel-jest": "^30.4.1",
+    "eslint": "^10.6.0",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "jest": "^30.4.2",
     "nodemon": "^3.1.14",
     "sequelize-cli": "^6.6.5",
