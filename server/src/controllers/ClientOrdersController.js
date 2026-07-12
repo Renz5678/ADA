@@ -110,21 +110,31 @@ export const createClientOrder = async (req, res) => {
                 reference_type: 'ORDER'
             }, { transaction: t });
 
+            await models.Notifications.create({
+                client_id: client_id,
+                title: 'Order Request Sent',
+                message: `Your order request has been sent successfully.`,
+                type: 'INFO',
+                reference_id: newOrder.order_id,
+                reference_type: 'ORDER'
+            }, { transaction: t });
+
             await t.commit();
 
-            // Fetch freelancer email to send the alert
-            const freelancer = await Users.findByPk(freelancer_id);
-            if (freelancer && freelancer.email) {
-                try {
-                    await transporter.sendMail({
+            // Fetch freelancer email to send the alert asynchronously
+            Users.findByPk(freelancer_id).then(freelancer => {
+                if (freelancer && freelancer.email) {
+                    transporter.sendMail({
                         to: freelancer.email,
                         subject: 'New Order Request on ADA',
                         text: `Hello ${freelancer.business_name || freelancer.first_name || 'Freelancer'},\n\nYou have received a new order request from ${client.name} for a total of ₱${calculated_total.toFixed(2)}.\n\nPlease log in to your ADA dashboard to review and confirm the order.\n\nBest regards,\nThe ADA Team`
+                    }).catch(emailError => {
+                        console.error('Failed to send order notification email:', emailError);
                     });
-                } catch (emailError) {
-                    console.error('Failed to send order notification email:', emailError);
                 }
-            }
+            }).catch(err => {
+                console.error('Failed to fetch freelancer for email:', err);
+            });
 
             return res.status(201).json({ message: 'Order requested successfully', order: newOrder });
         } catch (error) {
