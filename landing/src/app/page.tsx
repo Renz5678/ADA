@@ -91,8 +91,26 @@ export default function Home() {
               <div className="aspect-[16/9] w-full rounded-[1.5rem] bg-gray-50 flex items-center justify-center border border-gray-200/50 shadow-inner relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNlN2U1ZTQiLz48L3N2Zz4=')] opacity-[0.2] mix-blend-overlay"></div>
           
-          <motion.img src="/elements/element_dashboard.jpg" animate={{ y: [0, -20, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[20%] right-[10%] w-32 md:w-48 mix-blend-multiply opacity-90 pointer-events-none hidden md:block" alt="Floating Element" />
-          <motion.img src="/elements/element_team.jpg" animate={{ y: [0, 20, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[20%] left-[10%] w-24 md:w-40 mix-blend-multiply opacity-90 pointer-events-none hidden md:block" alt="Floating Element" />
+          <motion.img 
+            src="/elements/element_dashboard.jpg" 
+            animate={{ y: [0, -30, 0] }} 
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} 
+            whileHover={{ scale: 1.1, rotate: -5, cursor: "grab" }}
+            whileTap={{ scale: 0.9, cursor: "grabbing" }}
+            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            className="absolute top-[10%] right-[5%] w-48 md:w-80 mix-blend-multiply hidden md:block z-20" 
+            alt="Floating Element" 
+          />
+          <motion.img 
+            src="/elements/element_team.jpg" 
+            animate={{ y: [0, 30, 0] }} 
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} 
+            whileHover={{ scale: 1.1, rotate: 5, cursor: "grab" }}
+            whileTap={{ scale: 0.9, cursor: "grabbing" }}
+            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            className="absolute bottom-[10%] left-[2%] w-40 md:w-72 mix-blend-multiply hidden md:block z-20" 
+            alt="Floating Element" 
+          />
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10 gap-4">
                    <div className="h-16 w-16 rounded-2xl bg-white shadow-xl flex items-center justify-center text-[#8D4A52]">
                      <LayoutDashboard size={32} />
@@ -109,7 +127,16 @@ export default function Home() {
 
         {/* Deep Dive Bento Grid Features */}
         <section className="bg-white py-24 lg:py-32 relative overflow-hidden" id="features">
-          <motion.img src="/elements/element_stock.jpg" animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[30%] -right-12 w-48 md:w-64 mix-blend-multiply opacity-80 pointer-events-none hidden md:block" alt="Floating Element" />
+          <motion.img 
+            src="/elements/element_stock.jpg" 
+            animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }} 
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} 
+            whileHover={{ scale: 1.1, rotate: -2, cursor: "grab" }}
+            whileTap={{ scale: 0.9, cursor: "grabbing" }}
+            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            className="absolute top-[20%] right-[-2%] w-64 md:w-96 mix-blend-multiply hidden md:block z-20" 
+            alt="Floating Element" 
+          />
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <motion.div 
               initial="hidden"
@@ -225,9 +252,36 @@ export default function Home() {
 
         {/* Alternating Content / Benefits */}
         <section className="py-24 lg:py-32 bg-gray-50 border-t border-gray-200 relative overflow-hidden" id="benefits">
-          <motion.img src="/elements/element_profit.jpg" animate={{ y: [0, 20, 0] }} transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[20%] -left-12 w-48 mix-blend-multiply opacity-80 pointer-events-none hidden md:block" alt="Floating Element" />
-          <motion.img src="/elements/element_truck.jpg" animate={{ y: [0, -25, 0], rotate: [0, -5, 0] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[50%] right-[-5%] w-56 mix-blend-multiply opacity-80 pointer-events-none hidden md:block" alt="Floating Element" />
-          <motion.img src="/elements/element_client.jpg" animate={{ y: [0, 15, 0] }} transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-[10%] left-[5%] w-40 mix-blend-multiply opacity-80 pointer-events-none hidden md:block" alt="Floating Element" />
+          <motion.img 
+            src="/elements/element_profit.jpg" 
+            animate={{ y: [0, 25, 0] }} 
+            transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }} 
+            whileHover={{ scale: 1.1, rotate: 5, cursor: "grab" }}
+            whileTap={{ scale: 0.9, cursor: "grabbing" }}
+            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            className="absolute top-[10%] left-[-2%] w-64 md:w-96 mix-blend-multiply hidden md:block z-20" 
+            alt="Floating Element" 
+          />
+          <motion.img 
+            src="/elements/element_truck.jpg" 
+            animate={{ y: [0, -30, 0], rotate: [0, -5, 0] }} 
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} 
+            whileHover={{ scale: 1.1, rotate: 0, cursor: "grab" }}
+            whileTap={{ scale: 0.9, cursor: "grabbing" }}
+            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            className="absolute top-[45%] right-[2%] w-72 md:w-[32rem] mix-blend-multiply hidden md:block z-20" 
+            alt="Floating Element" 
+          />
+          <motion.img 
+            src="/elements/element_client.jpg" 
+            animate={{ y: [0, 20, 0] }} 
+            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }} 
+            whileHover={{ scale: 1.1, rotate: -5, cursor: "grab" }}
+            whileTap={{ scale: 0.9, cursor: "grabbing" }}
+            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
+            className="absolute bottom-[5%] left-[2%] w-56 md:w-80 mix-blend-multiply hidden md:block z-20" 
+            alt="Floating Element" 
+          />
 
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="max-w-6xl mx-auto space-y-24">
