@@ -85,19 +85,13 @@ export default function Home() {
               initial={{ opacity: 0, y: 60 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-              className="mx-auto mt-20 max-w-6xl rounded-[2rem] border border-white/40 bg-white/40 p-2 md:p-4 shadow-2xl backdrop-blur-xl relative group"
+              className="mx-auto mt-20 max-w-4xl rounded-[2rem] border border-white/40 bg-white/40 p-2 md:p-4 shadow-2xl backdrop-blur-xl relative group"
             >
               <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent rounded-[2rem] pointer-events-none"></div>
-              <div className="aspect-[16/9] w-full rounded-[1.5rem] bg-gray-50 flex items-center justify-center border border-gray-200/50 shadow-inner relative overflow-hidden">
+              <div className="aspect-[16/9] md:aspect-[21/9] w-full rounded-[1.5rem] bg-[#FFF7E6] flex items-center justify-center border border-gray-200/50 shadow-inner relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNlN2U1ZTQiLz48L3N2Zz4=')] opacity-50"></div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10 gap-4">
-                   <div className="h-16 w-16 rounded-2xl bg-white shadow-xl flex items-center justify-center text-[#8D4A52]">
-                     <LayoutDashboard size={32} />
-                   </div>
-                   <p className="text-gray-800 font-medium font-headline text-lg">
-                     [ PLACEHOLDER: Full Dashboard Screenshot ]
-                   </p>
-                   <p className="text-sm text-gray-500 max-w-md text-center px-4">This space is reserved for a high-resolution screenshot of your analytics dashboard showing active orders, revenue charts, and recent activity.</p>
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                   <img src="/elements/element_dashboard.jpg" alt="Dashboard" className="h-[120%] w-auto object-cover mix-blend-multiply" />
                 </div>
               </div>
             </motion.div>
@@ -136,10 +130,8 @@ export default function Home() {
                   <p className="text-gray-600 text-lg leading-relaxed max-w-md mb-8">
                     Link raw materials to your finished products. When a customer places an order, ADA automatically calculates and deducts the exact raw materials used from your inventory.
                   </p>
-                  <div className="aspect-[21/9] w-full rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center overflow-hidden">
-                    <p className="text-gray-400 font-medium text-sm flex items-center gap-2">
-                       <Box size={16} /> [ PLACEHOLDER: BOM Configuration UI ]
-                    </p>
+                  <div className="aspect-[21/9] w-full rounded-xl bg-[#FFF7E6] border border-gray-200 shadow-sm flex items-center justify-center overflow-hidden relative">
+                     <img src="/elements/element_stock.jpg" alt="Stock" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full object-cover mix-blend-multiply scale-125 opacity-90" />
                   </div>
                 </div>
               </motion.div>
@@ -234,8 +226,8 @@ export default function Home() {
                   className="flex-1"
                 >
                   <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
-                       <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Material Transactions Table ]</p>
+                    <div className="w-full h-full bg-[#FFF7E6] rounded-xl flex items-center justify-center relative overflow-hidden">
+                       <img src="/elements/element_stock.jpg" alt="Material Transactions" className="h-[120%] w-auto object-cover mix-blend-multiply absolute" />
                     </div>
                   </div>
                 </motion.div>
@@ -266,8 +258,8 @@ export default function Home() {
                   className="flex-1"
                 >
                   <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
-                       <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Analytics / Charts ]</p>
+                    <div className="w-full h-full bg-[#FFF7E6] rounded-xl flex items-center justify-center relative overflow-hidden">
+                       <img src="/elements/element_profit.jpg" alt="Analytics and Profits" className="h-[120%] w-auto object-cover mix-blend-multiply absolute" />
                     </div>
                   </div>
                 </motion.div>
@@ -284,6 +276,102 @@ export default function Home() {
                   <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Crystal clear visibility into your profits</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
                     By tracking both your revenue from orders and your costs from expenses and material purchases, ADA calculates your true operational health. See instantly which products are most profitable.
+                  </p>
+                </motion.div>
+              </div>
+
+              {/* Client Storefront */}
+              <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                <motion.div 
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="flex-1"
+                >
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                    <div className="w-full h-full bg-[#FFF7E6] rounded-xl flex items-center justify-center relative overflow-hidden">
+                       <img src="/elements/element_client.jpg" alt="Client Storefront" className="h-[120%] w-auto object-cover mix-blend-multiply absolute" />
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="flex-1 space-y-6"
+                >
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                    <ShoppingCart size={16} /> Direct Client Portal
+                  </div>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Your Catalog, Order Requests, & Tracking</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    Impress your clients with a beautiful, pastel-themed storefront. They can browse your product catalog, submit order requests directly to your dashboard, and track their shipping status all in one place.
+                  </p>
+                </motion.div>
+              </div>
+
+              {/* Supplier Management */}
+              <div className="flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-20">
+                <motion.div 
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="flex-1"
+                >
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                    <div className="w-full h-full bg-[#FFF7E6] rounded-xl flex items-center justify-center relative overflow-hidden">
+                       <img src="/elements/element_truck.jpg" alt="Supplier Management" className="h-[120%] w-auto object-cover mix-blend-multiply absolute" />
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="flex-1 space-y-6"
+                >
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                    <Box size={16} /> Supplier Management
+                  </div>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Track incoming raw materials effortlessly</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    Manage all your supplier contacts and incoming raw material shipments in a single view. Know exactly when your inventory is scheduled to arrive so you can fulfill orders on time.
+                  </p>
+                </motion.div>
+              </div>
+
+              {/* Team Collaboration */}
+              <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                <motion.div 
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="flex-1"
+                >
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                    <div className="w-full h-full bg-[#FFF7E6] rounded-xl flex items-center justify-center relative overflow-hidden">
+                       <img src="/elements/element_team.jpg" alt="Team Collaboration" className="h-[120%] w-auto object-cover mix-blend-multiply absolute" />
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="flex-1 space-y-6"
+                >
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                    <CheckCircle2 size={16} /> Team Collaboration
+                  </div>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Built for your entire team</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    Give customized access to your business partners or employees. Whether they are updating stock on the warehouse floor or fulfilling orders in the office, everyone stays in sync.
                   </p>
                 </motion.div>
               </div>
