@@ -1,9 +1,43 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Box, CheckCircle2, LayoutDashboard, LineChart, Package, ShoppingCart, Zap, Shield, Clock, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import Topbar from "@/components/Topbar";
+
+const InteractiveBlobs = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  return (
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[0]">
+      <motion.div
+        animate={{
+          x: mousePosition.x - 250,
+          y: mousePosition.y - 250,
+        }}
+        transition={{ type: "spring", damping: 40, stiffness: 50, mass: 1 }}
+        className="absolute top-0 left-0 w-[500px] h-[500px] bg-pink-300 rounded-full mix-blend-multiply filter blur-[120px] opacity-40"
+      />
+      <motion.div
+        animate={{
+          x: mousePosition.x - 200,
+          y: mousePosition.y - 200,
+        }}
+        transition={{ type: "spring", damping: 60, stiffness: 30, mass: 2 }}
+        className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#8D4A52]/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-40"
+      />
+    </div>
+  );
+};
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -24,32 +58,22 @@ export default function Home() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 relative">
+      <InteractiveBlobs />
+      <main className="flex-1 relative z-10 bg-transparent">
         {/* Background Mesh/Grid for Hero */}
         <div className="absolute top-0 left-0 w-full h-[800px] overflow-hidden -z-10 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-[#8D4A52]/10 blur-[100px]" />
-          <div className="absolute top-[20%] right-[-5%] w-[30%] h-[50%] rounded-full bg-orange-300/10 blur-[120px]" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
         </div>
 
         {/* Hero Section */}
-        <section className="relative pt-24 pb-20 lg:pt-36 lg:pb-32 overflow-hidden">
-          <motion.img 
-            src="/elements/element_dashboard.jpg" 
-            whileHover={{ scale: 1.05, rotate: -2, cursor: "grab" }}
-            whileTap={{ scale: 0.95, cursor: "grabbing" }}
-            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
-            className="absolute top-[20%] right-[2%] w-48 md:w-80 mix-blend-multiply hidden md:block z-0" 
-            alt="Floating Element" 
-          />
-          <motion.img 
-            src="/elements/element_team.jpg" 
-            whileHover={{ scale: 1.05, rotate: 2, cursor: "grab" }}
-            whileTap={{ scale: 0.95, cursor: "grabbing" }}
-            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
-            className="absolute bottom-[5%] left-[2%] w-40 md:w-72 mix-blend-multiply hidden md:block z-0" 
-            alt="Floating Element" 
-          />
+        <section className="relative min-h-[100dvh] flex flex-col justify-center py-24 overflow-hidden">
+          <div className="absolute top-[10%] right-[-5%] w-[300px] md:w-[450px] bg-white p-4 rounded-[2rem] shadow-2xl rotate-6 z-0 hidden md:block border border-gray-100">
+            <img src="/elements/element_dashboard.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
+          </div>
+          
+          <div className="absolute bottom-[5%] left-[-2%] w-[250px] md:w-[350px] bg-white p-4 rounded-[2rem] shadow-2xl -rotate-6 z-0 hidden md:block border border-gray-100">
+            <img src="/elements/element_team.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
+          </div>
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
             <motion.div
               initial="hidden"
@@ -122,14 +146,9 @@ export default function Home() {
 
         {/* Deep Dive Bento Grid Features */}
         <section className="bg-white py-24 lg:py-32 relative overflow-hidden" id="features">
-          <motion.img 
-            src="/elements/element_stock.jpg" 
-            whileHover={{ scale: 1.05, rotate: -2, cursor: "grab" }}
-            whileTap={{ scale: 0.95, cursor: "grabbing" }}
-            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
-            className="absolute top-[10%] right-[-5%] w-64 md:w-96 mix-blend-multiply hidden md:block z-0" 
-            alt="Floating Element" 
-          />
+          <div className="absolute top-[10%] right-[-5%] w-[300px] md:w-[400px] bg-white p-4 rounded-[2rem] shadow-2xl rotate-3 z-0 hidden md:block border border-gray-100">
+            <img src="/elements/element_stock.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
+          </div>
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <motion.div 
               initial="hidden"
@@ -245,30 +264,17 @@ export default function Home() {
 
         {/* Alternating Content / Benefits */}
         <section className="py-24 lg:py-32 bg-gray-50 border-t border-gray-200 relative overflow-hidden" id="benefits">
-          <motion.img 
-            src="/elements/element_profit.jpg" 
-            whileHover={{ scale: 1.05, rotate: 2, cursor: "grab" }}
-            whileTap={{ scale: 0.95, cursor: "grabbing" }}
-            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
-            className="absolute top-[10%] left-[-2%] w-64 md:w-96 mix-blend-multiply hidden md:block z-0" 
-            alt="Floating Element" 
-          />
-          <motion.img 
-            src="/elements/element_truck.jpg" 
-            whileHover={{ scale: 1.05, rotate: 0, cursor: "grab" }}
-            whileTap={{ scale: 0.95, cursor: "grabbing" }}
-            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
-            className="absolute top-[45%] right-[2%] w-72 md:w-[32rem] mix-blend-multiply hidden md:block z-0" 
-            alt="Floating Element" 
-          />
-          <motion.img 
-            src="/elements/element_client.jpg" 
-            whileHover={{ scale: 1.05, rotate: -2, cursor: "grab" }}
-            whileTap={{ scale: 0.95, cursor: "grabbing" }}
-            drag dragConstraints={{ left: -50, right: 50, top: -50, bottom: 50 }}
-            className="absolute bottom-[5%] left-[2%] w-56 md:w-80 mix-blend-multiply hidden md:block z-0" 
-            alt="Floating Element" 
-          />
+          <div className="absolute top-[5%] left-[-5%] w-[350px] md:w-[450px] bg-white p-4 rounded-[2rem] shadow-2xl -rotate-3 z-0 hidden md:block border border-gray-100">
+            <img src="/elements/element_profit.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
+          </div>
+          
+          <div className="absolute top-[45%] right-[-5%] w-[380px] md:w-[500px] bg-white p-4 rounded-[2rem] shadow-2xl rotate-3 z-0 hidden md:block border border-gray-100">
+            <img src="/elements/element_truck.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
+          </div>
+          
+          <div className="absolute bottom-[2%] left-[-2%] w-[300px] md:w-[400px] bg-white p-4 rounded-[2rem] shadow-2xl -rotate-6 z-0 hidden md:block border border-gray-100">
+            <img src="/elements/element_client.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
+          </div>
 
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="max-w-6xl mx-auto space-y-24">
