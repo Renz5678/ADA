@@ -16,7 +16,7 @@ export default function ClientSidebar() {
 
     const handleLogout = () => {
         localStorage.removeItem("client_token");
-        navigate("/login-client");
+        navigate("/");
     };
 
     return (

@@ -25,7 +25,7 @@ const InteractiveBlobs = () => {
           y: mousePosition.y - 250,
         }}
         transition={{ type: "spring", damping: 40, stiffness: 50, mass: 1 }}
-        className="absolute top-0 left-0 w-[500px] h-[500px] bg-pink-300 rounded-full mix-blend-multiply filter blur-[120px] opacity-40"
+        className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-200 rounded-full mix-blend-multiply filter blur-[120px] opacity-30"
       />
       <motion.div
         animate={{
@@ -33,7 +33,7 @@ const InteractiveBlobs = () => {
           y: mousePosition.y - 200,
         }}
         transition={{ type: "spring", damping: 60, stiffness: 30, mass: 2 }}
-        className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#8D4A52]/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-40"
+        className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-40"
       />
     </div>
   );
@@ -67,13 +67,6 @@ export default function Home() {
 
         {/* Hero Section */}
         <section className="relative min-h-[100dvh] flex flex-col justify-center py-24 overflow-hidden">
-          <div className="absolute top-[10%] right-[-5%] w-[300px] md:w-[450px] bg-white p-4 rounded-[2rem] shadow-2xl rotate-6 z-0 hidden md:block border border-gray-100">
-            <img src="/elements/element_dashboard.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
-          </div>
-          
-          <div className="absolute bottom-[5%] left-[-2%] w-[250px] md:w-[350px] bg-white p-4 rounded-[2rem] shadow-2xl -rotate-6 z-0 hidden md:block border border-gray-100">
-            <img src="/elements/element_team.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
-          </div>
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
             <motion.div
               initial="hidden"
@@ -81,13 +74,13 @@ export default function Home() {
               variants={staggerContainer}
               className="mx-auto max-w-5xl"
             >
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#8D4A52]/20 text-[#8D4A52] text-sm font-medium mb-6 shadow-sm">
-                <span className="flex h-2 w-2 rounded-full bg-[#8D4A52] animate-pulse"></span>
+              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-primary/20 text-primary text-sm font-medium mb-6 shadow-sm">
+                <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
                 The Modern ERP for Growing Businesses
               </motion.div>
               <motion.h1 
                 variants={fadeInUp}
-                className="font-headline text-5xl md:text-6xl lg:text-[5rem] font-extrabold tracking-tight text-[#0F1D29] mb-8 leading-[1.1]"
+                className="font-headline text-5xl md:text-6xl lg:text-[5rem] font-extrabold tracking-tight text-dark mb-8 leading-[1.1]"
               >
                 Intelligent Inventory & <br className="hidden md:block" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8D4A52] to-[#AB626A]">
@@ -103,21 +96,21 @@ export default function Home() {
               <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
                   href="https://app.ada-erp.com/signup"
-                  className="inline-flex items-center justify-center rounded-full bg-[#8D4A52] px-8 py-4 text-base font-medium text-white transition-all hover:bg-[#0F1D29] hover:shadow-xl hover:-translate-y-0.5 w-full sm:w-auto gap-2"
+                  className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 text-base font-medium text-white transition-all hover:bg-dark hover:shadow-xl hover:-translate-y-0.5 w-full sm:w-auto gap-2"
                 >
                   Start Managing Today <ArrowRight size={18} />
                 </Link>
                 <Link
                   href="#how-it-works"
-                  className="inline-flex items-center justify-center rounded-full border border-[#c1c1c1] bg-white px-8 py-4 text-base font-medium text-[#0F1D29] transition-all hover:border-[#8D4A52] hover:text-[#8D4A52] hover:shadow-md w-full sm:w-auto"
+                  className="inline-flex items-center justify-center rounded-full border border-gray-200 bg-white px-8 py-4 text-base font-medium text-dark transition-all hover:border-primary hover:text-primary hover:shadow-md w-full sm:w-auto"
                 >
                   See How It Works
                 </Link>
               </motion.div>
               
               <motion.div variants={fadeInUp} className="mt-10 flex items-center justify-center gap-8 text-sm text-gray-500 font-medium">
-                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#8D4A52]"/> No credit card required</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-[#8D4A52]"/> Setup in minutes</div>
+                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-primary"/> No credit card required</div>
+                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-primary"/> Setup in minutes</div>
               </motion.div>
             </motion.div>
 
@@ -131,7 +124,7 @@ export default function Home() {
               <div className="aspect-[16/9] w-full rounded-[1.5rem] bg-gray-50 flex items-center justify-center border border-gray-200/50 shadow-inner relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNlN2U1ZTQiLz48L3N2Zz4=')] opacity-[0.2] mix-blend-overlay"></div>
                 <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10 gap-4">
-                   <div className="h-16 w-16 rounded-2xl bg-white shadow-xl flex items-center justify-center text-[#8D4A52]">
+                   <div className="h-16 w-16 rounded-2xl bg-white shadow-xl flex items-center justify-center text-primary">
                      <LayoutDashboard size={32} />
                    </div>
                    <p className="text-gray-800 font-medium font-headline text-lg">
@@ -146,9 +139,6 @@ export default function Home() {
 
         {/* Deep Dive Bento Grid Features */}
         <section className="bg-white py-24 lg:py-32 relative overflow-hidden" id="features">
-          <div className="absolute top-[10%] right-[-5%] w-[300px] md:w-[400px] bg-white p-4 rounded-[2rem] shadow-2xl rotate-3 z-0 hidden md:block border border-gray-100">
-            <img src="/elements/element_stock.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
-          </div>
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <motion.div 
               initial="hidden"
@@ -157,7 +147,7 @@ export default function Home() {
               variants={fadeInUp}
               className="text-center mb-16"
             >
-              <h2 className="font-headline text-3xl md:text-5xl font-bold text-[#0F1D29] mb-4">A unified command center</h2>
+              <h2 className="font-headline text-3xl md:text-5xl font-bold text-dark mb-4">A unified command center</h2>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">Everything you need to orchestrate your inventory, fulfill orders, and monitor your business health in real-time.</p>
             </motion.div>
 
@@ -168,14 +158,14 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className="md:col-span-2 bg-[#FFF7E6]/40 rounded-3xl p-8 border border-[#c1c1c1]/30 hover:shadow-lg transition-all relative overflow-hidden group"
+                className="md:col-span-2 bg-white rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all relative overflow-hidden group"
               >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#8D4A52]/5 rounded-full blur-3xl -mr-20 -mt-20 transition-transform group-hover:scale-110"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-20 -mt-20 transition-transform group-hover:scale-110"></div>
                 <div className="relative z-10">
-                  <div className="h-14 w-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#8D4A52] mb-6">
+                  <div className="h-14 w-14 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-primary mb-6">
                     <Package size={28} />
                   </div>
-                  <h3 className="font-headline text-2xl font-bold text-[#0F1D29] mb-3">Bill of Materials (BOM) Automation</h3>
+                  <h3 className="font-headline text-2xl font-bold text-dark mb-3">Bill of Materials (BOM) Automation</h3>
                   <p className="text-gray-600 text-lg leading-relaxed max-w-md mb-8">
                     Link raw materials to your finished products. When a customer places an order, ADA automatically calculates and deducts the exact raw materials used from your inventory.
                   </p>
@@ -193,19 +183,19 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="bg-white rounded-3xl p-8 border border-[#c1c1c1]/30 hover:shadow-lg transition-all"
+                className="bg-white rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all"
               >
-                <div className="h-14 w-14 rounded-2xl bg-[#FFF7E6] flex items-center justify-center text-[#8D4A52] mb-6">
+                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6">
                   <ShoppingCart size={28} />
                 </div>
-                <h3 className="font-headline text-2xl font-bold text-[#0F1D29] mb-3">Order Tracking</h3>
+                <h3 className="font-headline text-2xl font-bold text-dark mb-3">Order Tracking</h3>
                 <p className="text-gray-600 leading-relaxed mb-6">
                   Manage the full lifecycle of customer orders. Move them from Pending, to Done, to Delivered with a single click while automatically tracking your revenue.
                 </p>
                 <ul className="space-y-3">
                   {['Custom status workflows', 'Revenue calculation', 'Customer history'].map((item, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-[#0F1D29] font-medium">
-                      <CheckCircle2 size={16} className="text-[#8D4A52]" /> {item}
+                    <li key={i} className="flex items-center gap-2 text-sm text-dark font-medium">
+                      <CheckCircle2 size={16} className="text-primary" /> {item}
                     </li>
                   ))}
                 </ul>
@@ -217,9 +207,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="bg-[#0F1D29] rounded-3xl p-8 border border-gray-800 hover:shadow-2xl transition-all relative overflow-hidden group"
+                className="bg-dark rounded-3xl p-8 border border-slate-800 hover:shadow-2xl transition-all relative overflow-hidden group"
               >
-                <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(141,74,82,0.15),transparent_50%)]"></div>
+                <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(14,116,144,0.15),transparent_50%)]"></div>
                 <div className="relative z-10">
                   <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center text-white mb-6 backdrop-blur-md">
                     <TrendingUp size={28} />
@@ -237,14 +227,14 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className="md:col-span-2 bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 border border-[#c1c1c1]/30 hover:shadow-lg transition-all"
+                className="md:col-span-2 bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 border border-gray-200 hover:shadow-lg transition-all"
               >
                 <div className="flex flex-col md:flex-row gap-8 items-center h-full">
                   <div className="flex-1">
-                    <div className="h-14 w-14 rounded-2xl bg-[#FFF7E6] flex items-center justify-center text-[#8D4A52] mb-6">
+                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6">
                       <Shield size={28} />
                     </div>
-                    <h3 className="font-headline text-2xl font-bold text-[#0F1D29] mb-3">Secure & Reliable</h3>
+                    <h3 className="font-headline text-2xl font-bold text-dark mb-3">Secure & Reliable</h3>
                     <p className="text-gray-600 leading-relaxed">
                       Built with modern security practices. Your data is protected by secure JWT authentication, and critical actions are guarded with OTP email verification.
                     </p>
@@ -253,7 +243,7 @@ export default function Home() {
                     <div className="space-y-4">
                       <div className="h-2 w-1/3 bg-gray-200 rounded-full"></div>
                       <div className="h-10 w-full bg-gray-50 border border-gray-200 rounded-lg"></div>
-                      <div className="h-10 w-full bg-[#8D4A52] rounded-lg"></div>
+                      <div className="h-10 w-full bg-primary rounded-lg"></div>
                     </div>
                   </div>
                 </div>
@@ -264,18 +254,6 @@ export default function Home() {
 
         {/* Alternating Content / Benefits */}
         <section className="py-24 lg:py-32 bg-gray-50 border-t border-gray-200 relative overflow-hidden" id="benefits">
-          <div className="absolute top-[5%] left-[-5%] w-[350px] md:w-[450px] bg-white p-4 rounded-[2rem] shadow-2xl -rotate-3 z-0 hidden md:block border border-gray-100">
-            <img src="/elements/element_profit.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
-          </div>
-          
-          <div className="absolute top-[45%] right-[-5%] w-[380px] md:w-[500px] bg-white p-4 rounded-[2rem] shadow-2xl rotate-3 z-0 hidden md:block border border-gray-100">
-            <img src="/elements/element_truck.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
-          </div>
-          
-          <div className="absolute bottom-[2%] left-[-2%] w-[300px] md:w-[400px] bg-white p-4 rounded-[2rem] shadow-2xl -rotate-6 z-0 hidden md:block border border-gray-100">
-            <img src="/elements/element_client.jpg" className="w-full h-auto rounded-xl" alt="Sticker" />
-          </div>
-
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="max-w-6xl mx-auto space-y-24">
               
@@ -288,7 +266,7 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
                     <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
                        <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Material Transactions Table ]</p>
                     </div>
@@ -301,10 +279,10 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1 space-y-6"
                 >
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
                     <Clock size={16} /> Save Hours Weekly
                   </div>
-                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Never manually update stock again</h3>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Never manually update stock again</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
                     Manual inventory counting is prone to errors and takes away time from growing your business. ADA's automated deduction engine ensures your raw material stock is always 100% accurate the moment an order is placed.
                   </p>
@@ -320,7 +298,7 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
                     <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
                        <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Analytics / Charts ]</p>
                     </div>
@@ -333,10 +311,10 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1 space-y-6"
                 >
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
                     <Zap size={16} /> Data-Driven Decisions
                   </div>
-                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Crystal clear visibility into your profits</h3>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Crystal clear visibility into your profits</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
                     By tracking both your revenue from orders and your costs from expenses and material purchases, ADA calculates your true operational health. See instantly which products are most profitable.
                   </p>
@@ -352,7 +330,7 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
                     <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
                        <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Client Portal UI ]</p>
                     </div>
@@ -365,10 +343,10 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1 space-y-6"
                 >
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
                     <ShoppingCart size={16} /> Direct Client Portal
                   </div>
-                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Your Catalog, Order Requests, & Tracking</h3>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Your Catalog, Order Requests, & Tracking</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
                     Impress your clients with a beautiful, pastel-themed storefront. They can browse your product catalog, submit order requests directly to your dashboard, and track their shipping status all in one place.
                   </p>
@@ -384,7 +362,7 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
                     <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
                        <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Supplier App View ]</p>
                     </div>
@@ -397,10 +375,10 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1 space-y-6"
                 >
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
                     <Box size={16} /> Supplier Management
                   </div>
-                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Track incoming raw materials effortlessly</h3>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Track incoming raw materials effortlessly</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
                     Manage all your supplier contacts and incoming raw material shipments in a single view. Know exactly when your inventory is scheduled to arrive so you can fulfill orders on time.
                   </p>
@@ -416,7 +394,7 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-[#c1c1c1]/40 shadow-xl flex items-center justify-center overflow-hidden p-2">
+                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
                     <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
                        <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Team Management UI ]</p>
                     </div>
@@ -429,10 +407,10 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1 space-y-6"
                 >
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF7E6] text-[#8D4A52] text-sm font-bold">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
                     <CheckCircle2 size={16} /> Team Collaboration
                   </div>
-                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Built for your entire team</h3>
+                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Built for your entire team</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
                     Give customized access to your business partners or employees. Whether they are updating stock on the warehouse floor or fulfilling orders in the office, everyone stays in sync.
                   </p>
@@ -453,7 +431,7 @@ export default function Home() {
               variants={fadeInUp}
               className="text-center mb-20"
             >
-              <h2 className="font-headline text-3xl md:text-5xl font-bold text-[#0F1D29] mb-4">How ADA Works</h2>
+              <h2 className="font-headline text-3xl md:text-5xl font-bold text-dark mb-4">How ADA Works</h2>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto">A seamless workflow designed specifically for makers, manufacturers, and small businesses.</p>
             </motion.div>
 
@@ -475,8 +453,8 @@ export default function Home() {
                   }}
                   className="relative"
                 >
-                  <div className="text-6xl font-extrabold text-[#FFF7E6] mb-4 font-headline drop-shadow-sm">{item.step}</div>
-                  <h3 className="font-headline text-xl font-bold text-[#0F1D29] mb-2">{item.title}</h3>
+                  <div className="text-6xl font-extrabold text-primary/10 mb-4 font-headline drop-shadow-sm">{item.step}</div>
+                  <h3 className="font-headline text-xl font-bold text-dark mb-2">{item.title}</h3>
                   <p className="text-gray-600">{item.desc}</p>
                   {i !== 3 && <div className="hidden md:block absolute top-8 right-[-10%] w-[20%] h-px bg-gray-300"></div>}
                 </motion.div>
@@ -495,7 +473,7 @@ export default function Home() {
               variants={fadeInUp}
               className="text-center mb-16"
             >
-              <h2 className="font-headline text-3xl md:text-4xl font-bold text-[#0F1D29]">Frequently Asked Questions</h2>
+              <h2 className="font-headline text-3xl md:text-4xl font-bold text-dark">Frequently Asked Questions</h2>
             </motion.div>
 
             <div className="space-y-6">
@@ -513,7 +491,7 @@ export default function Home() {
                   transition={{ delay: i * 0.1 }}
                   className="bg-white p-6 md:p-8 rounded-2xl border border-gray-200 shadow-sm"
                 >
-                  <h4 className="font-headline text-lg font-bold text-[#0F1D29] mb-2">{faq.q}</h4>
+                  <h4 className="font-headline text-lg font-bold text-dark mb-2">{faq.q}</h4>
                   <p className="text-gray-600">{faq.a}</p>
                 </motion.div>
               ))}
@@ -522,9 +500,9 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-[#0F1D29] py-24 relative overflow-hidden">
+        <section className="bg-dark py-24 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiMzMzMiLz48L3N2Zz4=')] opacity-20"></div>
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#8D4A52]/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
           
           <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
             <motion.div
@@ -538,7 +516,7 @@ export default function Home() {
               <p className="text-xl text-gray-300 mb-10">Join ADA today and simplify your inventory, orders, and expense management in one powerful platform.</p>
               <Link
                 href="https://app.ada-erp.com/signup"
-                className="inline-flex items-center justify-center rounded-full bg-[#8D4A52] px-10 py-5 text-lg font-semibold text-white transition-all hover:bg-white hover:text-[#0F1D29] hover:shadow-[0_0_40px_rgba(141,74,82,0.6)] hover:-translate-y-1 gap-2"
+                className="inline-flex items-center justify-center rounded-full bg-primary px-10 py-5 text-lg font-semibold text-white transition-all hover:bg-white hover:text-dark hover:shadow-[0_0_40px_rgba(14,116,144,0.6)] hover:-translate-y-1 gap-2"
               >
                 Sign Up Now <CheckCircle2 size={20} />
               </Link>
@@ -552,24 +530,24 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8 mb-12">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <Package size={24} className="text-[#8D4A52]" />
-                <span className="font-headline text-xl font-bold text-[#0F1D29]">ADA</span>
+                <Package size={24} className="text-primary" />
+                <span className="font-headline text-xl font-bold text-dark">ADA</span>
               </div>
               <p className="text-gray-500 max-w-sm">The comprehensive ERP system designed for small businesses to track orders, manage expenses, and automate material inventory.</p>
             </div>
             <div>
-              <h4 className="font-headline font-bold text-[#0F1D29] mb-4">Product</h4>
+              <h4 className="font-headline font-bold text-dark mb-4">Product</h4>
               <ul className="space-y-2">
-                <li><Link href="#features" className="text-gray-500 hover:text-[#8D4A52]">Features</Link></li>
-                <li><Link href="#how-it-works" className="text-gray-500 hover:text-[#8D4A52]">How it Works</Link></li>
-                <li><Link href="#benefits" className="text-gray-500 hover:text-[#8D4A52]">Benefits</Link></li>
+                <li><Link href="#features" className="text-gray-500 hover:text-primary">Features</Link></li>
+                <li><Link href="#how-it-works" className="text-gray-500 hover:text-primary">How it Works</Link></li>
+                <li><Link href="#benefits" className="text-gray-500 hover:text-primary">Benefits</Link></li>
               </ul>
             </div>
             <div>
-              <h4 className="font-headline font-bold text-[#0F1D29] mb-4">Account</h4>
+              <h4 className="font-headline font-bold text-dark mb-4">Account</h4>
               <ul className="space-y-2">
-                <li><Link href="https://app.ada-erp.com/login" className="text-gray-500 hover:text-[#8D4A52]">Log In</Link></li>
-                <li><Link href="https://app.ada-erp.com/signup" className="text-gray-500 hover:text-[#8D4A52]">Sign Up</Link></li>
+                <li><Link href="https://app.ada-erp.com/login" className="text-gray-500 hover:text-primary">Log In</Link></li>
+                <li><Link href="https://app.ada-erp.com/signup" className="text-gray-500 hover:text-primary">Sign Up</Link></li>
               </ul>
             </div>
           </div>
