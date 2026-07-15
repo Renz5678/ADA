@@ -48,7 +48,10 @@ export default function ProductsPage() {
             setEditingProduct(null);
             toast.success('Product updated successfully!');
         },
-        onError: (err) => toast.error(err.response?.data?.message || 'Failed to update product.')
+        onError: (err) => {
+            console.error('[ProductsPage] updateMutation onError:', err);
+            toast.error(err.response?.data?.message || 'Failed to update product.');
+        }
     });
 
     const deleteMutation = useMutation({
@@ -77,10 +80,14 @@ export default function ProductsPage() {
     };
 
     const handleSave = (formData) => {
-        if (editingProduct) {
-            updateMutation.mutate({ id: editingProduct.product_id, updates: formData });
-        } else {
-            createMutation.mutate(formData);
+        try {
+            if (editingProduct) {
+                updateMutation.mutate({ id: editingProduct.product_id, updates: formData });
+            } else {
+                createMutation.mutate(formData);
+            }
+        } catch (error) {
+            console.error('[ProductsPage] handleSave error:', error);
         }
     };
 
