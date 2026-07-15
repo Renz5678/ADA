@@ -105,8 +105,19 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-3 overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin' }}>
                     
-                    <div>
-                        <label className="block text-sm mb-1 font-label text-[#0F1D29]">Product Image (Optional)</label>
+                    <div className="flex flex-col gap-2">
+                        <label className="block text-sm font-label text-[#0F1D29]">Product Image (Optional)</label>
+                        
+                        {(image || (isEditing && initialProduct?.image_url)) && (
+                            <div className="w-full max-w-[200px] h-32 rounded-xl overflow-hidden border border-[#e8d5b5] bg-white mb-2">
+                                <img 
+                                    src={image ? URL.createObjectURL(image) : initialProduct?.image_url} 
+                                    alt="Product Preview" 
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        )}
+
                         <input
                             type="file"
                             accept="image/jpeg, image/png, image/webp"

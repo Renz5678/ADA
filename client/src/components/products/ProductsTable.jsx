@@ -24,11 +24,20 @@ const ProductsTable = ({ products, isFetching, onEdit, onDelete, onManageMateria
                 {products.map((product) => (
                     <div key={product.product_id} className="bg-white rounded-xl border border-[#e8d5b5] p-4 flex flex-col gap-3 shadow-sm">
                         <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2 min-w-0">
-                                <span className="font-headline font-semibold text-[#0F1D29] truncate">{product.product_name}</span>
-                                {product.ProductMaterials?.length > 0 && (
-                                    <span className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1"><MdLayers /> {product.ProductMaterials.length}</span>
+                            <div className="flex items-center gap-3 min-w-0">
+                                {product.image_url ? (
+                                    <img src={product.image_url} alt="" className="w-10 h-10 rounded-lg object-cover border border-[#e8d5b5] shrink-0" />
+                                ) : (
+                                    <div className="w-10 h-10 rounded-lg bg-[#FFF7E6] border border-[#e8d5b5] flex items-center justify-center text-[#8D4A52] shrink-0">
+                                        <MdInventory2 size={20} />
+                                    </div>
                                 )}
+                                <div className="flex flex-col min-w-0">
+                                    <span className="font-headline font-semibold text-[#0F1D29] truncate">{product.product_name}</span>
+                                    {product.ProductMaterials?.length > 0 && (
+                                        <span className="text-xs font-medium text-emerald-700 w-fit shrink-0 flex items-center gap-1"><MdLayers /> {product.ProductMaterials.length} materials</span>
+                                    )}
+                                </div>
                             </div>
                             <span className="text-xs font-medium text-[#8D4A52] bg-[#FFF7E6] px-2 py-1 rounded-full shrink-0">{product.product_code}</span>
                         </div>
@@ -61,7 +70,18 @@ const ProductsTable = ({ products, isFetching, onEdit, onDelete, onManageMateria
                         {products.map((product) => (
                             <tr key={product.product_id} className="hover:bg-gray-50">
                                 <td className="px-4 py-3 text-sm font-medium text-[#8D4A52]">{product.product_code}</td>
-                                <td className="px-4 py-3 text-sm text-gray-900">{product.product_name}</td>
+                                <td className="px-4 py-3 text-sm text-gray-900">
+                                    <div className="flex items-center gap-3">
+                                        {product.image_url ? (
+                                            <img src={product.image_url} alt="" className="w-8 h-8 rounded object-cover border border-gray-200" />
+                                        ) : (
+                                            <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-gray-400">
+                                                <MdInventory2 size={16} />
+                                            </div>
+                                        )}
+                                        {product.product_name}
+                                    </div>
+                                </td>
                                 <td className="px-4 py-3 text-sm text-gray-600">{formatCurrency(product.price)}</td>
                                 <td className="px-4 py-3 text-sm">
                                     {product.ProductMaterials?.length > 0 ? (
