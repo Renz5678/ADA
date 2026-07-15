@@ -17,13 +17,13 @@ export default function Topbar() {
         </div>
         <div className="flex items-center gap-4">
           <Link
-            href="https://app.ada-erp.com/login"
+            href="https://ada-pied-iota.vercel.app/"
             className="hidden sm:inline-flex text-sm font-medium text-dark hover:text-primary transition-colors"
           >
             Log In
           </Link>
           <Link
-            href="https://app.ada-erp.com/signup"
+            href="https://ada-pied-iota.vercel.app/"
             className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-dark"
           >
             Sign Up
