@@ -25,7 +25,7 @@ const InteractiveBlobs = () => {
           y: mousePosition.y - 250,
         }}
         transition={{ type: "spring", damping: 40, stiffness: 50, mass: 1 }}
-        className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-200 rounded-full mix-blend-multiply filter blur-[120px] opacity-30"
+        className="absolute top-0 left-0 w-[500px] h-[500px] bg-rose-200 rounded-full mix-blend-multiply filter blur-[120px] opacity-30"
       />
       <motion.div
         animate={{
@@ -74,10 +74,7 @@ export default function Home() {
               variants={staggerContainer}
               className="mx-auto max-w-5xl"
             >
-              <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-primary/20 text-primary text-sm font-medium mb-6 shadow-sm">
-                <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                The Modern ERP for Growing Businesses
-              </motion.div>
+
               <motion.h1 
                 variants={fadeInUp}
                 className="font-headline text-5xl md:text-6xl lg:text-[5rem] font-extrabold tracking-tight text-dark mb-8 leading-[1.1]"
@@ -95,7 +92,7 @@ export default function Home() {
               </motion.p>
               <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link
-                  href="https://app.ada-erp.com/signup"
+                  href="https://ada-pied-iota.vercel.app/"
                   className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 text-base font-medium text-white transition-all hover:bg-dark hover:shadow-xl hover:-translate-y-0.5 w-full sm:w-auto gap-2"
                 >
                   Start Managing Today <ArrowRight size={18} />
@@ -515,7 +512,7 @@ export default function Home() {
               <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">Ready to scale your operations?</h2>
               <p className="text-xl text-gray-300 mb-10">Join ADA today and simplify your inventory, orders, and expense management in one powerful platform.</p>
               <Link
-                href="https://app.ada-erp.com/signup"
+                href="https://ada-pied-iota.vercel.app/"
                 className="inline-flex items-center justify-center rounded-full bg-primary px-10 py-5 text-lg font-semibold text-white transition-all hover:bg-white hover:text-dark hover:shadow-[0_0_40px_rgba(14,116,144,0.6)] hover:-translate-y-1 gap-2"
               >
                 Sign Up Now <CheckCircle2 size={20} />
@@ -546,8 +543,8 @@ export default function Home() {
             <div>
               <h4 className="font-headline font-bold text-dark mb-4">Account</h4>
               <ul className="space-y-2">
-                <li><Link href="https://app.ada-erp.com/login" className="text-gray-500 hover:text-primary">Log In</Link></li>
-                <li><Link href="https://app.ada-erp.com/signup" className="text-gray-500 hover:text-primary">Sign Up</Link></li>
+                <li><Link href="https://ada-pied-iota.vercel.app/" className="text-gray-500 hover:text-primary">Log In</Link></li>
+                <li><Link href="https://ada-pied-iota.vercel.app/" className="text-gray-500 hover:text-primary">Sign Up</Link></li>
               </ul>
             </div>
           </div>
