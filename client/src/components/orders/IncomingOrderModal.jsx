@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    MdClose, MdCheckCircle, MdCancel,
+    MdCheckCircle, MdCancel,
     MdShoppingBag, MdPerson, MdCalendarToday,
     MdAttachMoney, MdInventory
 } from 'react-icons/md';
