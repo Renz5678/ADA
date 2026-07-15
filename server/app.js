@@ -35,6 +35,9 @@ app.locals.sseClients = new Map();
 app.use(helmet());
 const allowedOrigins = [
     'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
     'https://ada-pied-iota.vercel.app'
 ];
 if (process.env.CLIENT_URL) {
@@ -43,8 +46,8 @@ if (process.env.CLIENT_URL) {
 
 app.use(cors({
     origin: allowedOrigins,
-    methods: ['GET', 'PUT', 'POST', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
 
 app.use(express.json());
