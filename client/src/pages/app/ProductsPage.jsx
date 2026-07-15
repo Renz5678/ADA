@@ -49,7 +49,6 @@ export default function ProductsPage() {
             toast.success('Product updated successfully!');
         },
         onError: (err) => {
-            console.error('[ProductsPage] updateMutation onError:', err);
             toast.error(err.response?.data?.message || 'Failed to update product.');
         }
     });
@@ -87,7 +86,7 @@ export default function ProductsPage() {
                 createMutation.mutate(formData);
             }
         } catch (error) {
-            console.error('[ProductsPage] handleSave error:', error);
+            // handle error
         }
     };
 
