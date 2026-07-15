@@ -21,11 +21,16 @@ import notificationRouter from './src/routes/notification.js';
 import productMaterialRouter from './src/routes/productMaterial.js';
 import taskRouter from './src/routes/task.js';
 import profileRoutes from './src/routes/profileRoutes.js';
+import sseRouter from './src/routes/sse.js';
+import pendingOrdersRouter from './src/routes/pendingOrders.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
 const app = express();
 app.set('trust proxy', 1);
+
+// Initialize SSE client registry
+app.locals.sseClients = new Map();
 
 app.use(helmet());
 const allowedOrigins = [
@@ -71,6 +76,8 @@ app.use('/search', searchRouter);
 app.use('/notifications', notificationRouter);
 app.use('/tasks', taskRouter);
 app.use('/profile', profileRoutes);
+app.use('/sse', sseRouter);
+app.use('/pending-orders', pendingOrdersRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

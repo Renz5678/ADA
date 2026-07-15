@@ -1,7 +1,7 @@
 import Navitem from "./Navitem"
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdOutlineInventory, MdOutlineChecklist, MdMenu, MdClose, MdLogout } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdOutlineInventory, MdOutlineChecklist, MdMenu, MdClose } from "react-icons/md";
 import Icon from "#components/ui/Icon.jsx";
 
 const navItems = {
@@ -18,10 +18,6 @@ export default function Sidebar() {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/");
-    };
 
     return (
         <>
@@ -78,15 +74,6 @@ export default function Sidebar() {
                     ))}
                 </div>
 
-                <div className="mt-auto mb-4">
-                    <button
-                        onClick={handleLogout}
-                        className="w-full h-14 transition duration-300 ease-in items-center p-4 cursor-pointer font-body flex gap-2 text-[#E8F2FF] hover:bg-[#FFB2B9] hover:text-[#71333C] hover:scale-95"
-                    >
-                        <MdLogout size={20} />
-                        Logout
-                    </button>
-                </div>
             </div>
         </>
     )

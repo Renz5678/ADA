@@ -1,5 +1,5 @@
 import express from 'express';
-import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, getOrderStats, getScheduledOrders } from '../controllers/OrderController.js';
+import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, getOrderStats, getScheduledOrders, approveOrder, declineOrder } from '../controllers/OrderController.js';
 import { createOrderValidator, updateOrderValidator } from '../validators/orderValidator.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
@@ -17,5 +17,9 @@ orderRouter.post('/', authMiddleware, createOrderValidator, createOrder);
 orderRouter.put('/:id', authMiddleware, updateOrderValidator, updateOrder);
 
 orderRouter.delete('/:id', authMiddleware, deleteOrder);
+
+// Pending order approval/decline
+orderRouter.post('/approve/:pendingId', authMiddleware, approveOrder);
+orderRouter.post('/decline/:pendingId', authMiddleware, declineOrder);
 
 export default orderRouter;
