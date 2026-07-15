@@ -46,7 +46,7 @@ const getProducts = async (req, res) => {
         }
     } catch (e) {
         console.error('[ProductController] getProducts error:', e);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        return res.status(500).json({ message: e.message || 'Internal Server Error' });
     }
 };
 
@@ -68,7 +68,7 @@ const getProductById = async (req, res) => {
         return res.status(200).json(product);
     } catch (e) {
         console.error('[ProductController] getProductById error:', e);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        return res.status(500).json({ message: e.message || 'Internal Server Error' });
     }
 };
 
@@ -131,7 +131,7 @@ const createProduct = async (req, res) => {
         }
     } catch (e) {
         console.error('[ProductController] createProduct error:', e);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        return res.status(500).json({ message: e.message || 'Internal Server Error' });
     }
 };
 
@@ -197,7 +197,7 @@ const updateProduct = async (req, res) => {
         }
     } catch (e) {
         console.error('[ProductController] updateProduct error:', e);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        return res.status(500).json({ message: e.message || 'Internal Server Error' });
     }
 };
 
@@ -222,7 +222,7 @@ const deleteProduct = async (req, res) => {
         if (e.name === 'SequelizeForeignKeyConstraintError') {
             return res.status(400).json({ message: 'Cannot delete product because it is associated with existing orders.' });
         }
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        return res.status(500).json({ message: e.message || 'Internal Server Error' });
     }
 };
 
