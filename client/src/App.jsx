@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from 'react-hot-toast';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import LoadingBar from "#components/ui/LoadingBar.jsx";
 import AppRouter from "#routes/AppRouter.jsx";
 import ErrorBoundary from "#components/ui/ErrorBoundary.jsx";
@@ -40,6 +41,7 @@ export default function App() {
                     />
                     <LoadingBar isLoading={isLoading} message={loadingMessage} />
                     <AppRouter onStart={startLoading} onStop={stopLoading} />
+                    <SpeedInsights />
                 </ErrorBoundary>
             </QueryClientProvider>
         </>
