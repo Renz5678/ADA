@@ -16,8 +16,8 @@ export const getProducts = (page, limit, search = '') => {
     return api.get(url).then(r => r.data);
 };
 
-export const createProduct = (product) => api.post('/products', product, { headers: { 'Content-Type': 'multipart/form-data' } }).then(r => r.data);
+export const createProduct = (product) => api.post('/products', product).then(r => r.data);
 
-export const updateProduct = (id, updates) => api.put(`/products/${id}`, updates, { headers: { 'Content-Type': 'multipart/form-data' } }).then(r => r.data);
+export const updateProduct = (id, updates) => api.put(`/products/${id}`, updates).then(r => r.data);
 
 export const deleteProduct = (id) => api.delete(`/products/${id}`).then(r => r.data);
