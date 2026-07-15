@@ -304,3 +304,85 @@ export const getScheduleReminderHtml = (username, taskName, startTime) => {
 </html>
     `;
 };
+
+export const getNewOrderRequestHtml = (freelancerName, clientName, items, totalAmount, deadline) => {
+    const itemsHtml = items.map(item => `
+        <tr>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0e6d3; color: #0F1D29;">${item.product_name}</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0e6d3; text-align: center; color: #0F1D29;">${item.quantity}</td>
+            <td style="padding: 10px 12px; border-bottom: 1px solid #f0e6d3; text-align: right; color: #8D4A52; font-weight: bold;">₱${Number(item.subtotal).toFixed(2)}</td>
+        </tr>
+    `).join('');
+
+    const deadlineHtml = deadline
+        ? `<p style="margin: 4px 0;"><strong>Deadline:</strong> ${new Date(deadline).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}</p>`
+        : '';
+
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Work Sans', Arial, sans-serif; background-color: #FFF7E6; margin: 0; padding: 0; color: #0F1D29; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .logo { font-family: 'Manrope', Arial, sans-serif; font-size: 32px; font-weight: bold; color: #0F1D29; margin-bottom: 8px; text-align: center; }
+        .subtitle { color: #551E26; font-size: 14px; margin-bottom: 32px; text-align: center; }
+        .badge { display: inline-block; background-color: #FFF7E6; border: 1px solid #CBA0AA; color: #8D4A52; font-size: 12px; font-weight: bold; padding: 4px 12px; border-radius: 999px; margin-bottom: 24px; }
+        .order-meta { background-color: #FFF7E6; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        th { background-color: #0F1D29; color: #ffffff; padding: 10px 12px; text-align: left; font-size: 13px; }
+        th:nth-child(2) { text-align: center; }
+        th:nth-child(3) { text-align: right; }
+        .total-row { background-color: #FFF7E6; }
+        .total-row td { padding: 12px; font-weight: bold; font-size: 16px; }
+        .btn { display: inline-block; background-color: #8D4A52; color: #ffffff !important; padding: 14px 32px; border-radius: 24px; text-decoration: none; font-weight: bold; font-size: 15px; margin-top: 8px; }
+        .footer { margin-top: 40px; font-size: 12px; color: #888888; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">ADA</div>
+        <div class="subtitle">Create. Sell. Track</div>
+
+        <span class="badge">🛒 New Order Request</span>
+
+        <p>Hi <strong>${freelancerName}</strong>,</p>
+        <p>You have received a new order request from <strong>${clientName}</strong> that requires your approval.</p>
+
+        <div class="order-meta">
+            <p style="margin: 4px 0;"><strong>Client:</strong> ${clientName}</p>
+            ${deadlineHtml}
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Qty</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${itemsHtml}
+                <tr class="total-row">
+                    <td colspan="2" style="padding: 12px; color: #0F1D29;">Total Amount</td>
+                    <td style="padding: 12px; text-align: right; color: #8D4A52;">₱${Number(totalAmount).toFixed(2)}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Log in to your ADA dashboard to <strong>approve or decline</strong> this order request.</p>
+
+        <div style="text-align: center; margin: 28px 0;">
+            <a href="https://ada-pied-iota.vercel.app/orders" class="btn">Review Order Request →</a>
+        </div>
+
+        <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} ADA. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+};
+

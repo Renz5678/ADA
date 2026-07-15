@@ -264,3 +264,123 @@ const getScheduledOrders = async (req, res) => {
 };
 
 export { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, getOrderStats, getScheduledOrders };
+
+// ─── Approve a pending client order request ───────────────────────────────────
+export const approveOrder = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const pendingId = req.params.pendingId;
+
+        const { PendingOrders, Clients } = models;
+
+        const pending = await PendingOrders.findOne({
+            where: { pending_id: pendingId, freelancer_id: userId }
+        });
+
+        if (!pending) {
+            return res.status(404).json({ message: 'Pending order not found or already processed.' });
+        }
+
+        const t = await sequelize.transaction();
+        try {
+            // Create the real Order
+            const newOrder = await Orders.create({
+                user_id: userId,
+                client_id: pending.client_id,
+                customer_name: pending.customer_name,
+                order_date: new Date().toISOString().split('T')[0],
+                total_amount: pending.total_amount,
+                deadline: pending.deadline || null,
+                status: 'Pending'
+            }, { transaction: t });
+
+            // Create OrderItems from snapshot
+            const itemsSnapshot = pending.items_snapshot || [];
+            if (itemsSnapshot.length > 0) {
+                await models.OrderItem.bulkCreate(
+                    itemsSnapshot.map(item => ({
+                        order_id: newOrder.order_id,
+                        product_id: item.product_id,
+                        quantity: item.quantity,
+                        subtotal: item.subtotal
+                    })),
+                    { transaction: t }
+                );
+            }
+
+            // Create a Task for this order
+            if (models.Tasks) {
+                await models.Tasks.create({
+                    user_id: userId,
+                    title: `Fulfill Order #${newOrder.order_id}`,
+                    deadline: pending.deadline || null,
+                    status: 'Not Started',
+                    related_order_id: newOrder.order_id
+                }, { transaction: t });
+            }
+
+            // Notify client
+            await models.Notifications.create({
+                client_id: pending.client_id,
+                title: 'Order Approved! 🎉',
+                message: `Your order request has been approved by your freelancer. Order #${newOrder.order_id} is now being processed.`,
+                type: 'INFO',
+                reference_id: newOrder.order_id,
+                reference_type: 'ORDER'
+            }, { transaction: t });
+
+            // Delete the pending record
+            await pending.destroy({ transaction: t });
+
+            await t.commit();
+
+            // Return the new order to the freelancer
+            return res.status(201).json({
+                message: 'Order approved and created successfully.',
+                order: newOrder
+            });
+        } catch (err) {
+            await t.rollback();
+            console.error('[approveOrder]', err);
+            return res.status(500).json({ message: 'Failed to approve order.' });
+        }
+    } catch (e) {
+        console.error('[approveOrder]', e);
+        return res.status(500).json({ message: 'Internal Server Error!' });
+    }
+};
+
+// ─── Decline a pending client order request ───────────────────────────────────
+export const declineOrder = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const pendingId = req.params.pendingId;
+
+        const { PendingOrders } = models;
+
+        const pending = await PendingOrders.findOne({
+            where: { pending_id: pendingId, freelancer_id: userId }
+        });
+
+        if (!pending) {
+            return res.status(404).json({ message: 'Pending order not found or already processed.' });
+        }
+
+        // Notify client of the decline
+        await models.Notifications.create({
+            client_id: pending.client_id,
+            title: 'Order Request Declined',
+            message: `Unfortunately, your order request was declined by your freelancer. Please reach out for more details.`,
+            type: 'INFO',
+            reference_id: pending.pending_id,
+            reference_type: 'ORDER'
+        });
+
+        await pending.destroy();
+
+        return res.status(200).json({ message: 'Order request declined.' });
+    } catch (e) {
+        console.error('[declineOrder]', e);
+        return res.status(500).json({ message: 'Internal Server Error!' });
+    }
+};
