@@ -79,21 +79,25 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        const formData = new FormData();
-        formData.append('product_code', productCode);
-        formData.append('product_name', productName);
-        formData.append('price', price);
-        
-        if (description) formData.append('description', description);
-        if (estimatedDays) formData.append('estimated_days', estimatedDays);
-        if (image) formData.append('image', image);
-        
-        formData.append('materials', JSON.stringify(materials.map(m => ({
-            material_id: m.material_id,
-            quantity_required: Number(m.quantity_required)
-        }))));
+        try {
+            const formData = new FormData();
+            formData.append('product_code', productCode);
+            formData.append('product_name', productName);
+            formData.append('price', price);
+            
+            if (description) formData.append('description', description);
+            if (estimatedDays) formData.append('estimated_days', estimatedDays);
+            if (image) formData.append('image', image);
+            
+            formData.append('materials', JSON.stringify(materials.map(m => ({
+                material_id: m.material_id,
+                quantity_required: Number(m.quantity_required)
+            }))));
 
-        onSave(formData);
+            onSave(formData);
+        } catch (error) {
+            console.error('[ProductModal] handleSubmit error:', error);
+        }
     };
 
     return (
