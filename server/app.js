@@ -4,9 +4,9 @@ import helmet from 'helmet';
 
 import authRouter from './src/routes/auth.js';
 import clientAuthRouter from './src/routes/clientAuth.js';
-import clientBusinessesRouter from './src/routes/clientBusinesses.js';
-import clientOrdersRouter from './src/routes/clientOrders.js';
-import clientNotificationRouter from './src/routes/clientNotifications.js';
+import clientBusinessesRouter from './src/routes/clientBusiness.js';
+import clientOrdersRouter from './src/routes/clientOrder.js';
+import clientNotificationRouter from './src/routes/clientNotification.js';
 import productRouter from './src/routes/product.js';
 import orderRouter from './src/routes/order.js';
 import materialRouter from './src/routes/material.js';
@@ -20,9 +20,9 @@ import searchRouter from './src/routes/search.js';
 import notificationRouter from './src/routes/notification.js';
 import productMaterialRouter from './src/routes/productMaterial.js';
 import taskRouter from './src/routes/task.js';
-import profileRoutes from './src/routes/profileRoutes.js';
+import profileRoutes from './src/routes/profile.js';
 import sseRouter from './src/routes/sse.js';
-import pendingOrdersRouter from './src/routes/pendingOrders.js';
+import pendingOrdersRouter from './src/routes/pendingOrder.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 

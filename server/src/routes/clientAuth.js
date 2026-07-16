@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerClient, loginClient, verifyOtp, resendOtp, googleLoginClient } from '../controllers/ClientAuthController.js';
+import { registerClient, loginClient, verifyOtp, resendOtp, googleLoginClient } from '../controllers/clientAuthController.js';
 import { clientRegisterValidator, clientLoginValidator, clientVerifyOtpValidator, clientResendOtpValidator } from '../validators/clientValidator.js';
 
 const clientAuthRouter = express.Router();

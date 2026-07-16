@@ -1,5 +1,5 @@
 import express from 'express';
-import { getOrderItems, getOrderItemById, getOrderItemsByProductid, getOrderItemsByOrderid, createOrderItem, updateOrderItem, deleteOrderitem } from '../controllers/OrderItemController.js';
+import { getOrderItems, getOrderItemById, getOrderItemsByProductid, getOrderItemsByOrderid, createOrderItem, updateOrderItem, deleteOrderitem } from '../controllers/orderItemController.js';
 import { createOrderItemValidator, updateOrderItemValidator } from '../validators/orderItemValidator.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 

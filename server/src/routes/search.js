@@ -1,5 +1,5 @@
 import express from 'express';
-import { globalSearch } from '../controllers/SearchController.js';
+import { globalSearch } from '../controllers/searchController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
 const searchRouter = express.Router();

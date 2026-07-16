@@ -70,7 +70,7 @@ export default (sequelize, DataTypes) => {
     };
 
     Clients.associate = (models) => {
-        if (models.Users) Clients.belongsTo(models.Users, { foreignKey: 'freelancer_id' });
+        if (models.Users) Clients.belongsTo(models.Users, { foreignKey: 'freelancer_id', onDelete: 'CASCADE' });
         if (models.Orders) Clients.hasMany(models.Orders, { foreignKey: 'client_id' });
     };
 

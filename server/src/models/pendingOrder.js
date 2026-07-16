@@ -48,7 +48,7 @@ export default (sequelize, DataTypes) => {
     });
 
     PendingOrders.associate = (models) => {
-        PendingOrders.belongsTo(models.Users, { foreignKey: 'freelancer_id' });
+        PendingOrders.belongsTo(models.Users, { foreignKey: 'freelancer_id', onDelete: 'CASCADE' });
         PendingOrders.belongsTo(models.Clients, { foreignKey: 'client_id' });
     };
 

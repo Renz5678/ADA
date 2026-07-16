@@ -54,7 +54,7 @@ export default (sequelize, DataTypes) => {
         });
 
     Expense.associate = (models) => {
-        Expense.belongsTo(models.Users, { foreignKey: 'user_id' });
+        Expense.belongsTo(models.Users, { foreignKey: 'user_id', onDelete: 'CASCADE' });
     }
 
     return Expense;

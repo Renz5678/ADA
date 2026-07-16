@@ -2,19 +2,19 @@ import { Sequelize, DataTypes } from "sequelize";
 import dotenv from 'dotenv';
 dotenv.config();
 
-import UserFactory from '../models/users.js';
+import UserFactory from '../models/user.js';
 import ProductFactory from '../models/product.js';
-import OrderFactory from '../models/orders.js';
+import OrderFactory from '../models/order.js';
 import OrderItemFactory from '../models/orderItem.js';
 import MaterialFactory from '../models/material.js';
-import MaterialTransactionFactory from '../models/material_transaction.js';
+import MaterialTransactionFactory from '../models/materialTransaction.js';
 import ExpenseFactory from '../models/expense.js';
 import WeeklyAvailabilityFactory from '../models/weeklyAvailability.js';
 import ProductMaterialFactory from '../models/productMaterial.js';
-import NotificationFactory from '../models/notifications.js';
-import TaskFactory from '../models/tasks.js';
-import ClientFactory from '../models/clients.js';
-import PendingOrdersFactory from '../models/pendingOrders.js';
+import NotificationFactory from '../models/notification.js';
+import TaskFactory from '../models/task.js';
+import ClientFactory from '../models/client.js';
+import PendingOrdersFactory from '../models/pendingOrder.js';
 
 let sequelize;
 

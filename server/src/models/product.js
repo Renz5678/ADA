@@ -62,8 +62,8 @@ export default (sequelize, DataTypes) => {
         });
 
     Product.associate = (models) => {
-        if (models.OrderItem) Product.hasMany(models.OrderItem, { foreignKey: 'product_id', onDelete: 'RESTRICT' });
-        Product.belongsTo(models.Users, { foreignKey: 'user_id' });
+        if (models.OrderItem) Product.hasMany(models.OrderItem, { foreignKey: 'product_id', onDelete: 'CASCADE' });
+        Product.belongsTo(models.Users, { foreignKey: 'user_id', onDelete: 'CASCADE' });
         if (models.ProductMaterial) {
             Product.hasMany(models.ProductMaterial, { foreignKey: 'product_id', onDelete: 'CASCADE' });
         }

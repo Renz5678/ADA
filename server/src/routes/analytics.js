@@ -1,5 +1,5 @@
 import express from 'express';
-import { getSummary, getTopProducts, getWeakProducts, getSalesByMonth, getSuggestedFocus } from '../controllers/AnalyticsController.js';
+import { getSummary, getTopProducts, getWeakProducts, getSalesByMonth, getSuggestedFocus } from '../controllers/analyticsController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
 const analyticsRouter = express.Router();

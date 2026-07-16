@@ -1,6 +1,6 @@
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js'
-import { getMaterialTransactions, getMaterialTransactionById, createMaterialTransaction, updateMaterialTransaction, deleteMaterialTransaction } from '../controllers/MaterialTransactionController.js';
+import { getMaterialTransactions, getMaterialTransactionById, createMaterialTransaction, updateMaterialTransaction, deleteMaterialTransaction } from '../controllers/materialTransactionController.js';
 import { createMaterialTransactionValidator, updateMaterialTransactionValidator } from '../validators/materialTransactionValidator.js';
 
 const materialTransactionRouter = express.Router();
