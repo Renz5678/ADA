@@ -84,14 +84,14 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
     );
 
     return (
-        <div className="fixed inset-0 bg-[#0F1D29]/60 backdrop-blur-sm z-50 flex justify-center items-center animate-fadeIn">
-            <div className="w-[90%] sm:w-[600px] max-w-2xl bg-[#FFF7E6] border border-[#e8d5b5] rounded-3xl p-7 flex flex-col gap-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-zoomIn max-h-[90vh] overflow-hidden">
+        <div className="fixed inset-0 bg-[#0F1D29]/60 backdrop-blur-sm z-50 flex justify-center items-center animate-fadeIn p-4">
+            <div className="w-full sm:w-[600px] min-w-0 max-w-2xl bg-[#FFF7E6] border border-[#e8d5b5] rounded-3xl p-5 sm:p-7 flex flex-col gap-4 sm:gap-5 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] animate-zoomIn max-h-[90vh] overflow-hidden">
                 
-                <div className="flex justify-between items-center border-b border-[#e8d5b5] pb-4">
-                    <h3 className="font-headline text-xl font-bold text-[#8D4A52]">
+                <div className="flex justify-between items-center border-b border-[#e8d5b5] pb-4 shrink-0">
+                    <h3 className="font-headline text-lg sm:text-xl font-bold text-[#8D4A52] truncate pr-4">
                         Bill of Materials: {product.product_name}
                     </h3>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -99,7 +99,7 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
                 </div>
 
                 {/* Add Material Form */}
-                <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3 items-end bg-white p-4 rounded-xl shadow-sm border border-[#e8d5b5]">
+                <form onSubmit={handleAdd} className="flex flex-col sm:flex-row gap-3 items-end bg-white p-4 rounded-xl shadow-sm border border-[#e8d5b5] shrink-0 w-full">
                     <div className="w-full sm:flex-1">
                         <label className="block text-sm mb-1 font-label text-[#0F1D29]">Select Material</label>
                         <select
@@ -145,13 +145,13 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
                 </form>
 
                 {/* Materials List */}
-                <div className="flex-1 overflow-auto rounded-xl border border-[#e8d5b5] bg-white shadow-sm min-h-[200px]">
+                <div className="flex-1 overflow-x-auto overflow-y-auto rounded-xl border border-[#e8d5b5] bg-white shadow-sm min-h-[200px] w-full min-w-0">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-[#F5F3F3] sticky top-0 z-10">
                             <tr>
                                 <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Code</th>
                                 <th className="px-4 py-3 text-left text-xs font-medium text-[#0F1D29] uppercase font-label">Material Name</th>
-                                <th className="px-4 py-3 text-right text-xs font-medium text-[#0F1D29] uppercase font-label">Required Qty</th>
+                                <th className="px-4 py-3 text-right text-xs font-medium text-[#0F1D29] uppercase font-label whitespace-nowrap">Required Qty</th>
                                 <th className="px-4 py-3 text-center text-xs font-medium text-[#0F1D29] uppercase font-label">Actions</th>
                             </tr>
                         </thead>
@@ -167,10 +167,10 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
                             ) : (
                                 productMaterials.map(pm => (
                                     <tr key={pm.material_id} className="hover:bg-gray-50">
-                                        <td className="px-4 py-3 text-sm text-[#8D4A52] font-medium">{pm.Material?.material_code}</td>
-                                        <td className="px-4 py-3 text-sm text-gray-900">{pm.Material?.material_name}</td>
-                                        <td className="px-4 py-3 text-sm text-right text-gray-900 font-semibold">{pm.quantity_required}</td>
-                                        <td className="px-4 py-3 text-center">
+                                        <td className="px-4 py-3 text-sm text-[#8D4A52] font-medium whitespace-nowrap">{pm.Material?.material_code}</td>
+                                        <td className="px-4 py-3 text-sm text-gray-900 min-w-[120px]">{pm.Material?.material_name}</td>
+                                        <td className="px-4 py-3 text-sm text-right text-gray-900 font-semibold whitespace-nowrap">{pm.quantity_required}</td>
+                                        <td className="px-4 py-3 text-center whitespace-nowrap">
                                             <button 
                                                 onClick={() => handleRemove(pm.material_id)}
                                                 disabled={removeMutation.isPending}
@@ -186,8 +186,8 @@ export default function ProductMaterialsModal({ isOpen, onClose, product }) {
                     </table>
                 </div>
 
-                <div className="flex justify-end pt-2">
-                    <Button variant="secondary" onClick={onClose}>
+                <div className="flex justify-end pt-2 shrink-0">
+                    <Button variant="secondary" onClick={onClose} className="w-full sm:w-auto">
                         Close
                     </Button>
                 </div>
