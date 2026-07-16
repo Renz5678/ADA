@@ -86,7 +86,7 @@ export default function ProductsPage() {
                 createMutation.mutate(formData);
             }
         } catch (error) {
-            // handle error
+            console.error("Error saving product:", error);
         }
     };
 
