@@ -14,7 +14,19 @@ export default [
                 __dirname: "readonly",
                 module: "readonly",
                 require: "readonly",
-                exports: "readonly"
+                exports: "readonly",
+                describe: "readonly",
+                it: "readonly",
+                expect: "readonly",
+                beforeAll: "readonly",
+                afterAll: "readonly",
+                beforeEach: "readonly",
+                afterEach: "readonly",
+                jest: "readonly",
+                fetch: "readonly",
+                setTimeout: "readonly",
+                setInterval: "readonly",
+                clearInterval: "readonly"
             },
             ecmaVersion: 2022,
             sourceType: "module"
