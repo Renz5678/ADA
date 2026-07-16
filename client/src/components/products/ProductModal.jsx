@@ -96,7 +96,7 @@ export default function ProductModal({ isOpen, onClose, onSave, isSaving, initia
 
             onSave(formData);
         } catch (error) {
-            // error
+            console.error(error);
         }
     };
 
