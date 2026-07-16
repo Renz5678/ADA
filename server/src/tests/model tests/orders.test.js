@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes } from "sequelize";
-import UsersFactory from '../../models/users.js';
-import OrdersFactory from '../../models/orders.js';
-import ClientsFactory from '../../models/clients.js';
+import UsersFactory from '../../models/user.js';
+import OrdersFactory from '../../models/order.js';
+import ClientsFactory from '../../models/client.js';
 
 const sequelize = new Sequelize({ dialect: 'sqlite', storage: ':memory:', logging: false });
 

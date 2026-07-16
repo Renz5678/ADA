@@ -29,14 +29,14 @@ const ProductsTable = ({ products, isFetching, onEdit, onDelete, onManageMateria
                         className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-[#8D4A52] transition-all duration-300 flex flex-col overflow-hidden group"
                     >
                         {product.image_url ? (
-                            <div className="w-full h-48 bg-gray-100 overflow-hidden relative shrink-0">
+                            <div className="w-full h-36 bg-gray-100 overflow-hidden relative shrink-0">
                                 <img src={product.image_url} alt={product.product_name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-[#8D4A52] shadow-sm">
                                     {product.product_code}
                                 </div>
                             </div>
                         ) : (
-                            <div className="w-full h-48 bg-[#FFF7E6] text-[#8D4A52] flex flex-col items-center justify-center shrink-0 relative">
+                            <div className="w-full h-36 bg-[#FFF7E6] text-[#8D4A52] flex flex-col items-center justify-center shrink-0 relative">
                                 <MdOutlineLocalOffer size={40} className="mb-2 opacity-50" />
                                 <span className="text-xs font-medium opacity-60 uppercase tracking-widest">No Image</span>
                                 <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-[#8D4A52] shadow-sm">

@@ -2,7 +2,7 @@ import { models } from '../models/index.js';
 import { validationResult } from 'express-validator';
 import transporter from '../utils/mailer.js';
 import { getNewOrderRequestHtml } from '../utils/emailTemplates.js';
-import { sendToUser } from '../controllers/SseController.js';
+import { sendToUser } from '../controllers/sseController.js';
 
 const { PendingOrders, Clients, Users } = models;
 

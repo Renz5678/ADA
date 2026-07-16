@@ -4,7 +4,7 @@ import {
     getClientUnreadCount, 
     markClientNotificationAsRead, 
     markAllClientNotificationsAsRead 
-} from '../controllers/ClientNotificationsController.js';
+} from '../controllers/clientNotificationController.js';
 import clientAuthMiddleware from '../middleware/clientAuthMiddleware.js';
 
 const clientNotificationRouter = express.Router();

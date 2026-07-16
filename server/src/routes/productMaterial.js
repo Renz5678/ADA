@@ -1,5 +1,5 @@
 import express from 'express';
-import { getProductMaterials, addProductMaterial, removeProductMaterial } from '../controllers/ProductMaterialController.js';
+import { getProductMaterials, addProductMaterial, removeProductMaterial } from '../controllers/productMaterialController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 import { createProductMaterialValidator } from '../validators/productMaterialValidator.js';
 

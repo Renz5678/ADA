@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAvailabilities, createAvailability, updateAvailability, deleteAvailability } from '../controllers/ScheduleController.js';
+import { getAvailabilities, createAvailability, updateAvailability, deleteAvailability } from '../controllers/scheduleController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
 const scheduleRouter = express.Router();

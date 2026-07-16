@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { register, login, verifyOtp, resendOtp, resetPassword, confirmResetPassword, googleLogin } from '../controllers/AuthController.js';
+import { register, login, verifyOtp, resendOtp, resetPassword, confirmResetPassword, googleLogin } from '../controllers/authController.js';
 import { emailValidator, registerValidator, loginValidator, otpValidator, resetPasswordValidator } from '../validators/userValidator.js';
 const authRouter = express.Router();
 

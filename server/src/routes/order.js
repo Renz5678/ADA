@@ -1,5 +1,5 @@
 import express from 'express';
-import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, getOrderStats, getScheduledOrders, approveOrder, declineOrder } from '../controllers/OrderController.js';
+import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, getOrderStats, getScheduledOrders, approveOrder, declineOrder } from '../controllers/orderController.js';
 import { createOrderValidator, updateOrderValidator } from '../validators/orderValidator.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 

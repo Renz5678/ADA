@@ -1,5 +1,5 @@
 import express from 'express';
-import { getMaterials, getMaterialById, createMaterial, updateMaterial, deleteMaterial } from '../controllers/MaterialController.js';
+import { getMaterials, getMaterialById, createMaterial, updateMaterial, deleteMaterial } from '../controllers/materialController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 import { createMaterialValidator, updateMaterialValidator } from '../validators/materialValidator.js';
 const materialRouter = express.Router();

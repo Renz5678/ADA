@@ -61,7 +61,7 @@ export default (sequelize, DataTypes) => {
     });
 
     Tasks.associate = (models) => {
-        Tasks.belongsTo(models.Users, { foreignKey: 'user_id' });
+        Tasks.belongsTo(models.Users, { foreignKey: 'user_id', onDelete: 'CASCADE' });
         if (models.Orders) {
             Tasks.belongsTo(models.Orders, { foreignKey: 'related_order_id', onDelete: 'CASCADE' });
         }

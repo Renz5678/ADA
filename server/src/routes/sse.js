@@ -1,5 +1,5 @@
 import express from 'express';
-import { connectSse } from '../controllers/SseController.js';
+import { connectSse } from '../controllers/sseController.js';
 
 const sseRouter = express.Router();
 

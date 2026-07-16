@@ -1,6 +1,6 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { getClientOrders, createClientOrder } from '../controllers/ClientOrdersController.js';
+import { getClientOrders, createClientOrder } from '../controllers/clientOrderController.js';
 import clientAuthMiddleware from '../middleware/clientAuthMiddleware.js';
 import { body } from 'express-validator';
 

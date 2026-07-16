@@ -60,7 +60,7 @@ export default (sequelize, DataTypes) => {
         });
 
     WeeklyAvailability.associate = (models) => {
-        if (models.Users) WeeklyAvailability.belongsTo(models.Users, { foreignKey: 'user_id' });
+        if (models.Users) WeeklyAvailability.belongsTo(models.Users, { foreignKey: 'user_id', onDelete: 'CASCADE' });
     };
 
     return WeeklyAvailability;
