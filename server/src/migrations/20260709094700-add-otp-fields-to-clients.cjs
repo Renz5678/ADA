@@ -7,19 +7,25 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       });
-    } catch (e) {}
+    } catch (e) {
+      // Ignore error if column already exists
+    }
     try {
       await queryInterface.addColumn('Clients', 'is_verified', {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       });
-    } catch (e) {}
+    } catch (e) {
+      // Ignore error if column already exists
+    }
     try {
       await queryInterface.addColumn('Clients', 'otp_expires_at', {
         type: Sequelize.DATE,
         allowNull: true,
       });
-    } catch (e) {}
+    } catch (e) {
+      // Ignore error if column already exists
+    }
   },
 
   async down(queryInterface, Sequelize) {
