@@ -23,6 +23,7 @@ import taskRouter from './src/routes/task.js';
 import profileRoutes from './src/routes/profile.js';
 import sseRouter from './src/routes/sse.js';
 import pendingOrdersRouter from './src/routes/pendingOrder.js';
+import marketplaceRouter from './src/routes/marketplace.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
@@ -81,6 +82,7 @@ app.use('/tasks', taskRouter);
 app.use('/profile', profileRoutes);
 app.use('/sse', sseRouter);
 app.use('/pending-orders', pendingOrdersRouter);
+app.use('/marketplace', marketplaceRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

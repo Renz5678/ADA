@@ -49,6 +49,15 @@ export default function LandingPage() {
                     </div>
                 </div>
 
+                {/* Marketplace Option */}
+                <div className="w-full text-center mt-4">
+                    <p className="text-gray-500 font-body mb-3">Just looking around?</p>
+                    <Link to="/marketplace" className="inline-flex items-center gap-2 px-8 py-3 bg-[#E57A44] hover:bg-[#D46933] text-white rounded-full font-bold transition font-headline shadow-sm hover:shadow-md hover:-translate-y-0.5">
+                        <MdOutlineWorkOutline size={20} />
+                        Explore Marketplace
+                    </Link>
+                </div>
+
             </div>
         </motion.div>
     );
