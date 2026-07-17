@@ -72,12 +72,12 @@ export default function FreelancerCatalogPage() {
                             </div>
                         )}
                     </div>
-                    <div className="flex-1 pt-2 md:pt-16">
+                    <div className="flex-1 pt-16 md:pt-20">
                         <h1 className="text-3xl md:text-4xl font-headline font-black text-[#0F1D29]">{freelancer.business_name}</h1>
                         <p className="text-gray-500 font-body mt-1">@{freelancer.username}</p>
                         <p className="text-gray-700 font-body mt-4 max-w-2xl">{freelancer.bio || freelancer.description}</p>
                     </div>
-                    <div className="w-full md:w-auto pt-2 md:pt-16">
+                    <div className="w-full md:w-auto pt-16 md:pt-20">
                         <Button variant="primary" className="w-full md:w-auto flex items-center justify-center gap-2" onClick={handleInteract}>
                             <MdMessage size={20} />
                             Contact Maker
