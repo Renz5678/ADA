@@ -15,17 +15,15 @@ const VantaBackground = () => {
     let effect: unknown;
     if (!vantaEffect && typeof window !== "undefined") {
       import("three").then((THREE) => {
-        // Create a clone of THREE so we can monkey-patch it (ES modules are non-extensible)
-        const patchedTHREE = { ...THREE, VertexColors: true };
-        // @ts-expect-error adding property to window
-        window.THREE = patchedTHREE;
+        // @ts-ignore
+        window.THREE = THREE;
         
         // @ts-expect-error missing vanta types
         import("vanta/src/vanta.net").then((VantaNet) => {
           const NET = VantaNet.default || VantaNet;
           effect = NET({
             el: vantaRef.current,
-            THREE: patchedTHREE,
+            THREE: THREE,
             mouseControls: true,
             touchControls: true,
             gyroControls: false,
@@ -45,15 +43,15 @@ const VantaBackground = () => {
       });
     }
     return () => {
-      // @ts-expect-error calling destroy on unknown
+      // @ts-ignore
       if (effect) effect.destroy();
-      // @ts-expect-error calling destroy on unknown
+      // @ts-ignore
       if (vantaEffect) (vantaEffect as { destroy: () => void }).destroy();
     };
   }, [vantaEffect]);
 
   return (
-    <div ref={vantaRef} className="absolute inset-0 z-[0] pointer-events-none opacity-60" />
+    <div ref={vantaRef} className="fixed inset-0 z-[0] pointer-events-none opacity-60" />
   );
 };
 
