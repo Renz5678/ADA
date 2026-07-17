@@ -135,11 +135,11 @@ const verifyOtp = async (req, res) => {
 
         await user.save();
 
-        await transporter.sendMail({
+        transporter.sendMail({
             to: email,
             subject: 'Your ADA Account Has Been Verified',
             text: `Hi ${user.username},\n\nYour account has been successfully verified. You can now log in and start using ADA.\n\nIf you did not create this account, please contact our support team immediately.\n\nBest regards,\nThe ADA Team`
-        });
+        }).catch(err => console.error('Failed to send verification email:', err));
 
         return res.status(200).json({ message: 'Account verified!' });
     } catch (e) {
