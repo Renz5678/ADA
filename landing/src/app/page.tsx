@@ -38,9 +38,10 @@ const VantaBackground = () => {
                 scaleMobile: 1.00,
                 color: 0x8d4a52,
                 backgroundColor: 0xffffff,
+                backgroundAlpha: 0.0, // Make Vanta transparent so the grid shows through
                 points: 10.00,
-                maxDistance: 20.00,
-                spacing: 20.00,
+                maxDistance: 25.00, // Increase distance to make the net sparser
+                spacing: 25.00, // Increase spacing for a cleaner look
                 showDots: true
               });
               console.log("Vanta NET successfully initialized");
@@ -63,7 +64,7 @@ const VantaBackground = () => {
   }, []); // Empty dependency array prevents re-render loops
 
   return (
-    <div ref={vantaRef} className="fixed top-0 left-0 w-screen h-screen z-[0] pointer-events-none" />
+    <div ref={vantaRef} className="fixed top-0 left-0 w-screen h-screen z-[0] pointer-events-none opacity-40" />
   );
 };
 
