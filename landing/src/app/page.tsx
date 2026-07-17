@@ -20,13 +20,13 @@ const VantaBackground = () => {
         window.THREE = THREE;
         
         // @ts-ignore
-        import("vanta/dist/vanta.clouds2.min").then((VantaClouds2) => {
+        import("vanta/dist/vanta.waves.min").then((VantaWaves) => {
           if (!isMounted) return;
           
           if (!effectRef.current && vantaRef.current) {
-            const CLOUDS2 = VantaClouds2.default || VantaClouds2 || (window as any).VANTA?.CLOUDS2;
+            const WAVES = VantaWaves.default || VantaWaves || (window as any).VANTA?.WAVES;
             try {
-              effectRef.current = CLOUDS2({
+              effectRef.current = WAVES({
                 el: vantaRef.current,
                 THREE: THREE,
                 mouseControls: true,
@@ -35,19 +35,19 @@ const VantaBackground = () => {
                 minHeight: 200.00,
                 minWidth: 200.00,
                 scale: 1.00,
-                // Soft, light colors to fit ADA's clean aesthetic
-                backgroundColor: 0xffffff,
-                skyColor: 0xffffff,
-                cloudColor: 0x8d4a52, // ADA's brand maroon
-                lightColor: 0xffffff,
-                speed: 1.0
+                scaleMobile: 1.00,
+                color: 0x8d4a52, // ADA's maroon
+                shininess: 30.00,
+                waveHeight: 15.00,
+                waveSpeed: 0.80, // Slightly slower, elegant waves
+                zoom: 1.00
               });
-              console.log("Vanta CLOUDS2 successfully initialized");
+              console.log("Vanta WAVES successfully initialized");
             } catch (e) {
               console.error("Vanta initialization error:", e);
             }
           }
-        }).catch(e => console.error("Failed to load VantaClouds2:", e));
+        }).catch(e => console.error("Failed to load VantaWaves:", e));
       }).catch(e => console.error("Failed to load Three:", e));
     }
     
