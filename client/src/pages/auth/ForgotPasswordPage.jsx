@@ -130,7 +130,7 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
                 verification_token: code,
                 password: newPassword,
             });
-            navigate("/login");
+            navigate("/login-freelancer");
         } catch (err) {
             const status = err.response?.status;
             const retryAfter = err.response?.headers?.["retry-after"];
@@ -144,7 +144,7 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
                     message: "Your verification code has expired. Request a new one to continue.",
                     actions: [
                         { label: "Resend Code", onClick: handleResendOtp, variant: "primary" },
-                        { label: "Go Back", onClick: () => navigate("/login"), variant: "secondary" }
+                        { label: "Go Back", onClick: () => navigate("/login-freelancer"), variant: "secondary" }
                     ]
                 });
             } else if (status === 404) {

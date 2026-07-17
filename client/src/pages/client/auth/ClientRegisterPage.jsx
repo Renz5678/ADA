@@ -85,14 +85,14 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                 </div>
 
                 {/* Card */}
-                <div className="w-full bg-white rounded-3xl flex flex-col items-center py-10 font-body">
+                <div className="w-full bg-[#1A2B3C] border border-gray-700 rounded-3xl flex flex-col items-center py-10 font-body shadow-xl">
                     <form
                         onSubmit={handleRegister}
                         noValidate
                         className="flex flex-col w-[80%] gap-6"
                     >
                         {/* Name */}
-                        <label className="flex flex-col gap-1">
+                        <label className="flex flex-col gap-1 text-gray-200">
                             <span className="font-medium text-sm flex items-center gap-2">
                                 <MdPersonOutline /> Full Name
                             </span>
@@ -101,12 +101,12 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                                 type="text"
                                 value={form.name}
                                 onChange={handleChange}
-                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA]"
+                                className="w-full h-10 px-4 bg-[#0F1D29] border border-gray-600 rounded-lg text-white focus:border-[#E57A44] focus:outline-none"
                             />
                         </label>
 
                         {/* Email */}
-                        <label className="flex flex-col gap-1">
+                        <label className="flex flex-col gap-1 text-gray-200">
                             <span className="font-medium text-sm flex items-center gap-2">
                                 <MdOutlineMailOutline /> Email Address
                             </span>
@@ -116,17 +116,17 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                                 value={form.email}
                                 onChange={handleChange}
                                 autoComplete="email"
-                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA]"
+                                className="w-full h-10 px-4 bg-[#0F1D29] border border-gray-600 rounded-lg text-white focus:border-[#E57A44] focus:outline-none"
                             />
                             {form.email && (
-                                <p className={`text-xs mt-1 ${isValidEmail ? "text-green-500 flex items-center gap-1" : "text-red-500"}`}>
+                                <p className={`text-xs mt-1 ${isValidEmail ? "text-green-400 flex items-center gap-1" : "text-red-400"}`}>
                                     {isValidEmail ? <><MdCheck /> Valid email</> : "Please enter a valid email address"}
                                 </p>
                             )}
                         </label>
 
                         {/* Password */}
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1 text-gray-200">
                             <span className="font-medium text-sm flex items-center justify-between">
                                 <label htmlFor="password" className="flex items-center gap-2">
                                     <MdLockOutline /> Password
@@ -140,12 +140,12 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                                     value={form.password}
                                     onChange={handleChange}
                                     autoComplete="new-password"
-                                    className="w-full h-10 px-4 pr-10 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
+                                    className="w-full h-10 px-4 pr-10 bg-[#0F1D29] border border-gray-600 rounded-lg text-white focus:border-[#E57A44] focus:outline-none"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword((prev) => !prev)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#c1c1c1] hover:text-[#8D4A52]"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
                                 >
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </button>
@@ -154,13 +154,13 @@ export default function ClientRegisterPage({ onStart, onStop }) {
 
                         {/* Global error */}
                         {error && (
-                            <p className="text-xs text-red-500 -mt-2">{error}</p>
+                            <p className="text-xs text-red-400 -mt-2">{error}</p>
                         )}
 
                         <button
                             type="submit"
                             disabled={!canSubmit}
-                            className="w-full h-10 bg-[#0F1D29] rounded-full text-white font-medium hover:bg-[#8D4A52] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full h-10 bg-[#E57A44] rounded-full text-white font-bold hover:bg-[#D46933] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                         >
                             {isSubmitting ? "Registering..." : "Register"}
                         </button>
@@ -168,11 +168,11 @@ export default function ClientRegisterPage({ onStart, onStop }) {
 
                     {/* Divider + OAuth */}
                     <div className="flex flex-col w-full items-center gap-3 mt-6">
-                        <span className="text-[#CBA0AA] text-sm">or sign up with</span>
+                        <span className="text-gray-400 text-sm">or sign up with</span>
                         <button
                             type="button"
                             onClick={() => handleGoogleAuth()}
-                            className="w-[80%] border border-[#c1c1c1] h-10 rounded-lg flex justify-center items-center gap-4 hover:bg-[#0F1D29] hover:text-white transition duration-150"
+                            className="w-[80%] border border-gray-600 h-10 rounded-lg flex justify-center items-center gap-4 text-white hover:bg-white hover:text-[#0F1D29] transition duration-150"
                         >
                             <FaGoogle /> Google
                         </button>

@@ -101,7 +101,7 @@ export default function VerifyOTPPage({ onStart, onStop }) {
         onStart("Verifying your code...");
         try {
             await verifyOtp({ email, verification_token: code });
-            navigate("/login");
+            navigate("/login-freelancer");
         } catch (err) {
             const status = err.response?.status;
             const retryAfter = err.response?.headers?.["retry-after"];

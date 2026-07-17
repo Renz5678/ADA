@@ -75,6 +75,30 @@ export default (sequelize, DataTypes) => {
         theme_color: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        social_facebook: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        social_instagram: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        social_shopee: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        social_tiktok: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        social_twitter: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        social_linkedin: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     },
         {

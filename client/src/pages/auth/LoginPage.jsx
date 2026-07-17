@@ -100,7 +100,9 @@ export default function LoginPage({ onStart, onStop }) {
                         <Icon height={4} width={4} />
                         ADA
                     </div>
-                    <p className="font-label text-[#551E26] mt-2">Create. Sell. Track</p>
+                    <div className="mt-3 inline-block bg-[#8D4A52] text-white px-4 py-1.5 rounded-full font-bold text-sm uppercase tracking-widest shadow-sm">
+                        Freelancer Portal
+                    </div>
                 </div>
 
                 {/* Card */}
@@ -197,6 +199,12 @@ export default function LoginPage({ onStart, onStop }) {
                     New to ADA?{" "}
                     <Link to="/signup" className="font-semibold text-[#8D4A52]">
                         Create an Account
+                    </Link>
+                </p>
+                <p className="font-label text-xs text-gray-500 mt-2">
+                    Are you a client?{" "}
+                    <Link to="/login-client" className="font-semibold text-[#8D4A52] underline">
+                        Login here
                     </Link>
                 </p>
             </div>

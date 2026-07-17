@@ -4,7 +4,7 @@ const { Users } = models;
 
 export const updateProfile = async (req, res) => {
     try {
-        const { bio, description, theme_color, business_name } = req.body;
+        const { bio, description, theme_color, business_name, social_facebook, social_instagram, social_shopee, social_tiktok, social_twitter, social_linkedin } = req.body;
         const user_id = req.user.id; // From verifyToken middleware
 
         if (bio && bio.length > 200) {
@@ -22,6 +22,12 @@ export const updateProfile = async (req, res) => {
         if (business_name !== undefined && business_name.trim() !== '') {
             user.business_name = business_name.trim();
         }
+        user.social_facebook = social_facebook !== undefined ? social_facebook : user.social_facebook;
+        user.social_instagram = social_instagram !== undefined ? social_instagram : user.social_instagram;
+        user.social_shopee = social_shopee !== undefined ? social_shopee : user.social_shopee;
+        user.social_tiktok = social_tiktok !== undefined ? social_tiktok : user.social_tiktok;
+        user.social_twitter = social_twitter !== undefined ? social_twitter : user.social_twitter;
+        user.social_linkedin = social_linkedin !== undefined ? social_linkedin : user.social_linkedin;
 
         await user.save();
 

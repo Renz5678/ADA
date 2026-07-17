@@ -11,6 +11,7 @@
   },
   "jest": {
     "testTimeout": 30000,
+    "setupFiles": ["./jest.setup.js"],
     "transform": {
       "^.+\\.js$": "babel-jest"
     }

@@ -292,7 +292,7 @@ export default function SignupPage({ onStart, onStop }) {
                             </button>
                             <p className="font-label text-xs mt-1">
                                 Already have an account?{" "}
-                                <Link to="/login" className="font-semibold text-[#8D4A52] hover:underline">
+                                <Link to="/login-freelancer" className="font-semibold text-[#8D4A52] hover:underline">
                                     Log in to ADA
                                 </Link>
                             </p>

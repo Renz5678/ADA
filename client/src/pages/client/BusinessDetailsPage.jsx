@@ -4,6 +4,8 @@ import { useState, useMemo } from "react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { MdArrowBack, MdOutlineLocalOffer, MdClose, MdShoppingCart, MdAdd, MdRemove } from "react-icons/md";
+import { FaFacebook, FaInstagram, FaTiktok, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { SiShopee } from "react-icons/si";
 
 export default function BusinessDetailsPage() {
     const { id } = useParams();
@@ -111,16 +113,18 @@ export default function BusinessDetailsPage() {
                 
                 <div className="px-6 sm:px-8 pb-6 sm:pb-8 flex flex-col w-full">
                     {/* Top Row: Profile Pic + Action Button */}
-                    <div className="flex justify-between items-end w-full relative z-10 -mt-10 sm:-mt-12 mb-4">
-                        {business.profile_picture ? (
-                            <img src={business.profile_picture} alt={business.business_name} className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-sm shrink-0 border-4 border-white bg-white" />
-                        ) : (
-                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#0F1D29] text-white flex items-center justify-center font-headline font-bold text-4xl shadow-sm shrink-0 border-4 border-white">
-                                {business.business_name ? business.business_name.charAt(0).toUpperCase() : "B"}
-                            </div>
-                        )}
+                    <div className="flex justify-between items-start w-full relative z-10 -mt-10 sm:-mt-12 mb-4">
+                        <div className="shrink-0">
+                            {business.profile_picture ? (
+                                <img src={business.profile_picture} alt={business.business_name} className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover shadow-sm border-4 border-white bg-white" />
+                            ) : (
+                                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#0F1D29] text-white flex items-center justify-center font-headline font-bold text-4xl shadow-sm border-4 border-white">
+                                    {business.business_name ? business.business_name.charAt(0).toUpperCase() : "B"}
+                                </div>
+                            )}
+                        </div>
                         
-                        <div className="w-auto flex shrink-0">
+                        <div className="w-auto flex shrink-0 mt-14 sm:mt-16">
                             <button
                                 onClick={() => setIsCartOpen(true)}
                                 style={{ backgroundColor: themeColor }}
@@ -138,6 +142,18 @@ export default function BusinessDetailsPage() {
                         <h1 className="text-2xl sm:text-3xl font-headline font-bold text-[#0F1D29] break-words leading-tight">{business.business_name || "Unknown Business"}</h1>
                         <p className="text-gray-500 font-body mt-1 break-all sm:break-normal text-sm sm:text-base">@{business.username} • {business.email}</p>
                     </div>
+
+                    {/* Social Links */}
+                    {(business.social_facebook || business.social_instagram || business.social_shopee || business.social_tiktok || business.social_twitter || business.social_linkedin) && (
+                        <div className="flex items-center gap-4 mt-4">
+                            {business.social_facebook && <a href={business.social_facebook} target="_blank" rel="noopener noreferrer" className="text-[#1877F2] hover:opacity-80 transition-opacity"><FaFacebook size={26} /></a>}
+                            {business.social_instagram && <a href={business.social_instagram} target="_blank" rel="noopener noreferrer" className="text-[#E4405F] hover:opacity-80 transition-opacity"><FaInstagram size={26} /></a>}
+                            {business.social_shopee && <a href={business.social_shopee} target="_blank" rel="noopener noreferrer" className="text-[#EE4D2D] hover:opacity-80 transition-opacity"><SiShopee size={26} /></a>}
+                            {business.social_tiktok && <a href={business.social_tiktok} target="_blank" rel="noopener noreferrer" className="text-black hover:opacity-80 transition-opacity"><FaTiktok size={26} /></a>}
+                            {business.social_twitter && <a href={business.social_twitter} target="_blank" rel="noopener noreferrer" className="text-[#1DA1F2] hover:opacity-80 transition-opacity"><FaTwitter size={26} /></a>}
+                            {business.social_linkedin && <a href={business.social_linkedin} target="_blank" rel="noopener noreferrer" className="text-[#0A66C2] hover:opacity-80 transition-opacity"><FaLinkedin size={26} /></a>}
+                        </div>
+                    )}
                     
                     {business.bio && <p className="text-gray-600 font-body text-base italic mt-4 max-w-4xl leading-relaxed">"{business.bio}"</p>}
 

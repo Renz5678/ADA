@@ -78,7 +78,9 @@ export default function ClientLoginPage({ onStart, onStop }) {
                         <Icon height={4} width={4} />
                         ADA
                     </div>
-                    <p className="font-label text-[#551E26] mt-2">Client Portal</p>
+                    <div className="mt-3 inline-block bg-[#8D4A52] text-white px-4 py-1.5 rounded-full font-bold text-sm uppercase tracking-widest shadow-sm">
+                        Client Portal
+                    </div>
                 </div>
 
                 {/* Card */}
@@ -99,7 +101,7 @@ export default function ClientLoginPage({ onStart, onStop }) {
                                 value={form.email}
                                 onChange={handleChange}
                                 autoComplete="email"
-                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA]"
+                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA] outline-none"
                             />
                             {form.email && (
                                 <p className={`text-xs mt-1 ${isValidEmail ? "text-green-500 flex items-center gap-1" : "text-red-500"}`}>
@@ -143,7 +145,7 @@ export default function ClientLoginPage({ onStart, onStop }) {
                         <button
                             type="submit"
                             disabled={!canSubmit}
-                            className="w-full h-10 bg-[#0F1D29] rounded-full text-white font-medium hover:bg-[#8D4A52] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full h-10 bg-[#8D4A52] rounded-full text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? "Logging in..." : "Login"}
                         </button>
@@ -170,7 +172,7 @@ export default function ClientLoginPage({ onStart, onStop }) {
                 </p>
                 <p className="font-label text-xs text-gray-500 mt-2">
                     Are you a freelancer?{" "}
-                    <Link to="/login" className="font-semibold text-gray-700 underline">
+                    <Link to="/login-freelancer" className="font-semibold text-gray-700 underline">
                         Login here
                     </Link>
                 </p>

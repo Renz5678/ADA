@@ -175,11 +175,11 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
                 </div>
 
                 {/* Card */}
-                <div className="w-full bg-white rounded-3xl flex flex-col items-center py-10 px-6 gap-6 font-body">
+                <div className="w-full bg-[#1A2B3C] border border-gray-700 rounded-3xl flex flex-col items-center py-10 px-6 gap-6 font-body shadow-xl text-gray-200">
                     <div className="text-center flex flex-col gap-2">
-                        <h1 className="font-headline text-4xl font-semibold">Verify your account</h1>
-                        <p className="text-[#AB626A] text-sm">
-                            We sent a 6-digit code to <span className="font-medium">{email}</span>.
+                        <h1 className="font-headline text-4xl font-semibold text-white">Verify your account</h1>
+                        <p className="text-gray-400 text-sm">
+                            We sent a 6-digit code to <span className="font-medium text-white">{email}</span>.
                             It expires in 5 minutes.
                         </p>
                     </div>
@@ -197,7 +197,7 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
                                 onChange={(e) => handleChange(e.target.value, index)}
                                 onKeyDown={(e) => handleKeyDown(e, index)}
                                 aria-label={`OTP digit ${index + 1}`}
-                                className="w-12 h-12 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA] text-center text-xl"
+                                className="w-12 h-12 bg-[#0F1D29] border border-gray-600 rounded-lg text-white focus:outline-none focus:border-[#E57A44] text-center text-xl"
                             />
                         ))}
                     </div>
@@ -206,7 +206,7 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
                         type="button"
                         disabled={!isComplete || isVerifying}
                         onClick={handleVerifyOtp}
-                        className="w-[70%] h-12 text-lg bg-[#8D4A52] rounded-full text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-[70%] h-12 text-lg bg-[#E57A44] rounded-full text-white font-bold hover:bg-[#D46933] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                     >
                         {isVerifying ? "Verifying..." : "Verify Account"}
                     </button>
@@ -215,7 +215,7 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
                         type="button"
                         disabled={resendCooldown > 0}
                         onClick={handleResendOtp}
-                        className="text-sm text-[#8D4A52] font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:underline"
+                        className="text-sm text-[#E57A44] font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:underline"
                     >
                         {resendCooldown > 0
                             ? `Resend code in ${resendCooldown}s`

@@ -38,6 +38,16 @@ if (process.env.NODE_ENV === 'test') {
     });
 }
 
+// --- SAFEGUARD TO PREVENT ACCIDENTAL DATA LOSS ---
+const originalSync = sequelize.sync.bind(sequelize);
+sequelize.sync = async (options) => {
+    if (options && options.force && sequelize.getDialect() !== 'sqlite') {
+        throw new Error('CRITICAL WARNING: Attempted to run sequelize.sync({ force: true }) on a non-SQLite database! This drops all tables. Operation aborted to protect your database.');
+    }
+    return await originalSync(options);
+};
+// -------------------------------------------------
+
 const models = {
     Users: UserFactory(sequelize, DataTypes),
     Product: ProductFactory(sequelize, DataTypes),

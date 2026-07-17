@@ -2,13 +2,18 @@ import { useState, useEffect, useRef } from "react";
 import { useProfile, useUpdateProfile, useUploadProfileImages } from "#hooks/useUser.js";
 import toast from "react-hot-toast";
 import { MdImage, MdEdit, MdSave } from "react-icons/md";
+import { FaFacebook, FaInstagram, FaTiktok, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { SiShopee } from "react-icons/si";
 
 export default function ProfileSettingsPage() {
     const { data: profile, isLoading } = useProfile();
     const updateProfileMut = useUpdateProfile();
     const uploadImagesMut = useUploadProfileImages();
 
-    const [form, setForm] = useState({ business_name: "", bio: "", description: "", theme_color: "#8D4A52" });
+    const [form, setForm] = useState({ 
+        business_name: "", bio: "", description: "", theme_color: "#8D4A52",
+        social_facebook: "", social_instagram: "", social_shopee: "", social_tiktok: "", social_twitter: "", social_linkedin: "" 
+    });
     const [profilePic, setProfilePic] = useState(null);
     const [bannerImg, setBannerImg] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -22,7 +27,13 @@ export default function ProfileSettingsPage() {
                 business_name: profile.business_name || "",
                 bio: profile.bio || "",
                 description: profile.description || "",
-                theme_color: profile.theme_color || "#8D4A52"
+                theme_color: profile.theme_color || "#8D4A52",
+                social_facebook: profile.social_facebook || "",
+                social_instagram: profile.social_instagram || "",
+                social_shopee: profile.social_shopee || "",
+                social_tiktok: profile.social_tiktok || "",
+                social_twitter: profile.social_twitter || "",
+                social_linkedin: profile.social_linkedin || "",
             });
         }
     }, [profile]);
@@ -35,8 +46,18 @@ export default function ProfileSettingsPage() {
             const promises = [];
             let updatedImages = false;
 
-            // Check if text needs updating
-            if (form.business_name !== profile.business_name || form.bio !== profile.bio || form.description !== profile.description || form.theme_color !== profile.theme_color) {
+            if (
+                form.business_name !== profile.business_name || 
+                form.bio !== profile.bio || 
+                form.description !== profile.description || 
+                form.theme_color !== profile.theme_color ||
+                form.social_facebook !== profile.social_facebook ||
+                form.social_instagram !== profile.social_instagram ||
+                form.social_shopee !== profile.social_shopee ||
+                form.social_tiktok !== profile.social_tiktok ||
+                form.social_twitter !== profile.social_twitter ||
+                form.social_linkedin !== profile.social_linkedin
+            ) {
                 promises.push(updateProfileMut.mutateAsync(form));
             }
 
@@ -223,6 +244,73 @@ export default function ProfileSettingsPage() {
                                     placeholder="Tell your story. What makes your products unique? What is your process like?"
                                     className="w-full h-[calc(100%-28px)] min-h-[160px] bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 outline-none focus:bg-white focus:border-[#8D4A52] focus:ring-2 focus:ring-[#8D4A52]/20 transition-all resize-none text-gray-800 leading-relaxed"
                                 ></textarea>
+                            </div>
+                        </div>
+
+                        {/* Social Links Editor */}
+                        <div className="border-t border-gray-100 pt-8 mt-4">
+                            <h3 className="text-lg font-bold text-gray-800 mb-6 uppercase tracking-wider">Social Links</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:bg-white focus-within:border-[#8D4A52] focus-within:ring-2 focus-within:ring-[#8D4A52]/20 transition-all">
+                                    <FaFacebook className="text-gray-400 mr-3" size={20} />
+                                    <input
+                                        type="url"
+                                        placeholder="Facebook URL"
+                                        value={form.social_facebook}
+                                        onChange={e => setForm({ ...form, social_facebook: e.target.value })}
+                                        className="w-full bg-transparent outline-none text-gray-800 font-medium"
+                                    />
+                                </div>
+                                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:bg-white focus-within:border-[#8D4A52] focus-within:ring-2 focus-within:ring-[#8D4A52]/20 transition-all">
+                                    <FaInstagram className="text-gray-400 mr-3" size={20} />
+                                    <input
+                                        type="url"
+                                        placeholder="Instagram URL"
+                                        value={form.social_instagram}
+                                        onChange={e => setForm({ ...form, social_instagram: e.target.value })}
+                                        className="w-full bg-transparent outline-none text-gray-800 font-medium"
+                                    />
+                                </div>
+                                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:bg-white focus-within:border-[#8D4A52] focus-within:ring-2 focus-within:ring-[#8D4A52]/20 transition-all">
+                                    <SiShopee className="text-gray-400 mr-3" size={20} />
+                                    <input
+                                        type="url"
+                                        placeholder="Shopee URL"
+                                        value={form.social_shopee}
+                                        onChange={e => setForm({ ...form, social_shopee: e.target.value })}
+                                        className="w-full bg-transparent outline-none text-gray-800 font-medium"
+                                    />
+                                </div>
+                                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:bg-white focus-within:border-[#8D4A52] focus-within:ring-2 focus-within:ring-[#8D4A52]/20 transition-all">
+                                    <FaTiktok className="text-gray-400 mr-3" size={20} />
+                                    <input
+                                        type="url"
+                                        placeholder="TikTok URL"
+                                        value={form.social_tiktok}
+                                        onChange={e => setForm({ ...form, social_tiktok: e.target.value })}
+                                        className="w-full bg-transparent outline-none text-gray-800 font-medium"
+                                    />
+                                </div>
+                                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:bg-white focus-within:border-[#8D4A52] focus-within:ring-2 focus-within:ring-[#8D4A52]/20 transition-all">
+                                    <FaTwitter className="text-gray-400 mr-3" size={20} />
+                                    <input
+                                        type="url"
+                                        placeholder="Twitter URL"
+                                        value={form.social_twitter}
+                                        onChange={e => setForm({ ...form, social_twitter: e.target.value })}
+                                        className="w-full bg-transparent outline-none text-gray-800 font-medium"
+                                    />
+                                </div>
+                                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:bg-white focus-within:border-[#8D4A52] focus-within:ring-2 focus-within:ring-[#8D4A52]/20 transition-all">
+                                    <FaLinkedin className="text-gray-400 mr-3" size={20} />
+                                    <input
+                                        type="url"
+                                        placeholder="LinkedIn URL"
+                                        value={form.social_linkedin}
+                                        onChange={e => setForm({ ...form, social_linkedin: e.target.value })}
+                                        className="w-full bg-transparent outline-none text-gray-800 font-medium"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import AppLayout from "#components/layout/AppLayout.jsx";
+import RoleSelectionPage from "#pages/auth/RoleSelectionPage.jsx";
 import SignupPage from "#pages/auth/SignupPage.jsx";
 import LoginPage from "#pages/auth/LoginPage.jsx";
 import VerifyOTPPage from "#pages/auth/VerifyOTPPage.jsx";
@@ -36,7 +37,8 @@ export default function AppRouter({ onStart, onStop }) {
     return (
         <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage onStart={onStart} onStop={onStop} />} />
+            <Route path="/login" element={<RoleSelectionPage />} />
+            <Route path="/login-freelancer" element={<LoginPage onStart={onStart} onStop={onStop} />} />
             <Route path="/signup" element={<SignupPage onStart={onStart} onStop={onStop} />} />
             <Route path="/reset-password" element={<ForgotPasswordPage onStart={onStart} onStop={onStop} />} />
             <Route path="/verify-otp" element={<VerifyOTPPage onStart={onStart} onStop={onStop} />} />
