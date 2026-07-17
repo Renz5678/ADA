@@ -15,16 +15,17 @@ const VantaBackground = () => {
     let effect: unknown;
     if (!vantaEffect && typeof window !== "undefined") {
       import("three").then((THREE) => {
+        // Create a clone of THREE so we can monkey-patch it (ES modules are non-extensible)
+        const patchedTHREE = { ...THREE, VertexColors: true };
         // @ts-expect-error adding property to window
-        window.THREE = THREE;
-        // @ts-expect-error patch THREE.js for Vanta compatibility
-        if (THREE.VertexColors === undefined) THREE.VertexColors = true;
+        window.THREE = patchedTHREE;
+        
         // @ts-expect-error missing vanta types
         import("vanta/src/vanta.net").then((VantaNet) => {
           const NET = VantaNet.default || VantaNet;
           effect = NET({
             el: vantaRef.current,
-            THREE,
+            THREE: patchedTHREE,
             mouseControls: true,
             touchControls: true,
             gyroControls: false,
