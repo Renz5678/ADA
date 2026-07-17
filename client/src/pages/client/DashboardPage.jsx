@@ -87,42 +87,43 @@ export default function ClientDashboardPage() {
                             transition={{ duration: 0.3, delay: idx * 0.05 }}
                         >
                             <Link to={`/client/business/${business.user_id}`} className="block h-full group">
-                                <div className="bg-white border border-[#E5E7EB] rounded-2xl p-6 flex flex-col justify-between h-full shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-gray-300 transition-all duration-300 relative overflow-hidden">
-                                    {/* Subtle gradient background decoration */}
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#FFF7E6] to-transparent opacity-50 rounded-bl-full pointer-events-none"></div>
-                                    
-                                    <div className="z-10">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            {business.profile_picture ? (
-                                                <img src={business.profile_picture} alt={business.business_name} className="w-12 h-12 rounded-full object-cover shrink-0 border border-gray-200" />
-                                            ) : (
-                                                <div className="w-12 h-12 rounded-full bg-[#0F1D29] text-white flex items-center justify-center font-bold text-lg shrink-0">
-                                                    {business.business_name.charAt(0).toUpperCase()}
-                                                </div>
-                                            )}
-                                            <h3 className="text-xl font-headline font-bold text-[#0F1D29] group-hover:text-[#8D4A52] transition-colors line-clamp-1 break-all">
-                                                {business.business_name}
-                                            </h3>
-                                        </div>
-                                        <p className="text-gray-500 text-sm mt-3 font-medium">@{business.username}</p>
-                                        <p className="text-gray-400 text-xs mt-1 mb-2">{business.email}</p>
-                                        {business.bio && (
-                                            <p className="text-gray-600 text-sm italic line-clamp-2 mt-2 break-words">"{business.bio}"</p>
+                                <div className="bg-[#FFF7E6] border border-[#e8d5b5] rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
+                                    <div className="h-32 bg-gray-200 relative overflow-hidden">
+                                        {business.banner_image ? (
+                                            <img src={business.banner_image} alt="Banner" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full" style={{ backgroundColor: business.theme_color || '#0F1D29' }}></div>
                                         )}
                                     </div>
-                                    
-                                    <div className="mt-6 flex justify-between items-center z-10 pt-4 border-t border-gray-100">
-                                        <span className="text-sm font-semibold text-[#8D4A52] group-hover:underline">View Catalog &rarr;</span>
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault(); // Prevent navigating to the details page
-                                                setSelectedBusiness(business);
-                                                setIsOrdering(true);
-                                            }}
-                                            className="bg-[#0F1D29] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#8D4A52] transition-colors shrink-0"
-                                        >
-                                            Quick Request
-                                        </button>
+                                    <div className="px-6 pb-6 pt-2 relative flex-1 flex flex-col">
+                                        <div className="w-16 h-16 rounded-2xl border-4 border-[#FFF7E6] overflow-hidden -mt-10 mb-3 bg-white shadow-sm flex-shrink-0">
+                                            {business.profile_picture ? (
+                                                <img src={business.profile_picture} alt={business.business_name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full bg-[#E57A44] flex items-center justify-center text-white font-bold text-xl uppercase">
+                                                    {business.business_name?.substring(0,2) || business.username?.substring(0,2)}
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h3 className="font-headline font-bold text-[#0F1D29] text-xl mb-1 line-clamp-1">{business.business_name}</h3>
+                                        <p className="text-sm text-gray-500 font-body mb-3">@{business.username}</p>
+                                        <p className="text-sm text-gray-700 font-body line-clamp-3 mb-4 flex-1">{business.bio || business.description || 'No bio provided.'}</p>
+                                        
+                                        <div className="flex justify-between items-center gap-3 mt-auto pt-2">
+                                            <button className="flex-1 py-2 bg-[#0F1D29]/5 hover:bg-[#0F1D29]/10 text-[#0F1D29] font-bold rounded-xl transition-colors font-body text-sm text-center">
+                                                View Catalog
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setSelectedBusiness(business);
+                                                    setIsOrdering(true);
+                                                }}
+                                                className="flex-1 py-2 bg-[#0F1D29] hover:bg-[#8D4A52] text-white font-bold rounded-xl transition-colors font-body text-sm text-center shadow-sm"
+                                            >
+                                                Quick Request
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </Link>
