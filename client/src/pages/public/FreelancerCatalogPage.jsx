@@ -16,7 +16,8 @@ export default function FreelancerCatalogPage() {
     useEffect(() => {
         const fetchFreelancer = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/marketplace/freelancer/${id}`);
+                const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+                const response = await axios.get(`${baseURL}/marketplace/freelancer/${id}`);
                 setFreelancer(response.data);
                 setLoading(false);
             } catch (err) {

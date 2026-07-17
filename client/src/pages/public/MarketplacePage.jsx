@@ -13,7 +13,8 @@ export default function MarketplacePage() {
         const fetchFreelancers = async () => {
             try {
                 // Not using our authenticated api interceptor, using raw axios for public routes
-                const response = await axios.get('http://localhost:3001/marketplace/freelancers');
+                const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+                const response = await axios.get(`${baseURL}/marketplace/freelancers`);
                 setFreelancers(response.data);
                 setLoading(false);
             } catch (err) {
