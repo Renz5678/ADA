@@ -99,7 +99,7 @@ export default function FreelancerCatalogPage() {
                                         <div className="w-full h-full flex items-center justify-center text-gray-400 font-body">No Image</div>
                                     )}
                                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full font-bold text-[#0F1D29] text-sm shadow-sm">
-                                        ${Number(product.price).toFixed(2)}
+                                        ₱{Number(product.price).toFixed(2)}
                                     </div>
                                 </div>
                                 <div className="p-5 flex-1 flex flex-col">
