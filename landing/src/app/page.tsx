@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Box, CheckCircle2, LayoutDashboard, Package, ShoppingCart, Zap, Shield, Clock, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import Topbar from "@/components/Topbar";
 import { ReactLenis } from 'lenis/react';
 
@@ -133,8 +134,6 @@ export default function Home() {
               </motion.div>
               
               <motion.div variants={fadeInUp} className="mt-10 flex items-center justify-center gap-8 text-sm text-gray-500 font-medium">
-                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-primary"/> No credit card required</div>
-                <div className="flex items-center gap-2"><CheckCircle2 size={16} className="text-primary"/> Setup in minutes</div>
               </motion.div>
             </motion.div>
 
@@ -146,16 +145,7 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent rounded-[2rem] pointer-events-none"></div>
               <div className="aspect-[16/9] w-full rounded-[1.5rem] bg-gray-50 flex items-center justify-center border border-gray-200/50 shadow-inner relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiNlN2U1ZTQiLz48L3N2Zz4=')] opacity-[0.2] mix-blend-overlay"></div>
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm z-10 gap-4">
-                   <div className="h-16 w-16 rounded-2xl bg-white shadow-xl flex items-center justify-center text-primary">
-                     <LayoutDashboard size={32} />
-                   </div>
-                   <p className="text-gray-800 font-medium font-headline text-lg">
-                     [ PLACEHOLDER: Full Dashboard Screenshot ]
-                   </p>
-                   <p className="text-sm text-gray-500 max-w-md text-center px-4">This space is reserved for a high-resolution screenshot of your analytics dashboard showing active orders, revenue charts, and recent activity.</p>
-                </div>
+                <Image src="/images/dashboard-v2.png" alt="ADA Dashboard" fill sizes="(max-width: 768px) 100vw, 80vw" className="object-cover scale-[1.04] origin-left" priority />
               </div>
             </motion.div>
           </div>
@@ -193,10 +183,8 @@ export default function Home() {
                   <p className="text-gray-600 text-lg leading-relaxed max-w-md mb-8">
                     Link raw materials to your finished products. When a customer places an order, ADA automatically calculates and deducts the exact raw materials used from your inventory.
                   </p>
-                  <div className="aspect-[21/9] w-full rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center overflow-hidden">
-                    <p className="text-gray-400 font-medium text-sm flex items-center gap-2">
-                       <Box size={16} /> [ PLACEHOLDER: BOM Configuration UI ]
-                    </p>
+                  <div className="aspect-[16/9] w-full rounded-xl bg-white border border-gray-200 shadow-sm flex items-center justify-center overflow-hidden relative">
+                    <Image src="/images/bom.png" alt="BOM Configuration" fill sizes="(max-width: 768px) 100vw, 80vw" className="object-cover object-top" />
                   </div>
                 </div>
               </motion.div>
@@ -263,12 +251,28 @@ export default function Home() {
                       Built with modern security practices. Your data is protected by secure JWT authentication, and critical actions are guarded with OTP email verification.
                     </p>
                   </div>
-                  <div className="flex-1 w-full bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-                    <div className="space-y-4">
-                      <div className="h-2 w-1/3 bg-gray-200 rounded-full"></div>
-                      <div className="h-10 w-full bg-gray-50 border border-gray-200 rounded-lg"></div>
-                      <div className="h-10 w-full bg-primary rounded-lg"></div>
+                  <div className="flex-1 w-full bg-white rounded-2xl border border-gray-100 p-8 shadow-lg shadow-gray-200/50 relative overflow-hidden group/modal">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 transition-transform duration-700 group-hover/modal:scale-150"></div>
+                    <div className="flex items-center gap-3 mb-6 relative z-10">
+                      <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center border border-green-100">
+                        <Shield className="text-green-500 w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-dark text-sm">Security Verification</h4>
+                        <p className="text-xs text-gray-500">Enter the 6-digit code</p>
+                      </div>
                     </div>
+                    <div className="flex gap-2 mb-6 justify-between relative z-10">
+                      {[1, 2, 3, 4, 5, 6].map((i) => (
+                        <div key={i} className={`w-10 h-12 rounded-lg border ${i <= 3 ? 'border-primary/50 bg-primary/5' : 'border-gray-200 bg-gray-50'} flex items-center justify-center font-bold text-dark shadow-sm`}>
+                          {i === 1 ? '4' : i === 2 ? '0' : i === 3 ? '2' : ''}
+                          {i === 4 && <div className="w-px h-5 bg-primary animate-pulse"></div>}
+                        </div>
+                      ))}
+                    </div>
+                    <button className="w-full py-3 bg-dark text-white rounded-xl font-medium text-sm hover:bg-black transition-colors flex items-center justify-center gap-2 relative z-10">
+                      Verify Identity <CheckCircle2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               </motion.div>
@@ -290,10 +294,8 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
-                       <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Material Transactions Table ]</p>
-                    </div>
+                  <div className="aspect-[16/9] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden relative group">
+                    <Image src="/images/materials.png" alt="Material Transactions" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-top" />
                   </div>
                 </motion.div>
                 <motion.div 
@@ -322,10 +324,8 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
-                       <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Analytics / Charts ]</p>
-                    </div>
+                  <div className="aspect-[16/9] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden relative group">
+                    <Image src="/images/expenses.png" alt="Analytics and Charts" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-top" />
                   </div>
                 </motion.div>
                 <motion.div 
@@ -354,10 +354,8 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                   className="flex-1"
                 >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
-                       <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Client Portal UI ]</p>
-                    </div>
+                  <div className="aspect-[16/9] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden relative group">
+                    <Image src="/images/marketplace.png" alt="Client Portal" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover object-top scale-[1.04] origin-left" />
                   </div>
                 </motion.div>
                 <motion.div 
@@ -377,69 +375,7 @@ export default function Home() {
                 </motion.div>
               </div>
 
-              {/* Supplier Management */}
-              <div className="flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-20">
-                <motion.div 
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="flex-1"
-                >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
-                       <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Supplier App View ]</p>
-                    </div>
-                  </div>
-                </motion.div>
-                <motion.div 
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="flex-1 space-y-6"
-                >
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
-                    <Box size={16} /> Supplier Management
-                  </div>
-                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Track incoming raw materials effortlessly</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
-                    Manage all your supplier contacts and incoming raw material shipments in a single view. Know exactly when your inventory is scheduled to arrive so you can fulfill orders on time.
-                  </p>
-                </motion.div>
-              </div>
 
-              {/* Team Collaboration */}
-              <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-                <motion.div 
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="flex-1"
-                >
-                  <div className="aspect-[4/3] w-full rounded-2xl bg-white border border-gray-200 shadow-xl flex items-center justify-center overflow-hidden p-2">
-                    <div className="w-full h-full bg-gray-50 rounded-xl border border-dashed border-gray-300 flex items-center justify-center">
-                       <p className="text-gray-400 font-medium text-sm">[ PLACEHOLDER: Team Management UI ]</p>
-                    </div>
-                  </div>
-                </motion.div>
-                <motion.div 
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  className="flex-1 space-y-6"
-                >
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold">
-                    <CheckCircle2 size={16} /> Team Collaboration
-                  </div>
-                  <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Built for your entire team</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
-                    Give customized access to your business partners or employees. Whether they are updating stock on the warehouse floor or fulfilling orders in the office, everyone stays in sync.
-                  </p>
-                </motion.div>
-              </div>
 
             </div>
           </div>
@@ -549,39 +485,58 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white pt-16 pb-8">
+      <footer className="bg-[#0B0F19] text-gray-400 py-16 border-t border-gray-800 relative z-10">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid md:grid-cols-4 gap-8 mb-12">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <Package size={24} className="text-primary" />
-                <span className="font-headline text-xl font-bold text-dark">ADA</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-16">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex items-center gap-2">
+                <Package size={28} className="text-primary" />
+                <span className="font-headline text-2xl font-bold text-white">ADA</span>
               </div>
-              <p className="text-gray-500 max-w-sm">The comprehensive ERP system designed for small businesses to track orders, manage expenses, and automate material inventory.</p>
+              <p className="text-gray-400 max-w-sm text-sm leading-relaxed">
+                The comprehensive ERP system designed for makers, manufacturers, and small businesses. Take control of your inventory, automate your BOMs, and scale your operations with crystal clear analytics.
+              </p>
+              <div className="flex items-center gap-4 pt-2">
+                <a href="https://github.com/Renz5678" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-primary/20 flex items-center justify-center transition-colors text-white hover:text-primary">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" /></svg>
+                </a>
+              </div>
             </div>
+            
             <div>
-              <h4 className="font-headline font-bold text-dark mb-4">Product</h4>
-              <ul className="space-y-2">
-                <li><Link href="#features" className="text-gray-500 hover:text-primary">Features</Link></li>
-                <li><Link href="#how-it-works" className="text-gray-500 hover:text-primary">How it Works</Link></li>
-                <li><Link href="#benefits" className="text-gray-500 hover:text-primary">Benefits</Link></li>
+              <h4 className="font-headline font-semibold text-white mb-6 text-lg">Product</h4>
+              <ul className="space-y-3">
+                <li><Link href="#features" className="text-gray-400 hover:text-white transition-colors text-sm">Features</Link></li>
+                <li><Link href="#how-it-works" className="text-gray-400 hover:text-white transition-colors text-sm">How it Works</Link></li>
+                <li><Link href="#benefits" className="text-gray-400 hover:text-white transition-colors text-sm">Benefits</Link></li>
+                <li><Link href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Pricing</Link></li>
               </ul>
             </div>
+            
             <div>
-              <h4 className="font-headline font-bold text-dark mb-4">Account</h4>
-              <ul className="space-y-2">
-                <li><Link href="https://ada-pied-iota.vercel.app/" className="text-gray-500 hover:text-primary">Log In</Link></li>
-                <li><Link href="https://ada-pied-iota.vercel.app/" className="text-gray-500 hover:text-primary">Sign Up</Link></li>
+              <h4 className="font-headline font-semibold text-white mb-6 text-lg">Developer</h4>
+              <ul className="space-y-3">
+                <li><a href="https://github.com/Renz5678" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors text-sm">GitHub</a></li>
+                <li><a href="https://www.linkedin.com/in/lawrenz-matthew-garcia-a84018222/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors text-sm">LinkedIn</a></li>
+                <li><a href="https://www.facebook.com/dwight.garcia.524/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors text-sm">Facebook</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-headline font-semibold text-white mb-6 text-lg">Legal</h4>
+              <ul className="space-y-3">
+                <li><Link href="https://ada-pied-iota.vercel.app/terms" className="text-gray-400 hover:text-white transition-colors text-sm">Terms of Service</Link></li>
+                <li><Link href="https://ada-pied-iota.vercel.app/privacy" className="text-gray-400 hover:text-white transition-colors text-sm">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-gray-400">
+          
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} ADA. All rights reserved.
             </p>
-            <div className="flex gap-4 text-sm text-gray-400">
-              <span className="cursor-pointer hover:text-gray-600">Privacy Policy</span>
-              <span className="cursor-pointer hover:text-gray-600">Terms of Service</span>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              Designed with <span className="text-red-500">♥</span> for small businesses
             </div>
           </div>
         </div>
