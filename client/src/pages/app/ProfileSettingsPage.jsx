@@ -8,7 +8,7 @@ export default function ProfileSettingsPage() {
     const updateProfileMut = useUpdateProfile();
     const uploadImagesMut = useUploadProfileImages();
 
-    const [form, setForm] = useState({ bio: "", description: "", theme_color: "#8D4A52" });
+    const [form, setForm] = useState({ business_name: "", bio: "", description: "", theme_color: "#8D4A52" });
     const [profilePic, setProfilePic] = useState(null);
     const [bannerImg, setBannerImg] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
@@ -19,6 +19,7 @@ export default function ProfileSettingsPage() {
     useEffect(() => {
         if (profile) {
             setForm({
+                business_name: profile.business_name || "",
                 bio: profile.bio || "",
                 description: profile.description || "",
                 theme_color: profile.theme_color || "#8D4A52"
@@ -35,7 +36,7 @@ export default function ProfileSettingsPage() {
             let updatedImages = false;
 
             // Check if text needs updating
-            if (form.bio !== profile.bio || form.description !== profile.description || form.theme_color !== profile.theme_color) {
+            if (form.business_name !== profile.business_name || form.bio !== profile.bio || form.description !== profile.description || form.theme_color !== profile.theme_color) {
                 promises.push(updateProfileMut.mutateAsync(form));
             }
 
@@ -164,6 +165,18 @@ export default function ProfileSettingsPage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div className="flex flex-col gap-6">
+                                <div>
+                                    <div className="flex justify-between items-center mb-2">
+                                        <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Business Name</label>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={form.business_name}
+                                        onChange={e => setForm({ ...form, business_name: e.target.value })}
+                                        placeholder="Your Business Name"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 outline-none focus:bg-white focus:border-[#8D4A52] focus:ring-2 focus:ring-[#8D4A52]/20 transition-all font-bold text-gray-800 mb-6"
+                                    />
+                                </div>
                                 <div>
                                     <div className="flex justify-between items-center mb-2">
                                         <label className="text-sm font-bold text-gray-700 uppercase tracking-wider">Catchphrase</label>
