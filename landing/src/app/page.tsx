@@ -1,41 +1,58 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Box, CheckCircle2, LayoutDashboard, LineChart, Package, ShoppingCart, Zap, Shield, Clock, TrendingUp } from "lucide-react";
+import { ArrowRight, Box, CheckCircle2, LayoutDashboard, Package, ShoppingCart, Zap, Shield, Clock, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import Topbar from "@/components/Topbar";
+import { ReactLenis } from 'lenis/react';
 
-const InteractiveBlobs = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+const VantaBackground = () => {
+  const vantaRef = useRef<HTMLDivElement>(null);
+  const [vantaEffect, setVantaEffect] = useState<unknown>(null);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    let effect: unknown;
+    if (!vantaEffect && typeof window !== "undefined") {
+      import("three").then((THREE) => {
+        // @ts-expect-error adding property to window
+        window.THREE = THREE;
+        // @ts-expect-error patch THREE.js for Vanta compatibility
+        if (THREE.VertexColors === undefined) THREE.VertexColors = true;
+        // @ts-expect-error missing vanta types
+        import("vanta/src/vanta.net").then((VantaNet) => {
+          const NET = VantaNet.default || VantaNet;
+          effect = NET({
+            el: vantaRef.current,
+            THREE,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x8d4a52,
+            backgroundColor: 0xffffff,
+            points: 10.00,
+            maxDistance: 20.00,
+            spacing: 20.00,
+            showDots: true
+          });
+          setVantaEffect(effect);
+        });
+      });
+    }
+    return () => {
+      // @ts-expect-error calling destroy on unknown
+      if (effect) effect.destroy();
+      // @ts-expect-error calling destroy on unknown
+      if (vantaEffect) (vantaEffect as { destroy: () => void }).destroy();
     };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [vantaEffect]);
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[0]">
-      <motion.div
-        animate={{
-          x: mousePosition.x - 250,
-          y: mousePosition.y - 250,
-        }}
-        transition={{ type: "spring", damping: 40, stiffness: 50, mass: 1 }}
-        className="absolute top-0 left-0 w-[500px] h-[500px] bg-rose-200 rounded-full mix-blend-multiply filter blur-[120px] opacity-30"
-      />
-      <motion.div
-        animate={{
-          x: mousePosition.x - 200,
-          y: mousePosition.y - 200,
-        }}
-        transition={{ type: "spring", damping: 60, stiffness: 30, mass: 2 }}
-        className="absolute top-0 left-0 w-[400px] h-[400px] bg-primary/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-40"
-      />
-    </div>
+    <div ref={vantaRef} className="absolute inset-0 z-[0] pointer-events-none opacity-60" />
   );
 };
 
@@ -56,9 +73,9 @@ const staggerContainer = {
 
 export default function Home() {
   return (
-    <>
+    <ReactLenis root>
       <Topbar />
-      <InteractiveBlobs />
+      <VantaBackground />
       <main className="flex-1 relative z-10 bg-transparent">
         {/* Background Mesh/Grid for Hero */}
         <div className="absolute top-0 left-0 w-full h-[800px] overflow-hidden -z-10 pointer-events-none">
@@ -281,7 +298,7 @@ export default function Home() {
                   </div>
                   <h3 className="font-headline text-3xl md:text-4xl font-bold text-dark">Never manually update stock again</h3>
                   <p className="text-lg text-gray-600 leading-relaxed">
-                    Manual inventory counting is prone to errors and takes away time from growing your business. ADA's automated deduction engine ensures your raw material stock is always 100% accurate the moment an order is placed.
+                    Manual inventory counting is prone to errors and takes away time from growing your business. ADA&apos;s automated deduction engine ensures your raw material stock is always 100% accurate the moment an order is placed.
                   </p>
                 </motion.div>
               </div>
@@ -559,6 +576,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </>
+    </ReactLenis>
   );
 }
