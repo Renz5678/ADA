@@ -18,29 +18,34 @@ const VantaBackground = () => {
         // @ts-ignore
         window.THREE = THREE;
         
-        // @ts-expect-error missing vanta types
-        import("vanta/src/vanta.net").then((VantaNet) => {
-          const NET = VantaNet.default || VantaNet;
-          effect = NET({
-            el: vantaRef.current,
-            THREE: THREE,
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200.00,
-            minWidth: 200.00,
-            scale: 1.00,
-            scaleMobile: 1.00,
-            color: 0x8d4a52,
-            backgroundColor: 0xffffff,
-            points: 10.00,
-            maxDistance: 20.00,
-            spacing: 20.00,
-            showDots: true
-          });
-          setVantaEffect(effect);
-        });
-      });
+        // @ts-ignore
+        import("vanta/dist/vanta.net.min").then((VantaNet) => {
+          const NET = VantaNet.default || VantaNet || (window as any).VANTA?.NET;
+          try {
+            effect = NET({
+              el: vantaRef.current,
+              THREE: THREE,
+              mouseControls: true,
+              touchControls: true,
+              gyroControls: false,
+              minHeight: 200.00,
+              minWidth: 200.00,
+              scale: 1.00,
+              scaleMobile: 1.00,
+              color: 0x8d4a52,
+              backgroundColor: 0xffffff,
+              points: 10.00,
+              maxDistance: 20.00,
+              spacing: 20.00,
+              showDots: true
+            });
+            setVantaEffect(effect);
+            console.log("Vanta NET successfully initialized");
+          } catch (e) {
+            console.error("Vanta initialization error:", e);
+          }
+        }).catch(e => console.error("Failed to load VantaNet:", e));
+      }).catch(e => console.error("Failed to load Three:", e));
     }
     return () => {
       // @ts-ignore
@@ -51,7 +56,7 @@ const VantaBackground = () => {
   }, [vantaEffect]);
 
   return (
-    <div ref={vantaRef} className="fixed inset-0 z-[0] pointer-events-none opacity-60" />
+    <div ref={vantaRef} className="fixed top-0 left-0 w-screen h-screen z-[0] pointer-events-none" />
   );
 };
 
