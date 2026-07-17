@@ -37,6 +37,9 @@ export default function Topbar({ pendingQueue = [], onDismiss }) {
             </div>
             <div className="flex items-center gap-3 shrink-0 relative" ref={dropdownRef}>
                 <div className="flex items-center gap-4 pr-3 border-r border-[#e0e0e0]">
+                    <Link to="/marketplace" className="hidden sm:flex items-center px-3 py-1.5 bg-[#8D4A52] text-white text-sm font-medium rounded-md hover:bg-[#7a3e45] transition-colors">
+                        View Marketplace
+                    </Link>
                     <NotificationDropdown pendingQueue={pendingQueue} onDismiss={onDismiss} />
                     <AiOutlineQuestionCircle size={20} className="cursor-pointer text-gray-600 hover:text-[#8D4A52] transition hidden sm:block" />
                 </div>
