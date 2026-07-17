@@ -20,13 +20,13 @@ const VantaBackground = () => {
         window.THREE = THREE;
         
         // @ts-ignore
-        import("vanta/dist/vanta.net.min").then((VantaNet) => {
+        import("vanta/dist/vanta.clouds2.min").then((VantaClouds2) => {
           if (!isMounted) return;
           
           if (!effectRef.current && vantaRef.current) {
-            const NET = VantaNet.default || VantaNet || (window as any).VANTA?.NET;
+            const CLOUDS2 = VantaClouds2.default || VantaClouds2 || (window as any).VANTA?.CLOUDS2;
             try {
-              effectRef.current = NET({
+              effectRef.current = CLOUDS2({
                 el: vantaRef.current,
                 THREE: THREE,
                 mouseControls: true,
@@ -35,21 +35,19 @@ const VantaBackground = () => {
                 minHeight: 200.00,
                 minWidth: 200.00,
                 scale: 1.00,
-                scaleMobile: 1.00,
-                color: 0x8d4a52,
+                // Soft, light colors to fit ADA's clean aesthetic
                 backgroundColor: 0xffffff,
-                backgroundAlpha: 0.0, // Make Vanta transparent so the grid shows through
-                points: 10.00,
-                maxDistance: 25.00, // Increase distance to make the net sparser
-                spacing: 25.00, // Increase spacing for a cleaner look
-                showDots: true
+                skyColor: 0xffffff,
+                cloudColor: 0x8d4a52, // ADA's brand maroon
+                lightColor: 0xffffff,
+                speed: 1.0
               });
-              console.log("Vanta NET successfully initialized");
+              console.log("Vanta CLOUDS2 successfully initialized");
             } catch (e) {
               console.error("Vanta initialization error:", e);
             }
           }
-        }).catch(e => console.error("Failed to load VantaNet:", e));
+        }).catch(e => console.error("Failed to load VantaClouds2:", e));
       }).catch(e => console.error("Failed to load Three:", e));
     }
     
