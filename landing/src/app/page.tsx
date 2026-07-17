@@ -535,9 +535,6 @@ export default function Home() {
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} ADA. All rights reserved.
             </p>
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              Designed with <span className="text-red-500">♥</span> for small businesses
-            </div>
           </div>
         </div>
       </footer>
