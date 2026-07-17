@@ -9,7 +9,8 @@ import ForgotPasswordPage from "#pages/auth/ForgotPasswordPage.jsx";
 import TermsPage from "#pages/public/TermsPage.jsx";
 import PrivacyPage from "#pages/public/PrivacyPage.jsx";
 import LandingPage from "#pages/public/LandingPage.jsx";
-
+import MarketplacePage from "#pages/public/MarketplacePage.jsx";
+import FreelancerCatalogPage from "#pages/public/FreelancerCatalogPage.jsx";
 
 import DashboardPage from "#pages/app/DashboardPage.jsx";
 import ExpensesPage from "#pages/app/ExpensesPage.jsx";
@@ -41,6 +42,9 @@ export default function AppRouter({ onStart, onStop }) {
             <Route path="/verify-otp" element={<VerifyOTPPage onStart={onStart} onStop={onStop} />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
+            
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/marketplace/:id" element={<FreelancerCatalogPage />} />
 
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
