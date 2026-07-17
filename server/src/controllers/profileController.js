@@ -4,7 +4,7 @@ const { Users } = models;
 
 export const updateProfile = async (req, res) => {
     try {
-        const { bio, description, theme_color } = req.body;
+        const { bio, description, theme_color, business_name } = req.body;
         const user_id = req.user.id; // From verifyToken middleware
 
         if (bio && bio.length > 200) {
@@ -19,6 +19,9 @@ export const updateProfile = async (req, res) => {
         user.bio = bio !== undefined ? bio : user.bio;
         user.description = description !== undefined ? description : user.description;
         user.theme_color = theme_color !== undefined ? theme_color : user.theme_color;
+        if (business_name !== undefined && business_name.trim() !== '') {
+            user.business_name = business_name.trim();
+        }
 
         await user.save();
 
