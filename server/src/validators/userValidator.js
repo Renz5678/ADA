@@ -19,7 +19,7 @@ export const registerValidator = [
         .matches(/[A-Z]/).withMessage('Password must have an uppercase letter')
         .matches(/[a-z]/).withMessage('Password must have a lowercase letter')
         .matches(/[0-9]/).withMessage('Password must have a number')
-        .matches(/[@#$%?!&*]/).withMessage('Password must have a special character')
+        .matches(/[^A-Za-z0-9]/).withMessage('Password must have a special character')
 ];
 
 export const loginValidator = [
@@ -51,5 +51,5 @@ export const resetPasswordValidator = [
         .matches(/[A-Z]/).withMessage('Password must have an uppercase letter')
         .matches(/[a-z]/).withMessage('Password must have a lowercase letter')
         .matches(/[0-9]/).withMessage('Password must have a number')
-        .matches(/[@#$%?!&*]/).withMessage('Password must have a special character')
+        .matches(/[^A-Za-z0-9]/).withMessage('Password must have a special character')
 ];
