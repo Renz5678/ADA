@@ -9,51 +9,58 @@ import { ReactLenis } from 'lenis/react';
 
 const VantaBackground = () => {
   const vantaRef = useRef<HTMLDivElement>(null);
-  const [vantaEffect, setVantaEffect] = useState<unknown>(null);
+  const effectRef = useRef<any>(null);
 
   useEffect(() => {
-    let effect: unknown;
-    if (!vantaEffect && typeof window !== "undefined") {
+    let isMounted = true;
+    
+    if (typeof window !== "undefined") {
       import("three").then((THREE) => {
         // @ts-ignore
         window.THREE = THREE;
         
         // @ts-ignore
         import("vanta/dist/vanta.net.min").then((VantaNet) => {
-          const NET = VantaNet.default || VantaNet || (window as any).VANTA?.NET;
-          try {
-            effect = NET({
-              el: vantaRef.current,
-              THREE: THREE,
-              mouseControls: true,
-              touchControls: true,
-              gyroControls: false,
-              minHeight: 200.00,
-              minWidth: 200.00,
-              scale: 1.00,
-              scaleMobile: 1.00,
-              color: 0x8d4a52,
-              backgroundColor: 0xffffff,
-              points: 10.00,
-              maxDistance: 20.00,
-              spacing: 20.00,
-              showDots: true
-            });
-            setVantaEffect(effect);
-            console.log("Vanta NET successfully initialized");
-          } catch (e) {
-            console.error("Vanta initialization error:", e);
+          if (!isMounted) return;
+          
+          if (!effectRef.current && vantaRef.current) {
+            const NET = VantaNet.default || VantaNet || (window as any).VANTA?.NET;
+            try {
+              effectRef.current = NET({
+                el: vantaRef.current,
+                THREE: THREE,
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200.00,
+                minWidth: 200.00,
+                scale: 1.00,
+                scaleMobile: 1.00,
+                color: 0x8d4a52,
+                backgroundColor: 0xffffff,
+                points: 10.00,
+                maxDistance: 20.00,
+                spacing: 20.00,
+                showDots: true
+              });
+              console.log("Vanta NET successfully initialized");
+            } catch (e) {
+              console.error("Vanta initialization error:", e);
+            }
           }
         }).catch(e => console.error("Failed to load VantaNet:", e));
       }).catch(e => console.error("Failed to load Three:", e));
     }
+    
     return () => {
-      // @ts-ignore
-      if (effect) effect.destroy();
-      // @ts-ignore
-      if (vantaEffect) (vantaEffect as { destroy: () => void }).destroy();
+      isMounted = false;
+      if (effectRef.current) {
+        // @ts-ignore
+        effectRef.current.destroy();
+        effectRef.current = null;
+      }
     };
-  }, [vantaEffect]);
+  }, []); // Empty dependency array prevents re-render loops
 
   return (
     <div ref={vantaRef} className="fixed top-0 left-0 w-screen h-screen z-[0] pointer-events-none" />
