@@ -14,7 +14,7 @@ export default function AuthPromptModal({ isOpen, onClose, title = 'Sign in requ
                     <p className="text-sm text-gray-600 font-body">{message}</p>
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Button variant="primary" className="w-full" onClick={() => navigate('/auth/client')}>
+                    <Button variant="primary" className="w-full" onClick={() => navigate('/login-client')}>
                         Log In / Sign Up
                     </Button>
                     <Button variant="secondary" className="w-full" onClick={onClose}>
