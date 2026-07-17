@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from 'react-hot-toast';
+import { Analytics } from '@vercel/analytics/react';
 import LoadingBar from "#components/ui/LoadingBar.jsx";
 import AppRouter from "#routes/AppRouter.jsx";
 import ErrorBoundary from "#components/ui/ErrorBoundary.jsx";
@@ -42,6 +43,7 @@ export default function App() {
                     <AppRouter onStart={startLoading} onStop={stopLoading} />
                 </ErrorBoundary>
             </QueryClientProvider>
+            <Analytics />
         </>
     );
 }
