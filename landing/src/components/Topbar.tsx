@@ -9,7 +9,7 @@ export default function Topbar() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
-            <img src="/icon.png" alt="ADA Logo" className="h-full w-full object-cover" />
+            <img src="/iconLight.png" alt="ADA Logo" className="h-full w-full object-cover" />
           </div>
           <span className="font-headline text-xl font-bold text-dark">
             ADA
