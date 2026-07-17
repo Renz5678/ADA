@@ -8,8 +8,6 @@ const port = process.env.PORT || 3000;
 
 const start = async () => {
     await sequelize.authenticate();
-    // Temporarily force sync in production to apply the new image_url and profile_picture columns
-    await sequelize.sync({ alter: true });
     console.log("Database connection has been established successfully.");
 
     startCleanUpJob();
