@@ -31,7 +31,7 @@ export default function MarketplacePage() {
     if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
 
     return (
-        <div className="min-h-screen bg-[#FDF9F1] p-6 lg:p-12">
+        <div className="h-screen overflow-y-auto bg-[#FDF9F1] p-6 lg:p-12">
             <div className="max-w-6xl mx-auto">
                 <header className="mb-12 text-center">
                     <h1 className="text-4xl lg:text-5xl font-headline font-black text-[#0F1D29] tracking-tight mb-4">Discover Independent Makers</h1>

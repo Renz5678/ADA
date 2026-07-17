@@ -42,7 +42,7 @@ export default function FreelancerCatalogPage() {
     const products = freelancer.Products || [];
 
     return (
-        <div className="min-h-screen bg-[#FDF9F1]">
+        <div className="h-screen overflow-y-auto bg-[#FDF9F1]">
             {/* Header/Banner */}
             <div className="h-48 md:h-64 relative bg-gray-200">
                 {freelancer.banner_image ? (
