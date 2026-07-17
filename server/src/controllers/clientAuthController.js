@@ -35,16 +35,12 @@ export const registerClient = async (req, res) => {
                 existingClient.otp_expires_at = otp_expires_at;
                 await existingClient.save();
 
-                try {
-                    await transporter.sendMail({
-                        to: email,
-                        subject: 'OTP Verification for ADA Client Account',
-                        text: `Good day, ${name}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes.`,
-                        html: getVerificationEmailHtml(name, verification_token)
-                    });
-                } catch (mailErr) {
-                    console.log(`SMTP Blocked/Failed. Verification Token for ${email} is: ${verification_token}`);
-                }
+                await transporter.sendMail({
+                    to: email,
+                    subject: 'OTP Verification for ADA Client Account',
+                    text: `Good day, ${name}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes.`,
+                    html: getVerificationEmailHtml(name, verification_token)
+                });
 
                 return res.status(200).json({ message: 'OTP resent!' });
             }

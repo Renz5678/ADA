@@ -56,16 +56,12 @@ const register = async (req, res) => {
             otp_expires_at
         });
 
-        try {
-            await transporter.sendMail({
-                to: email,
-                subject: 'Your ADA Account Verification Code',
-                text: `Hi ${username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
-                html: getVerificationEmailHtml(username, verification_token)
-            });
-        } catch (mailErr) {
-            console.log(`SMTP Blocked/Failed. Verification Token for ${email} is: ${verification_token}`);
-        }
+        await transporter.sendMail({
+            to: email,
+            subject: 'Your ADA Account Verification Code',
+            text: `Hi ${username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
+            html: getVerificationEmailHtml(username, verification_token)
+        });
 
         return res.status(201).json({ message: 'New User Created Successfully!', user: newUser });
     }
