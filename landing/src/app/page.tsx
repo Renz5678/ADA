@@ -36,10 +36,10 @@ const VantaBackground = () => {
                 minWidth: 200.00,
                 scale: 1.00,
                 scaleMobile: 1.00,
-                color: 0x8d4a52, // ADA's maroon
-                shininess: 30.00,
+                color: 0xffffff, // White/light gray waves for beautiful subtle contrast
+                shininess: 15.00, // Reduced shininess for softer waves
                 waveHeight: 15.00,
-                waveSpeed: 0.80, // Slightly slower, elegant waves
+                waveSpeed: 0.70, // Even slower, elegant waves
                 zoom: 1.00
               });
               console.log("Vanta WAVES successfully initialized");
@@ -62,7 +62,7 @@ const VantaBackground = () => {
   }, []); // Empty dependency array prevents re-render loops
 
   return (
-    <div ref={vantaRef} className="fixed top-0 left-0 w-screen h-screen z-[0] pointer-events-none opacity-40" />
+    <div ref={vantaRef} className="fixed top-0 left-0 w-screen h-screen z-[0] pointer-events-none opacity-80" />
   );
 };
 
