@@ -8,7 +8,7 @@ const getUsernameAndBusinessName = async (req, res) => {
 
         const user = await Users.findOne({
             where: { user_id: userId },
-            attributes: ['username', 'business_name', 'email']
+            attributes: ['username', 'business_name', 'email', 'role', 'approval_status']
         });
 
         if (!user) {

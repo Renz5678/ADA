@@ -1,4 +1,3 @@
-import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { useCurrentUser } from "#hooks/useUser.js";
 import GlobalSearch from "./GlobalSearch.jsx";
 import NotificationDropdown from "./NotificationDropdown.jsx";
