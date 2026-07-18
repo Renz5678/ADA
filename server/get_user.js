@@ -1,7 +1,7 @@
-import { Sequelize } from 'sequelize';
-const sequelize = new Sequelize('postgres://postgres.enkfinmvcqmtbfruvwhr:***REMOVED***@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres');
+import { sequelize } from './src/models/index.js';
+
 async function run() {
-  const [results] = await sequelize.query("SELECT * FROM \"Users\" LIMIT 1");
+  const [results] = await sequelize.query('SELECT * FROM "Users" LIMIT 1');
   console.log(results);
   process.exit(0);
 }
