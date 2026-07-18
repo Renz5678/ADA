@@ -1,12 +1,10 @@
-import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import dns from 'dns';
 
 dns.setDefaultResultOrder('ipv4first');
 
 dotenv.config();
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 let transporter;
 
@@ -18,18 +16,16 @@ if (process.env.NODE_ENV === 'test') {
         }
     };
 } else {
-    transporter = {
-        sendMail: async ({ to, subject, text, html }) => {
-            const msg = {
-                to,
-                from: process.env.EMAIL_USER || 'ada.freelance.help@gmail.com', // Must match verified sender
-                subject,
-                text,
-                html
-            };
-            return await sgMail.send(msg);
-        }
-    };
+    transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000
+    });
 }
 
 export default transporter;
