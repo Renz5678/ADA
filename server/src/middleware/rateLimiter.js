@@ -17,6 +17,14 @@ export const generalLimiter = rateLimit({
     }
 });
 
+export const adminLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Strict limit for admin endpoints
+    message: {
+        message: 'Too many administrative requests, please try again later.'
+    }
+});
+
 // Max 3 registrations per IP per hour
 export const registerLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour

@@ -26,6 +26,10 @@ export const updateUserStatus = async (req, res) => {
         const { id } = req.params;
         const { approval_status, is_deleted, warning_message } = req.body;
         
+        if (parseInt(id) === req.user.id) {
+            return res.status(403).json({ error: 'Forbidden: Admins cannot modify their own account' });
+        }
+        
         const user = await models.Users.findByPk(id);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
@@ -47,6 +51,11 @@ export const deleteUser = async (req, res) => {
     // Keeping this as an option for hard delete if needed, but normally we use soft delete
     try {
         const { id } = req.params;
+        
+        if (parseInt(id) === req.user.id) {
+            return res.status(403).json({ error: 'Forbidden: Admins cannot delete themselves' });
+        }
+        
         const user = await models.Users.findByPk(id);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
