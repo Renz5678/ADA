@@ -1,7 +1,9 @@
-import axios from 'axios';
+import { google } from 'googleapis';
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+const OAuth2 = google.auth.OAuth2;
 
 let transporter;
 
@@ -15,26 +17,41 @@ if (process.env.NODE_ENV === 'test') {
 } else {
     transporter = {
         sendMail: async ({ to, subject, text, html }) => {
-            const payload = {
-                sender: {
-                    name: "ADA Freelance Help",
-                    email: process.env.EMAIL_USER || 'ada.freelance.help@gmail.com'
-                },
-                to: [
-                    { email: to }
-                ],
-                subject: subject,
-                htmlContent: html,
-                textContent: text
-            };
+            const oauth2Client = new OAuth2(
+                process.env.GMAIL_CLIENT_ID,
+                process.env.GMAIL_CLIENT_SECRET,
+                "https://developers.google.com/oauthplayground"
+            );
 
-            // Using Brevo HTTP API to completely bypass Render's SMTP Port firewall
-            return await axios.post('https://api.brevo.com/v3/smtp/email', payload, {
-                headers: {
-                    'accept': 'application/json',
-                    'api-key': process.env.BREVO_API_KEY,
-                    'content-type': 'application/json'
-                }
+            oauth2Client.setCredentials({
+                refresh_token: process.env.GMAIL_REFRESH_TOKEN
+            });
+
+            const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+
+            const utf8Subject = `=?utf-8?B?${Buffer.from(subject).toString('base64')}?=`;
+            const messageParts = [
+                `From: ADA Freelance Help <${process.env.EMAIL_USER || 'ada.freelance.help@gmail.com'}>`,
+                `To: ${to}`,
+                'Content-Type: text/html; charset=utf-8',
+                'MIME-Version: 1.0',
+                `Subject: ${utf8Subject}`,
+                '',
+                html || text
+            ];
+            const message = messageParts.join('\n');
+
+            const encodedMessage = Buffer.from(message)
+                .toString('base64')
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
+
+            return await gmail.users.messages.send({
+                userId: 'me',
+                requestBody: {
+                    raw: encodedMessage,
+                },
             });
         }
     };

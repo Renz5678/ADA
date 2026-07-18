@@ -56,7 +56,11 @@ export const registerClient = async (req, res) => {
             return res.status(409).json({ message: 'Email already in use!' });
         }
 
-        const flaggedForReview = isSpammyName(name) || isSpammyEmail(email);
+        const isSpammy = isSpammyName(name) || isSpammyEmail(email);
+
+        if (isSpammy) {
+            return res.status(400).json({ message: 'Registration blocked: Your email or name has been flagged as spam.' });
+        }
 
         const newClient = await Clients.create({
             name,
@@ -67,7 +71,7 @@ export const registerClient = async (req, res) => {
             is_verified: false,
             verification_token,
             otp_expires_at,
-            flaggedForReview
+            flaggedForReview: false
         });
 
         await transporter.sendMail({
