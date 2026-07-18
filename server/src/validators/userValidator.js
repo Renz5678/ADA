@@ -1,8 +1,5 @@
 import { body } from 'express-validator';
-import fs from 'fs';
-import path from 'path';
-
-const disposableDomains = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'node_modules/disposable-email-domains/index.json'), 'utf8'));
+import { isDisposableEmail } from '../utils/emailValidation.js';
 
 export const emailValidator = [
     body('email')
@@ -18,8 +15,7 @@ export const registerValidator = [
         .notEmpty().withMessage('Email is required!')
         .isEmail().withMessage('Email must be a valid email')
         .custom(value => {
-            const domain = value.split('@')[1];
-            if (disposableDomains.includes(domain)) {
+            if (isDisposableEmail(value)) {
                 throw new Error('Disposable or temporary emails are not allowed');
             }
             return true;
