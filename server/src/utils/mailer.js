@@ -1,12 +1,7 @@
-import sgMail from '@sendgrid/mail';
+import axios from 'axios';
 import dotenv from 'dotenv';
-import dns from 'dns';
-
-dns.setDefaultResultOrder('ipv4first');
 
 dotenv.config();
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 let transporter;
 
@@ -20,14 +15,27 @@ if (process.env.NODE_ENV === 'test') {
 } else {
     transporter = {
         sendMail: async ({ to, subject, text, html }) => {
-            const msg = {
-                to,
-                from: process.env.EMAIL_USER || 'ada.freelance.help@gmail.com', // Must match verified sender
-                subject,
-                text,
-                html
+            const payload = {
+                sender: {
+                    name: "ADA Freelance Help",
+                    email: process.env.EMAIL_USER || 'ada.freelance.help@gmail.com'
+                },
+                to: [
+                    { email: to }
+                ],
+                subject: subject,
+                htmlContent: html,
+                textContent: text
             };
-            return await sgMail.send(msg);
+
+            // Using Brevo HTTP API to completely bypass Render's SMTP Port firewall
+            return await axios.post('https://api.brevo.com/v3/smtp/email', payload, {
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': process.env.BREVO_API_KEY,
+                    'content-type': 'application/json'
+                }
+            });
         }
     };
 }
