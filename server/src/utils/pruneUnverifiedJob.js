@@ -13,10 +13,11 @@ export const pruneUnverifiedAccounts = async () => {
         const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
         // --- USERS (Freelancers) ---
-        // 1. Delete users older than 48 hours
+        // 1. Delete users older than 48 hours who actually went through the OTP flow
         const usersToDelete = await Users.findAll({
             where: {
                 is_verified: false,
+                verification_token: { [Op.ne]: null }, // SAFEGUARD: Protect legacy accounts
                 createdAt: {
                     [Op.lt]: fortyEightHoursAgo
                 }
@@ -32,6 +33,7 @@ export const pruneUnverifiedAccounts = async () => {
         const usersToRemind = await Users.findAll({
             where: {
                 is_verified: false,
+                verification_token: { [Op.ne]: null }, // SAFEGUARD: Protect legacy accounts
                 createdAt: {
                     [Op.gte]: fortyEightHoursAgo,
                     [Op.lt]: twentyFourHoursAgo
@@ -50,10 +52,11 @@ export const pruneUnverifiedAccounts = async () => {
         }
 
         // --- CLIENTS ---
-        // 1. Delete clients older than 48 hours
+        // 1. Delete clients older than 48 hours who actually went through the OTP flow
         const clientsToDelete = await Clients.findAll({
             where: {
                 is_verified: false,
+                verification_token: { [Op.ne]: null }, // SAFEGUARD: Protect legacy accounts
                 createdAt: {
                     [Op.lt]: fortyEightHoursAgo
                 }
@@ -69,6 +72,7 @@ export const pruneUnverifiedAccounts = async () => {
         const clientsToRemind = await Clients.findAll({
             where: {
                 is_verified: false,
+                verification_token: { [Op.ne]: null }, // SAFEGUARD: Protect legacy accounts
                 createdAt: {
                     [Op.gte]: fortyEightHoursAgo,
                     [Op.lt]: twentyFourHoursAgo
