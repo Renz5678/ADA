@@ -9,10 +9,28 @@ const disposableDomains = JSON.parse(fs.readFileSync(disposableDomainsPath, 'utf
 const customBlocklist = [
     'web-library.net',
     'example.com',
-    'suahi.com'
+    'suahi.com',
+    'mailinator.com',
+    'temp-mail.org',
+    'guerrillamail.com',
+    '10minutemail.com',
+    'yopmail.com',
+    'trashmail.com',
+    'throwawaymail.com',
+    'maildrop.cc'
 ];
 
 export const isDisposableEmail = (email) => {
     const domain = email.split('@')[1].toLowerCase();
-    return disposableDomains.includes(domain) || customBlocklist.includes(domain);
+    
+    if (disposableDomains.includes(domain) || customBlocklist.includes(domain)) {
+        return true;
+    }
+    
+    // Hard block notoriously spammy generic TLDs
+    if (domain.endsWith('.top') || domain.endsWith('.xyz')) {
+        return true;
+    }
+    
+    return false;
 };
