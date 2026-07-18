@@ -100,8 +100,13 @@ export default function VerifyOTPPage({ onStart, onStop }) {
         setIsVerifying(true);
         onStart("Verifying your code...");
         try {
-            await verifyOtp({ email, verification_token: code });
-            navigate("/login-freelancer");
+            const res = await verifyOtp({ email, verification_token: code });
+            if (res.data?.token) {
+                localStorage.setItem("token", res.data.token);
+                navigate("/dashboard");
+            } else {
+                navigate("/login-freelancer");
+            }
         } catch (err) {
             const status = err.response?.status;
             const retryAfter = err.response?.headers?.["retry-after"];

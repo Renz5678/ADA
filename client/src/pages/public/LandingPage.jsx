@@ -31,7 +31,7 @@ export default function LandingPage() {
                         </div>
                         <h2 className="text-2xl font-bold text-[#0F1D29] mb-2">Freelancer</h2>
                         <p className="text-sm text-center text-gray-500 mb-6">Manage your orders, inventory, and clients all in one place.</p>
-                        <Link to="/login" className="mt-auto px-6 py-2 bg-[#8D4A52] text-white rounded-full font-medium hover:bg-[#0F1D29] transition w-full text-center">
+                        <Link to="/login-freelancer" className="mt-auto px-6 py-2 bg-[#8D4A52] text-white rounded-full font-medium hover:bg-[#0F1D29] transition w-full text-center">
                             Login as Freelancer
                         </Link>
                     </div>

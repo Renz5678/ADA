@@ -36,7 +36,7 @@ const register = async (req, res) => {
                 await transporter.sendMail({
                     to: email,
                     subject: 'OTP Verification for ADA Account Registration',
-                    text: `Good day, ${username}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes.`,
+                    text: `Good day, ${username}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes. (Please also check your spam folder.)`,
                     html: getVerificationEmailHtml(username, verification_token)
                 });
 
@@ -59,7 +59,7 @@ const register = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Account Verification Code',
-            text: `Hi ${username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
+            text: `Hi ${username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email. (Please also check your spam folder.)\n\nBest regards,\nThe ADA Team`,
             html: getVerificationEmailHtml(username, verification_token)
         });
 
@@ -141,7 +141,13 @@ const verifyOtp = async (req, res) => {
             text: `Hi ${user.username},\n\nYour account has been successfully verified. You can now log in and start using ADA.\n\nIf you did not create this account, please contact our support team immediately.\n\nBest regards,\nThe ADA Team`
         }).catch(err => console.error('Failed to send verification email:', err));
 
-        return res.status(200).json({ message: 'Account verified!' });
+        const token = jwt.sign(
+            { id: user.user_id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+        );
+
+        return res.status(200).json({ message: 'Account verified!', token: token });
     } catch (e) {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
@@ -175,7 +181,7 @@ const resendOtp = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Account Verification Code',
-            text: `Hi ${user.username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
+            text: `Hi ${user.username},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email. (Please also check your spam folder.)\n\nBest regards,\nThe ADA Team`,
             html: getVerificationEmailHtml(user.username, verification_token)
         });
 
@@ -212,7 +218,7 @@ const resetPassword = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Password Reset Code',
-            text: `Hi ${user.username},\n\nWe received a request to reset your ADA account password. Use the OTP below to proceed:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request a password reset, please ignore this email and your account will remain secure.\n\nBest regards,\nThe ADA Team`,
+            text: `Hi ${user.username},\n\nWe received a request to reset your ADA account password. Use the OTP below to proceed:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request a password reset, please ignore this email and your account will remain secure. (Please also check your spam folder.)\n\nBest regards,\nThe ADA Team`,
             html: getVerificationEmailHtml(user.username, verification_token)
         });
 

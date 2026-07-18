@@ -100,8 +100,13 @@ export default function ClientVerifyOTPPage({ onStart, onStop }) {
         setIsVerifying(true);
         onStart("Verifying your code...");
         try {
-            await verifyClientOtp({ email, verification_token: code });
-            navigate("/login-client");
+            const res = await verifyClientOtp({ email, verification_token: code });
+            if (res.data?.token) {
+                localStorage.setItem("token", res.data.token);
+                navigate("/client/dashboard");
+            } else {
+                navigate("/login-client");
+            }
         } catch (err) {
             const status = err.response?.status;
             const retryAfter = err.response?.headers?.["retry-after"];

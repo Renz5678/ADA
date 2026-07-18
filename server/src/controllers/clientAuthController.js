@@ -38,7 +38,7 @@ export const registerClient = async (req, res) => {
                 await transporter.sendMail({
                     to: email,
                     subject: 'OTP Verification for ADA Client Account',
-                    text: `Good day, ${name}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes.`,
+                    text: `Good day, ${name}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes. (Please also check your spam folder.)`,
                     html: getVerificationEmailHtml(name, verification_token)
                 });
 
@@ -60,7 +60,7 @@ export const registerClient = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Client Account Verification Code',
-            text: `Hi ${name},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
+            text: `Hi ${name},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email. (Please also check your spam folder.)\n\nBest regards,\nThe ADA Team`,
             html: getVerificationEmailHtml(name, verification_token)
         });
 
@@ -135,8 +135,14 @@ export const verifyOtp = async (req, res) => {
             text: `Hi ${client.name},\n\nYour account has been successfully verified. You can now log in and start using ADA.\n\nIf you did not create this account, please contact our support team immediately.\n\nBest regards,\nThe ADA Team`
         });
 
-        return res.status(200).json({ message: 'Account verified!' });
-    } catch (e) {
+        const token = jwt.sign(
+            { id: client.client_id, email: client.email, isClient: true },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+        );
+
+        return res.status(200).json({ message: 'Account verified!', token: token });
+    } catch (error) {
         return res.status(500).json({ message: 'Internal Server Error' });
     }
 };
@@ -169,7 +175,7 @@ export const resendOtp = async (req, res) => {
         await transporter.sendMail({
             to: email,
             subject: 'Your ADA Client Account Verification Code',
-            text: `Hi ${client.name},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email.\n\nBest regards,\nThe ADA Team`,
+            text: `Hi ${client.name},\n\nThank you for registering with ADA. Use the OTP below to verify your account:\n\n${verification_token}\n\nThis code will expire in 5 minutes. Do not share this code with anyone.\n\nIf you did not request this, please ignore this email. (Please also check your spam folder.)\n\nBest regards,\nThe ADA Team`,
             html: getVerificationEmailHtml(client.name, verification_token)
         });
 
