@@ -1,10 +1,12 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 import dns from 'dns';
 
 dns.setDefaultResultOrder('ipv4first');
 
 dotenv.config();
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 let transporter;
 
@@ -16,28 +18,16 @@ if (process.env.NODE_ENV === 'test') {
         }
     };
 } else {
-    // Create the secure SMTP transport for Gmail
-    const smtpTransport = nodemailer.createTransport({
-        service: 'gmail',
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // Use SSL
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
-    });
-
     transporter = {
         sendMail: async ({ to, subject, text, html }) => {
-            const mailOptions = {
-                from: process.env.EMAIL_USER || 'ada.freelance.help@gmail.com',
+            const msg = {
                 to,
+                from: process.env.EMAIL_USER || 'ada.freelance.help@gmail.com', // Must match verified sender
                 subject,
                 text,
                 html
             };
-            return await smtpTransport.sendMail(mailOptions);
+            return await sgMail.send(msg);
         }
     };
 }
