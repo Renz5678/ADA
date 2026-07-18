@@ -1,14 +1,17 @@
 import request from 'supertest';
 import app from '../../../app.js';
 import { models, sequelize } from '../../../src/models/index.js';
+import jwt from 'jsonwebtoken';
 
-const { Users } = models;
+const { Users, Clients } = models;
 
 beforeAll(async () => {
     await sequelize.sync({ force: true });
 });
 
 describe('Client Businesses Controller', () => {
+    let token;
+
     beforeAll(async () => {
         await Users.create({
             username: 'freelancer1',
@@ -25,11 +28,25 @@ describe('Client Businesses Controller', () => {
             password: 'testpassword',
             is_verified: false // Should not be returned
         });
+
+        // Create a test client and token
+        const client = await Clients.create({
+            name: 'Test Client',
+            email: 'client@test.com',
+            password: 'testpassword'
+        });
+
+        token = jwt.sign(
+            { id: client.client_id, email: client.email, role: 'client' },
+            process.env.JWT_SECRET || 'testsecret',
+            { expiresIn: '1h' }
+        );
     });
 
     it('should fetch all verified businesses', async () => {
         const res = await request(app)
-            .get('/client-businesses');
+            .get('/client-businesses')
+            .set('Authorization', `Bearer ${token}`);
 
         expect(res.statusCode).toEqual(200);
         expect(res.body.businesses.length).toBe(1);
