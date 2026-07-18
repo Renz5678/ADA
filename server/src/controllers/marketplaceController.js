@@ -11,7 +11,11 @@ export const getPublicFreelancers = async (req, res) => {
                 'profile_picture',
                 'banner_image',
                 'theme_color',
-                'description'
+                'description',
+                'social_facebook',
+                'social_instagram',
+                'social_shopee',
+                'social_tiktok'
             ],
             where: {
                 approval_status: 'approved',
@@ -39,7 +43,11 @@ export const getPublicFreelancerProfile = async (req, res) => {
                 'profile_picture',
                 'banner_image',
                 'theme_color',
-                'description'
+                'description',
+                'social_facebook',
+                'social_instagram',
+                'social_shopee',
+                'social_tiktok'
             ],
             where: {
                 approval_status: 'approved',

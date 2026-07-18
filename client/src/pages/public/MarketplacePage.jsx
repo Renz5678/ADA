@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { SiShopee } from 'react-icons/si';
 
 
 export default function MarketplacePage() {
@@ -65,6 +67,29 @@ export default function MarketplacePage() {
                                 <p className="text-sm text-gray-500 font-body mb-3">@{maker.username}</p>
                                 <p className="text-sm text-gray-700 font-body line-clamp-3 mb-4 flex-1">{maker.bio || maker.description || 'No bio provided.'}</p>
                                 
+                                <div className="flex gap-3 mb-4 items-center">
+                                    {maker.social_facebook && (
+                                        <a href={maker.social_facebook.startsWith('http') ? maker.social_facebook : `https://${maker.social_facebook}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#1877F2] transition-colors" onClick={(e) => e.stopPropagation()}>
+                                            <FaFacebook size={20} />
+                                        </a>
+                                    )}
+                                    {maker.social_instagram && (
+                                        <a href={maker.social_instagram.startsWith('http') ? maker.social_instagram : `https://${maker.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#E4405F] transition-colors" onClick={(e) => e.stopPropagation()}>
+                                            <FaInstagram size={20} />
+                                        </a>
+                                    )}
+                                    {maker.social_tiktok && (
+                                        <a href={maker.social_tiktok.startsWith('http') ? maker.social_tiktok : `https://${maker.social_tiktok}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors" onClick={(e) => e.stopPropagation()}>
+                                            <FaTiktok size={20} />
+                                        </a>
+                                    )}
+                                    {maker.social_shopee && (
+                                        <a href={maker.social_shopee.startsWith('http') ? maker.social_shopee : `https://${maker.social_shopee}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#EE4D2D] transition-colors" onClick={(e) => e.stopPropagation()}>
+                                            <SiShopee size={20} />
+                                        </a>
+                                    )}
+                                </div>
+
                                 <button className="w-full py-2 bg-[#0F1D29]/5 hover:bg-[#0F1D29]/10 text-[#0F1D29] font-bold rounded-xl transition-colors font-body text-sm mt-auto">
                                     View Catalog
                                 </button>

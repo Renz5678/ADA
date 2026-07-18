@@ -4,6 +4,8 @@ import axios from 'axios';
 import AuthPromptModal from '../../components/ui/AuthPromptModal.jsx';
 import Button from '../../components/ui/Button.jsx';
 import { MdArrowBack, MdMessage, MdAddShoppingCart } from 'react-icons/md';
+import { FaFacebook, FaInstagram, FaTiktok } from 'react-icons/fa';
+import { SiShopee } from 'react-icons/si';
 
 export default function FreelancerCatalogPage() {
     const { id } = useParams();
@@ -76,6 +78,29 @@ export default function FreelancerCatalogPage() {
                         <h1 className="text-3xl md:text-4xl font-headline font-black text-[#0F1D29]">{freelancer.business_name}</h1>
                         <p className="text-gray-500 font-body mt-1">@{freelancer.username}</p>
                         <p className="text-gray-700 font-body mt-4 max-w-2xl">{freelancer.bio || freelancer.description}</p>
+                        
+                        <div className="flex gap-4 mt-6 items-center">
+                            {freelancer.social_facebook && (
+                                <a href={freelancer.social_facebook.startsWith('http') ? freelancer.social_facebook : `https://${freelancer.social_facebook}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#1877F2] transition-colors bg-white p-2 rounded-full shadow-sm">
+                                    <FaFacebook size={24} />
+                                </a>
+                            )}
+                            {freelancer.social_instagram && (
+                                <a href={freelancer.social_instagram.startsWith('http') ? freelancer.social_instagram : `https://${freelancer.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#E4405F] transition-colors bg-white p-2 rounded-full shadow-sm">
+                                    <FaInstagram size={24} />
+                                </a>
+                            )}
+                            {freelancer.social_tiktok && (
+                                <a href={freelancer.social_tiktok.startsWith('http') ? freelancer.social_tiktok : `https://${freelancer.social_tiktok}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors bg-white p-2 rounded-full shadow-sm">
+                                    <FaTiktok size={24} />
+                                </a>
+                            )}
+                            {freelancer.social_shopee && (
+                                <a href={freelancer.social_shopee.startsWith('http') ? freelancer.social_shopee : `https://${freelancer.social_shopee}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#EE4D2D] transition-colors bg-white p-2 rounded-full shadow-sm">
+                                    <SiShopee size={24} />
+                                </a>
+                            )}
+                        </div>
                     </div>
                     <div className="w-full md:w-auto pt-16 md:pt-20">
                         <Button variant="primary" className="w-full md:w-auto flex items-center justify-center gap-2" onClick={handleInteract}>
