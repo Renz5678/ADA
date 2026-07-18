@@ -8,7 +8,8 @@ const disposableDomains = JSON.parse(fs.readFileSync(disposableDomainsPath, 'utf
 // Add our own custom blocklist for domains that evade the community list
 const customBlocklist = [
     'web-library.net',
-    'example.com'
+    'example.com',
+    'suahi.com'
 ];
 
 export const isDisposableEmail = (email) => {
