@@ -95,74 +95,109 @@ export default function AdminDashboard() {
                             <div className="h-10 bg-gray-200 rounded w-full"></div>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm text-gray-700">
-                                <thead className="text-xs uppercase bg-gray-50 text-gray-500 border-b border-[#dddddd]">
-                                    <tr>
-                                        <th className="px-6 py-4 font-semibold">ID</th>
-                                        <th className="px-6 py-4 font-semibold">Username / Email</th>
-                                        <th className="px-6 py-4 font-semibold">Business</th>
-                                        <th className="px-6 py-4 font-semibold">Status</th>
-                                        <th className="px-6 py-4 font-semibold">Deleted</th>
-                                        <th className="px-6 py-4 font-semibold text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {users?.map(user => (
-                                        <tr key={user.user_id} className="border-b border-[#dddddd] hover:bg-[#FFF7E6] transition-colors group">
-                                            <td className="px-6 py-4">{user.user_id}</td>
-                                            <td className="px-6 py-4">
-                                                <div className="font-bold text-[#0F1D29]">{user.username}</div>
-                                                <div className="text-xs text-gray-500 mt-1">{user.email}</div>
-                                            </td>
-                                            <td className="px-6 py-4 font-medium">{user.business_name}</td>
-                                            <td className="px-6 py-4">
-                                                <select 
-                                                    value={user.approval_status}
-                                                    onChange={(e) => handleApproval(user, e.target.value)}
-                                                    className="bg-white border border-[#dddddd] rounded-md px-3 py-1.5 text-sm outline-none focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] transition-all cursor-pointer"
-                                                >
-                                                    <option value="pending">Pending</option>
-                                                    <option value="approved">Approved</option>
-                                                    <option value="rejected">Rejected</option>
-                                                    <option value="banned">Banned</option>
-                                                </select>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {user.is_deleted ? (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                        Yes
-                                                    </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        No
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                {user.is_deleted ? (
-                                                    <button onClick={() => handleRestore(user)} className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">
-                                                        Restore
-                                                    </button>
-                                                ) : (
-                                                    <button onClick={() => handleSoftDelete(user)} className="text-red-600 hover:text-red-800 font-medium text-sm transition-colors">
-                                                        Soft Delete
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {users?.length === 0 && (
-                                        <tr>
-                                            <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
-                                                <div className="flex flex-col items-center justify-center">
-                                                    <span className="text-gray-400 mb-2">No users found.</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {users?.map(user => (
+                                <div key={user.user_id} className="bg-white border border-[#dddddd] rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+                                    {/* Header / Banner */}
+                                    <div className="h-24 w-full bg-gray-100 relative">
+                                        {user.banner_image ? (
+                                            <img src={user.banner_image} alt="Banner" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-r from-gray-200 to-gray-300"></div>
+                                        )}
+                                        <div className="absolute -bottom-8 left-4">
+                                            {user.profile_picture ? (
+                                                <img src={user.profile_picture} alt="Avatar" className="w-16 h-16 rounded-full border-4 border-white object-cover bg-white" />
+                                            ) : (
+                                                <div className="w-16 h-16 rounded-full border-4 border-white bg-[#0F1D29] flex items-center justify-center text-white font-bold text-xl">
+                                                    {user.business_name ? user.business_name.charAt(0).toUpperCase() : 'U'}
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* User Details */}
+                                    <div className="pt-10 px-5 pb-4 flex-1">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="font-bold text-lg text-[#0F1D29]">{user.business_name}</h3>
+                                                <p className="text-sm text-gray-500">@{user.username} • {user.email}</p>
+                                            </div>
+                                            {user.is_deleted && (
+                                                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-bold bg-red-100 text-red-800 uppercase tracking-wide">
+                                                    Deleted
+                                                </span>
+                                            )}
+                                        </div>
+                                        
+                                        {user.bio && (
+                                            <p className="mt-3 text-sm text-gray-600 line-clamp-2">{user.bio}</p>
+                                        )}
+                                        
+                                        {/* Products Preview */}
+                                        <div className="mt-4 pt-4 border-t border-gray-100">
+                                            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Product Listings ({user.Products?.length || 0})</h4>
+                                            {user.Products && user.Products.length > 0 ? (
+                                                <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                                                    {user.Products.map(prod => (
+                                                        <div key={prod.product_id} className="flex-none w-20 group relative">
+                                                            <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 mb-1">
+                                                                {prod.image_url ? (
+                                                                    <img src={prod.image_url} alt={prod.product_name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                                                ) : (
+                                                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                                        <span className="text-xs">No img</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <p className="text-[10px] text-gray-600 truncate font-medium">{prod.product_name}</p>
+                                                            <p className="text-[10px] font-bold text-[#8D4A52]">₱{Number(prod.price).toLocaleString()}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p className="text-sm text-gray-400 italic">No products listed yet.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Actions */}
+                                    <div className="bg-gray-50 p-4 border-t border-gray-200 flex justify-between items-center mt-auto">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs font-semibold text-gray-500 uppercase">Status:</span>
+                                            <select 
+                                                value={user.approval_status}
+                                                onChange={(e) => handleApproval(user, e.target.value)}
+                                                className="bg-white border border-[#dddddd] rounded-md px-2 py-1 text-sm font-medium outline-none focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] transition-all cursor-pointer shadow-sm"
+                                            >
+                                                <option value="pending">Pending</option>
+                                                <option value="approved">Approved</option>
+                                                <option value="rejected">Rejected</option>
+                                                <option value="banned">Banned</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div>
+                                            {user.is_deleted ? (
+                                                <button onClick={() => handleRestore(user)} className="px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-md font-semibold text-sm transition-colors border border-blue-200">
+                                                    Restore
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => handleSoftDelete(user)} className="px-3 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 rounded-md font-semibold text-sm transition-colors border border-red-200">
+                                                    Delete
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {users?.length === 0 && (
+                                <div className="col-span-full py-12 text-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                    <div className="flex flex-col items-center justify-center">
+                                        <span className="text-gray-400 font-medium">No users found.</span>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

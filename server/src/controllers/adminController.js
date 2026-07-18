@@ -5,8 +5,13 @@ export const getUsers = async (req, res) => {
         const users = await models.Users.findAll({
             attributes: [
                 'user_id', 'username', 'email', 'business_name', 'role', 
-                'approval_status', 'is_deleted', 'is_verified', 'createdAt'
+                'approval_status', 'is_deleted', 'is_verified', 'createdAt',
+                'profile_picture', 'banner_image', 'bio'
             ],
+            include: [{
+                model: models.Product,
+                attributes: ['product_id', 'product_name', 'price', 'image_url', 'description']
+            }],
             order: [['createdAt', 'DESC']]
         });
         res.status(200).json(users);
