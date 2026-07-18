@@ -32,11 +32,13 @@ export const normalizedEmailLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 1,
     skip: () => process.env.NODE_ENV === 'test',
-    keyGenerator: (req) => {
+    validate: { xForwardedForHeader: false, default: true },
+    keyGenerator: (req, res) => {
         if (req.body && req.body.email) {
             return 'email:' + normalizeEmail(req.body.email);
         }
-        return 'ip:' + (req.ip || 'unknown'); // fallback if no email is provided
+        // Fallback to IP address if no email is provided
+        return req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
     },
     message: {
         message: 'Too many registrations for this email address, please try again later.'
