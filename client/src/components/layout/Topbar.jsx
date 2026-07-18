@@ -3,12 +3,14 @@ import { useCurrentUser } from "#hooks/useUser.js";
 import GlobalSearch from "./GlobalSearch.jsx";
 import NotificationDropdown from "./NotificationDropdown.jsx";
 import { useState, useRef, useEffect } from "react";
-import { MdOutlinePersonOutline, MdOutlineCalendarToday, MdLogout } from "react-icons/md";
+import { MdOutlinePersonOutline, MdOutlineCalendarToday, MdLogout, MdFeedback } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
+import FeedbackModal from "../FeedbackModal.jsx";
 
 export default function Topbar({ pendingQueue = [], onDismiss }) {
     const { data: user, isLoading } = useCurrentUser();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
@@ -41,7 +43,13 @@ export default function Topbar({ pendingQueue = [], onDismiss }) {
                         View Marketplace
                     </Link>
                     <NotificationDropdown pendingQueue={pendingQueue} onDismiss={onDismiss} />
-                    <AiOutlineQuestionCircle size={20} className="cursor-pointer text-gray-600 hover:text-[#8D4A52] transition hidden sm:block" />
+                    <button 
+                        onClick={() => setIsFeedbackOpen(true)}
+                        className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#8D4A52] transition hidden sm:flex"
+                    >
+                        <MdFeedback size={20} />
+                        <span className="hidden md:inline">Feedback</span>
+                    </button>
                 </div>
 
                 <button
@@ -65,6 +73,15 @@ export default function Topbar({ pendingQueue = [], onDismiss }) {
                         >
                             <MdOutlinePersonOutline size={18} /> Profile Settings
                         </Link>
+                        {user?.role === 'admin' && (
+                            <Link
+                                to="/admin/dashboard"
+                                onClick={() => setIsProfileOpen(false)}
+                                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF7E6] hover:text-[#8D4A52] transition-colors font-bold"
+                            >
+                                <MdOutlinePersonOutline size={18} /> Admin Dashboard
+                            </Link>
+                        )}
                         <Link
                             to="/schedule"
                             onClick={() => setIsProfileOpen(false)}
@@ -82,6 +99,11 @@ export default function Topbar({ pendingQueue = [], onDismiss }) {
                         </div>
                     </div>
                 )}
+                
+                <FeedbackModal 
+                    isOpen={isFeedbackOpen} 
+                    onClose={() => setIsFeedbackOpen(false)} 
+                />
             </div>
         </div>
     );

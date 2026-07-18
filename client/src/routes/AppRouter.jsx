@@ -13,6 +13,9 @@ import LandingPage from "#pages/public/LandingPage.jsx";
 import MarketplacePage from "#pages/public/MarketplacePage.jsx";
 import FreelancerCatalogPage from "#pages/public/FreelancerCatalogPage.jsx";
 
+import AdminProtectedRoute from "#components/AdminProtectedRoute.jsx";
+import AdminDashboard from "#pages/admin/AdminDashboard.jsx";
+
 import DashboardPage from "#pages/app/DashboardPage.jsx";
 import ExpensesPage from "#pages/app/ExpensesPage.jsx";
 import TasksPage from "#pages/app/TasksPage.jsx";
@@ -75,6 +78,11 @@ export default function AppRouter({ onStart, onStop }) {
                     <Route path="/client/business/:id" element={<BusinessDetailsPage />} />
                     <Route path="/client/orders" element={<ClientOrdersPage />} />
                 </Route>
+            </Route>
+
+            {/* Admin Routes */}
+            <Route element={<AdminProtectedRoute />}>
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
             </Route>
         </Routes>
     );

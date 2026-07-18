@@ -108,6 +108,22 @@ export default (sequelize, DataTypes) => {
         social_linkedin: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        role: {
+            type: DataTypes.ENUM('user', 'admin'),
+            defaultValue: 'user'
+        },
+        approval_status: {
+            type: DataTypes.ENUM('pending', 'approved', 'rejected', 'banned'),
+            defaultValue: 'pending'
+        },
+        is_deleted: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        warning_message: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     },
         {
@@ -131,6 +147,7 @@ export default (sequelize, DataTypes) => {
         if (models.WeeklyAvailability) Users.hasMany(models.WeeklyAvailability, { foreignKey: 'user_id' });
         if (models.Notifications) Users.hasMany(models.Notifications, { foreignKey: 'user_id' });
         if (models.Clients) Users.hasMany(models.Clients, { foreignKey: 'freelancer_id' });
+        if (models.Feedback) Users.hasMany(models.Feedback, { foreignKey: 'user_id' });
     };
 
     return Users;

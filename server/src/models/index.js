@@ -15,6 +15,7 @@ import NotificationFactory from '../models/notification.js';
 import TaskFactory from '../models/task.js';
 import ClientFactory from '../models/client.js';
 import PendingOrdersFactory from '../models/pendingOrder.js';
+import FeedbackFactory from '../models/feedback.js';
 
 let sequelize;
 
@@ -80,7 +81,8 @@ const models = {
     Notifications: NotificationFactory(sequelize, DataTypes),
     Tasks: TaskFactory(sequelize, DataTypes),
     Clients: ClientFactory(sequelize, DataTypes),
-    PendingOrders: PendingOrdersFactory(sequelize, DataTypes)
+    PendingOrders: PendingOrdersFactory(sequelize, DataTypes),
+    Feedback: FeedbackFactory(sequelize, DataTypes)
 };
 
 Object.values(models).forEach(model => {

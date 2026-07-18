@@ -13,7 +13,10 @@ export const getPublicFreelancers = async (req, res) => {
                 'theme_color',
                 'description'
             ],
-            // optionally we can add where: { is_verified: true } in the future
+            where: {
+                approval_status: 'approved',
+                is_deleted: false
+            }
         });
 
         res.status(200).json(freelancers);
@@ -38,6 +41,10 @@ export const getPublicFreelancerProfile = async (req, res) => {
                 'theme_color',
                 'description'
             ],
+            where: {
+                approval_status: 'approved',
+                is_deleted: false
+            },
             include: [{
                 model: models.Product,
                 attributes: [

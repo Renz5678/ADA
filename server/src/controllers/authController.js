@@ -100,6 +100,7 @@ const login = async (req, res) => {
         });
 
         if (userResult === null) return res.status(401).json({ message: 'Invalid credentials!' });
+        if (userResult.is_deleted) return res.status(403).json({ message: userResult.warning_message || 'Account has been deleted.' });
         if (!userResult.is_verified) return res.status(403).json({ message: 'Account is not yet verified!' });
 
         const isPasswordCorrect = await bcrypt.compare(password, userResult.password);
@@ -109,7 +110,9 @@ const login = async (req, res) => {
         const token = jwt.sign(
             {
                 id: userResult.user_id,
-                email: userResult.email
+                email: userResult.email,
+                role: userResult.role,
+                approval_status: userResult.approval_status
             },
             process.env.JWT_SECRET,
             {
@@ -143,6 +146,7 @@ const verifyOtp = async (req, res) => {
         });
 
         if (!user) return res.status(404).json({ message: 'Email not found or wrong verification code!' });
+        if (user.is_deleted) return res.status(403).json({ message: user.warning_message || 'Account has been deleted.' });
 
         if (user.otp_expires_at < new Date()) return res.status(400).json({ message: 'OTP has expired!' });
 
@@ -159,7 +163,7 @@ const verifyOtp = async (req, res) => {
         }).catch(err => console.error('Failed to send verification email:', err));
 
         const token = jwt.sign(
-            { id: user.user_id, email: user.email },
+            { id: user.user_id, email: user.email, role: user.role, approval_status: user.approval_status },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );
@@ -315,8 +319,10 @@ const googleLogin = async (req, res) => {
             await userResult.save();
         }
 
+        if (userResult.is_deleted) return res.status(403).json({ message: userResult.warning_message || 'Account has been deleted.' });
+
         const jwtToken = jwt.sign(
-            { id: userResult.user_id, email: userResult.email },
+            { id: userResult.user_id, email: userResult.email, role: userResult.role, approval_status: userResult.approval_status },
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );

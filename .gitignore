@@ -37,3 +37,7 @@ out/
 
 # Optional eslint cache
 .eslintcache
+
+# Admin and DB Sync Scripts
+server/make-admin.js
+server/sync-db.js
