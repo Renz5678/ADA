@@ -69,56 +69,58 @@ export default function AdminDashboard() {
     };
 
     return (
-        <div className="p-6 max-w-7xl mx-auto space-y-6">
-            <h1 className="text-3xl font-bold text-gray-100">Admin Dashboard</h1>
+        <div className="max-w-7xl mx-auto space-y-6">
+            <h1 className="text-3xl font-headline font-bold text-[#0F1D29]">Admin Dashboard</h1>
 
-            <div className="flex space-x-4 border-b border-gray-700 pb-2">
+            <div className="flex space-x-6 border-b border-[#dddddd] pb-0">
                 <button 
                     onClick={() => setActiveTab('users')} 
-                    className={`px-4 py-2 font-semibold rounded-t-lg transition-colors ${activeTab === 'users' ? 'text-[#38bdf8] border-b-2 border-[#38bdf8]' : 'text-gray-400 hover:text-gray-200'}`}
+                    className={`px-4 py-3 font-semibold transition-colors border-b-2 ${activeTab === 'users' ? 'text-[#8D4A52] border-[#8D4A52]' : 'text-gray-500 border-transparent hover:text-[#0F1D29]'}`}
                 >
                     User Approvals
                 </button>
                 <button 
                     onClick={() => setActiveTab('feedbacks')} 
-                    className={`px-4 py-2 font-semibold rounded-t-lg transition-colors ${activeTab === 'feedbacks' ? 'text-[#38bdf8] border-b-2 border-[#38bdf8]' : 'text-gray-400 hover:text-gray-200'}`}
+                    className={`px-4 py-3 font-semibold transition-colors border-b-2 ${activeTab === 'feedbacks' ? 'text-[#8D4A52] border-[#8D4A52]' : 'text-gray-500 border-transparent hover:text-[#0F1D29]'}`}
                 >
                     Feedback & Reports
                 </button>
             </div>
 
             {activeTab === 'users' && (
-                <div className="bg-[#1a2332] rounded-xl p-6 shadow-xl border border-gray-700/50">
-                    <h2 className="text-xl font-bold text-gray-100 mb-4">Manage Users</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-[#dddddd] p-6">
+                    <h2 className="text-xl font-bold text-[#0F1D29] mb-6 font-headline">Manage Users</h2>
                     {usersLoading ? (
-                        <p className="text-gray-400">Loading users...</p>
+                        <div className="animate-pulse flex space-x-4">
+                            <div className="h-10 bg-gray-200 rounded w-full"></div>
+                        </div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm text-gray-300">
-                                <thead className="text-xs uppercase bg-[#0f1623] text-gray-400 border-b border-gray-700">
+                            <table className="w-full text-left text-sm text-gray-700">
+                                <thead className="text-xs uppercase bg-gray-50 text-gray-500 border-b border-[#dddddd]">
                                     <tr>
-                                        <th className="px-4 py-3">ID</th>
-                                        <th className="px-4 py-3">Username / Email</th>
-                                        <th className="px-4 py-3">Business</th>
-                                        <th className="px-4 py-3">Status</th>
-                                        <th className="px-4 py-3">Deleted</th>
-                                        <th className="px-4 py-3">Actions</th>
+                                        <th className="px-6 py-4 font-semibold">ID</th>
+                                        <th className="px-6 py-4 font-semibold">Username / Email</th>
+                                        <th className="px-6 py-4 font-semibold">Business</th>
+                                        <th className="px-6 py-4 font-semibold">Status</th>
+                                        <th className="px-6 py-4 font-semibold">Deleted</th>
+                                        <th className="px-6 py-4 font-semibold text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {users?.map(user => (
-                                        <tr key={user.user_id} className="border-b border-gray-800 hover:bg-[#0f1623]/50">
-                                            <td className="px-4 py-3">{user.user_id}</td>
-                                            <td className="px-4 py-3">
-                                                <div className="font-medium text-gray-100">{user.username}</div>
-                                                <div className="text-xs text-gray-500">{user.email}</div>
+                                        <tr key={user.user_id} className="border-b border-[#dddddd] hover:bg-[#FFF7E6] transition-colors group">
+                                            <td className="px-6 py-4">{user.user_id}</td>
+                                            <td className="px-6 py-4">
+                                                <div className="font-bold text-[#0F1D29]">{user.username}</div>
+                                                <div className="text-xs text-gray-500 mt-1">{user.email}</div>
                                             </td>
-                                            <td className="px-4 py-3">{user.business_name}</td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-6 py-4 font-medium">{user.business_name}</td>
+                                            <td className="px-6 py-4">
                                                 <select 
                                                     value={user.approval_status}
                                                     onChange={(e) => handleApproval(user, e.target.value)}
-                                                    className="bg-[#0f1623] border border-gray-700 rounded px-2 py-1 text-sm outline-none focus:border-[#38bdf8]"
+                                                    className="bg-white border border-[#dddddd] rounded-md px-3 py-1.5 text-sm outline-none focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] transition-all cursor-pointer"
                                                 >
                                                     <option value="pending">Pending</option>
                                                     <option value="approved">Approved</option>
@@ -126,20 +128,24 @@ export default function AdminDashboard() {
                                                     <option value="banned">Banned</option>
                                                 </select>
                                             </td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-6 py-4">
                                                 {user.is_deleted ? (
-                                                    <span className="text-red-400 font-semibold">Yes</span>
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                        Yes
+                                                    </span>
                                                 ) : (
-                                                    <span className="text-green-400">No</span>
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        No
+                                                    </span>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-3">
+                                            <td className="px-6 py-4 text-right">
                                                 {user.is_deleted ? (
-                                                    <button onClick={() => handleRestore(user)} className="text-blue-400 hover:text-blue-300 text-sm">
+                                                    <button onClick={() => handleRestore(user)} className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">
                                                         Restore
                                                     </button>
                                                 ) : (
-                                                    <button onClick={() => handleSoftDelete(user)} className="text-red-400 hover:text-red-300 text-sm">
+                                                    <button onClick={() => handleSoftDelete(user)} className="text-red-600 hover:text-red-800 font-medium text-sm transition-colors">
                                                         Soft Delete
                                                     </button>
                                                 )}
@@ -148,7 +154,11 @@ export default function AdminDashboard() {
                                     ))}
                                     {users?.length === 0 && (
                                         <tr>
-                                            <td colSpan="6" className="px-4 py-6 text-center text-gray-500">No users found.</td>
+                                            <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
+                                                <div className="flex flex-col items-center justify-center">
+                                                    <span className="text-gray-400 mb-2">No users found.</span>
+                                                </div>
+                                            </td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -159,42 +169,48 @@ export default function AdminDashboard() {
             )}
 
             {activeTab === 'feedbacks' && (
-                <div className="bg-[#1a2332] rounded-xl p-6 shadow-xl border border-gray-700/50">
-                    <h2 className="text-xl font-bold text-gray-100 mb-4">Feedback & Bug Reports</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-[#dddddd] p-6">
+                    <h2 className="text-xl font-bold text-[#0F1D29] mb-6 font-headline">Feedback & Bug Reports</h2>
                     {feedbacksLoading ? (
-                        <p className="text-gray-400">Loading feedbacks...</p>
+                        <div className="space-y-4">
+                            {[1, 2].map(i => (
+                                <div key={i} className="animate-pulse bg-gray-50 h-32 rounded-lg border border-gray-100"></div>
+                            ))}
+                        </div>
                     ) : (
                         <div className="space-y-4">
                             {feedbacks?.map(fb => (
-                                <div key={fb.feedback_id} className="bg-[#0f1623] p-4 rounded-lg border border-gray-800">
-                                    <div className="flex justify-between items-start mb-2">
+                                <div key={fb.feedback_id} className="bg-white p-5 rounded-lg border border-[#dddddd] hover:border-[#8D4A52] hover:shadow-md transition-all">
+                                    <div className="flex justify-between items-start mb-3">
                                         <div>
-                                            <span className={`text-xs px-2 py-1 rounded font-bold uppercase ${fb.type === 'bug' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}`}>
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium uppercase tracking-wider ${fb.type === 'bug' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
                                                 {fb.type}
                                             </span>
-                                            <h3 className="text-lg font-bold text-gray-100 mt-2">{fb.title}</h3>
-                                            <p className="text-sm text-gray-400">From: {fb.user?.username || 'Unknown'} ({fb.user?.email || 'N/A'})</p>
+                                            <h3 className="text-lg font-bold text-[#0F1D29] mt-2">{fb.title}</h3>
+                                            <p className="text-sm text-gray-500 mt-1">From: <span className="font-medium text-gray-700">{fb.user?.username || 'Unknown'}</span> ({fb.user?.email || 'N/A'})</p>
                                         </div>
                                         <select
                                             value={fb.status}
                                             onChange={(e) => handleFeedbackStatus(fb.feedback_id, e.target.value)}
-                                            className="bg-[#1a2332] border border-gray-700 rounded px-3 py-1 text-sm outline-none focus:border-[#38bdf8]"
+                                            className="bg-white border border-[#dddddd] rounded-md px-3 py-1.5 text-sm font-medium outline-none focus:border-[#8D4A52] focus:ring-1 focus:ring-[#8D4A52] cursor-pointer shadow-sm"
                                         >
                                             <option value="open">Open</option>
                                             <option value="in_progress">In Progress</option>
                                             <option value="closed">Closed</option>
                                         </select>
                                     </div>
-                                    <div className="mt-3 text-gray-300 whitespace-pre-wrap bg-[#1a2332] p-3 rounded text-sm border border-gray-700/50">
+                                    <div className="mt-4 text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-md text-sm border border-gray-100 leading-relaxed">
                                         {fb.description}
                                     </div>
-                                    <div className="mt-2 text-xs text-gray-500">
-                                        Submitted on: {new Date(fb.createdAt).toLocaleString()}
+                                    <div className="mt-3 text-xs text-gray-400 font-medium">
+                                        Submitted on: {new Date(fb.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                                     </div>
                                 </div>
                             ))}
                             {feedbacks?.length === 0 && (
-                                <p className="text-center text-gray-500 py-6">No feedbacks found.</p>
+                                <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                    <p className="text-gray-500 font-medium">No feedback or reports found.</p>
+                                </div>
                             )}
                         </div>
                     )}
