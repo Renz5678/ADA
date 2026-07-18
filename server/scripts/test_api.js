@@ -1,7 +1,12 @@
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-dotenv.config({ path: '/home/scarecrow/dev/ADA/server/.env' });
-import { models } from '/home/scarecrow/dev/ADA/server/src/models/index.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+import { models } from '../src/models/index.js';
 
 async function testApi() {
     try {

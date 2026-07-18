@@ -1,7 +1,8 @@
 import { body } from 'express-validator';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const disposableDomains = require('disposable-email-domains');
+import fs from 'fs';
+import path from 'path';
+
+const disposableDomains = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'node_modules/disposable-email-domains/index.json'), 'utf8'));
 
 export const emailValidator = [
     body('email')

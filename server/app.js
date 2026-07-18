@@ -53,6 +53,8 @@ app.use(cors({
 
 app.use(express.json());
 
+app.use(generalLimiter);
+
 app.get('/', (req, res) => {
     res.json({
         status: "healthy",
@@ -65,7 +67,6 @@ app.use('/client-auth', authLimiter, clientAuthRouter);
 app.use('/client-businesses', clientBusinessesRouter);
 app.use('/client-orders', clientOrdersRouter);
 app.use('/client-notifications', clientNotificationRouter);
-app.use(generalLimiter);
 app.use('/products', productRouter);
 app.use('/products/:productId/materials', productMaterialRouter);
 app.use('/orders', orderRouter);
@@ -92,9 +93,11 @@ app.use((err, req, res, next) => {
             message: 'This record cannot be modified or deleted because it is tied to another existing record.'
         });
     }
+    
+    const isProduction = process.env.NODE_ENV === 'production';
     res.status(err.status || 500).json({
         error: 'Internal Server Error',
-        message: err.message
+        message: isProduction ? 'Something went wrong. Please try again.' : err.message
     });
 });
 
