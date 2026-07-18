@@ -18,7 +18,8 @@ beforeAll(async () => {
         is_verified: true,
         bio: 'I make cool things',
         profile_picture: 'pic.png',
-        banner_image: 'banner.png'
+        banner_image: 'banner.png',
+        approval_status: 'approved'
     });
     testUserId = user.user_id;
 
