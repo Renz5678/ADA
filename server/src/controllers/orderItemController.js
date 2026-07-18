@@ -17,7 +17,8 @@ const getOrderItems = async (req, res) => {
 
         return res.status(200).json(orderItems);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -39,7 +40,8 @@ const getOrderItemById = async (req, res) => {
 
         return res.status(200).json(orderItem);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -67,7 +69,8 @@ const getOrderItemsByOrderid = async (req, res) => {
 
         return res.status(200).json(orderItem);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -91,7 +94,8 @@ const getOrderItemsByProductid = async (req, res) => {
 
         return res.status(200).json(orderItem);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -189,10 +193,12 @@ const createOrderItem = async (req, res) => {
             return res.status(201).json({ message: 'New Order Item created!', data: newOrderitem });
         } catch (e) {
             await t.rollback();
-            return res.status(500).json({ message: 'Internal Server Error!' });
+            console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -298,10 +304,12 @@ const updateOrderItem = async (req, res) => {
             res.status(200).json({ message: 'Order Item updated successfully!' });
         } catch (e) {
             await t.rollback();
-            return res.status(500).json({ message: 'Internal Server Error!' });
+            console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -357,10 +365,12 @@ const deleteOrderitem = async (req, res) => {
             return res.status(200).json({ message: 'Order item deleted!' });
         } catch (e) {
             await t.rollback();
-            return res.status(500).json({ message: 'Internal Server Error!' });
+            console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 

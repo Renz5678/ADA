@@ -42,7 +42,8 @@ const getSummary = async (req, res) => {
 
         return res.status(200).json({ totalSales, totalExpenses, netProfit });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -69,7 +70,8 @@ const getTopProducts = async (req, res) => {
 
         return res.status(200).json(topProducts);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -96,7 +98,8 @@ const getWeakProducts = async (req, res) => {
 
         return res.status(200).json(weakProducts);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -115,7 +118,8 @@ const getSalesByMonth = async (req, res) => {
 
         return res.status(200).json(sales);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -162,7 +166,8 @@ const getSuggestedFocus = async (req, res) => {
         return res.status(200).json(topTasks);
     } catch (error) {
         console.error('Error in getSuggestedFocus:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', error);
+        return res.status(500).json({ message: `Server Error: ${error.message || 'An unexpected error occurred.'}`, error: error.name });
     }
 };
 

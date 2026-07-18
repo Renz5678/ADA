@@ -19,6 +19,15 @@ api.interceptors.response.use(
                 window.location.href = '/login-freelancer';
             }
         }
+        if (error.response && error.response.status >= 500) {
+            console.error(
+                `%c [API Error - ${error.response.status}] `, 'background: red; color: white; font-weight: bold;', 
+                error.response.data?.message || error.message
+            );
+            if (error.response.data?.error) {
+                console.error(`Error Type: ${error.response.data.error}`);
+            }
+        }
         return Promise.reject(error);
     }
 );

@@ -56,6 +56,15 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: true
         },
+        normalized_email: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        flaggedForReview: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: false
+        },
         profile_picture: {
             type: DataTypes.STRING,
             allowNull: true
@@ -97,14 +106,6 @@ export default (sequelize, DataTypes) => {
             allowNull: true
         },
         social_linkedin: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
-        flaggedForReview: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        },
-        normalized_email: {
             type: DataTypes.STRING,
             allowNull: true
         }

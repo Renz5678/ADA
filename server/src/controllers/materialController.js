@@ -35,7 +35,8 @@ const getMaterials = async (req, res) => {
             return res.status(200).json(materials);
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -55,7 +56,8 @@ const getMaterialById = async (req, res) => {
 
         return res.status(200).json(material);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -100,7 +102,8 @@ const createMaterial = async (req, res) => {
 
         return res.status(201).json({ message: 'Material created!', data: newMaterial });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -136,7 +139,8 @@ const updateMaterial = async (req, res) => {
 
         return res.status(200).json({ message: 'Material updated successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -160,7 +164,8 @@ const deleteMaterial = async (req, res) => {
         if (e.name === 'SequelizeForeignKeyConstraintError') {
             return res.status(400).json({ message: 'Cannot delete material because it is associated with existing transactions or products.' });
         }
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 

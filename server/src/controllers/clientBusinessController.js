@@ -13,7 +13,8 @@ export const getAllBusinesses = async (req, res) => {
 
         return res.status(200).json({ businesses });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -39,6 +40,7 @@ export const getBusinessDetails = async (req, res) => {
 
         return res.status(200).json({ business });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };

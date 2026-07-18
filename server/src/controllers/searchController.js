@@ -68,7 +68,8 @@ const globalSearch = async (req, res) => {
         });
 
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 

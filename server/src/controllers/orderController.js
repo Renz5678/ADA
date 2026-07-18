@@ -54,7 +54,8 @@ const getOrders = async (req, res) => {
             currentPage: pageNumber
         });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -78,7 +79,8 @@ const getOrderById = async (req, res) => {
 
         return res.status(200).json(order);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -114,7 +116,8 @@ const createOrder = async (req, res) => {
         return res.status(201).json({ message: 'Order created!', data: newOrder });
     } catch (e) {
         console.error('Error creating order:', e);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -165,7 +168,8 @@ const updateOrder = async (req, res) => {
 
         return res.status(200).json({ message: 'Order updated successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -216,10 +220,12 @@ const deleteOrder = async (req, res) => {
             return res.status(200).json({ message: 'Order deleted successfully!' });
         } catch (error) {
             await t.rollback();
-            return res.status(500).json({ message: 'Internal Server Error!' });
+            console.error('Error in controller:', error);
+        return res.status(500).json({ message: `Server Error: ${error.message || 'An unexpected error occurred.'}`, error: error.name });
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -238,7 +244,8 @@ const getOrderStats = async (req, res) => {
             activeOrdersCount: activeOrdersCount || 0
         });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -259,7 +266,8 @@ const getScheduledOrders = async (req, res) => {
 
         return res.status(200).json(scheduledOrders);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -346,7 +354,8 @@ export const approveOrder = async (req, res) => {
         }
     } catch (e) {
         console.error('[approveOrder]', e);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -381,6 +390,7 @@ export const declineOrder = async (req, res) => {
         return res.status(200).json({ message: 'Order request declined.' });
     } catch (e) {
         console.error('[declineOrder]', e);
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };

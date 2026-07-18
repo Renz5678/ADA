@@ -17,7 +17,8 @@ const getMaterialTransactions = async (req, res) => {
 
         return res.status(200).json(materialTransactions);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -38,7 +39,8 @@ const getMaterialTransactionById = async (req, res) => {
 
         return res.status(200).json(materialTransaction);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -99,10 +101,12 @@ const createMaterialTransaction = async (req, res) => {
             return res.status(201).json({ message: 'Material Transaction created!', data: newMaterialTransaction });
         } catch (e) {
             await t.rollback();
-            return res.status(500).json({ message: 'Internal Server Error!' });
+            console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -138,7 +142,8 @@ const updateMaterialTransaction = async (req, res) => {
 
         return res.status(200).json({ message: 'Material Transaction edited successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -161,7 +166,8 @@ const deleteMaterialTransaction = async (req, res) => {
 
         return res.status(200).json({ message: 'Material Transaction deleted successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 

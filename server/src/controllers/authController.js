@@ -77,7 +77,8 @@ const register = async (req, res) => {
         return res.status(201).json({ message: 'New User Created Successfully!', user: newUser });
     }
     catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -114,7 +115,8 @@ const login = async (req, res) => {
 
         return res.status(200).json({ message: 'Login valid!', token: token });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 
 };
@@ -160,7 +162,8 @@ const verifyOtp = async (req, res) => {
 
         return res.status(200).json({ message: 'Account verified!', token: token });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -198,7 +201,8 @@ const resendOtp = async (req, res) => {
 
         return res.status(200).json({ message: 'New OTP sent!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -235,7 +239,8 @@ const resetPassword = async (req, res) => {
 
         return res.status(200).json({ message: 'OTP for password reset sent!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -269,7 +274,8 @@ const confirmResetPassword = async (req, res) => {
 
         return res.status(200).json({ message: 'Password reset successful!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -314,7 +320,8 @@ const googleLogin = async (req, res) => {
         return res.status(200).json({ message: 'Login valid!', token: jwtToken });
     } catch (e) {
         console.error(e);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 

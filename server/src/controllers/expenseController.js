@@ -33,7 +33,8 @@ const getExpenses = async (req, res) => {
             return res.status(200).json(expenses);
         }
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -53,7 +54,8 @@ const getExpenseById = async (req, res) => {
 
         return res.status(200).json(expense)
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -82,7 +84,8 @@ const createExpense = async (req, res) => {
 
         return res.status(201).json({ message: 'Expense created!', data: newExpense });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -118,7 +121,8 @@ const updateExpense = async (req, res) => {
 
         return res.status(200).json({ message: 'Expense updated successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -140,7 +144,8 @@ const deleteExpense = async (req, res) => {
 
         return res.status(200).json({ message: 'Expense deleted successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 

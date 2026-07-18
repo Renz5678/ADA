@@ -12,7 +12,8 @@ const getAvailabilities = async (req, res) => {
         });
         return res.status(200).json(availabilities);
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -34,7 +35,8 @@ const createAvailability = async (req, res) => {
 
         return res.status(201).json({ message: 'Availability created!', data: newAvailability });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -63,7 +65,8 @@ const updateAvailability = async (req, res) => {
 
         return res.status(200).json({ message: 'Availability updated successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -82,7 +85,8 @@ const deleteAvailability = async (req, res) => {
 
         return res.status(200).json({ message: 'Availability deleted successfully!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error!' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 

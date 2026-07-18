@@ -10,7 +10,8 @@ export const getClientNotifications = async (req, res) => {
         return res.status(200).json(notifications);
     } catch (e) {
         console.error('Error fetching client notifications:', e);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -23,7 +24,8 @@ export const getClientUnreadCount = async (req, res) => {
         return res.status(200).json({ count });
     } catch (e) {
         console.error('Error fetching unread count:', e);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -44,7 +46,8 @@ export const markClientNotificationAsRead = async (req, res) => {
         return res.status(200).json({ message: 'Notification marked as read' });
     } catch (e) {
         console.error('Error marking notification as read:', e);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -58,6 +61,7 @@ export const markAllClientNotificationsAsRead = async (req, res) => {
         return res.status(200).json({ message: 'All notifications marked as read' });
     } catch (e) {
         console.error('Error marking all notifications as read:', e);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };

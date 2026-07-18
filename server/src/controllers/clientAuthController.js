@@ -79,7 +79,8 @@ export const registerClient = async (req, res) => {
 
         return res.status(201).json({ message: 'Client registered successfully!', client: newClient });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -111,7 +112,8 @@ export const loginClient = async (req, res) => {
 
         return res.status(200).json({ message: 'Login valid!', token });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -156,7 +158,8 @@ export const verifyOtp = async (req, res) => {
 
         return res.status(200).json({ message: 'Account verified!', token: token });
     } catch (error) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', error);
+        return res.status(500).json({ message: `Server Error: ${error.message || 'An unexpected error occurred.'}`, error: error.name });
     }
 };
 
@@ -194,7 +197,8 @@ export const resendOtp = async (req, res) => {
 
         return res.status(200).json({ message: 'New OTP sent!' });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -239,6 +243,7 @@ export const googleLoginClient = async (req, res) => {
         return res.status(200).json({ message: 'Login valid!', token: jwtToken });
     } catch (e) {
         console.error(e);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };

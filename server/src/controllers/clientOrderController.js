@@ -30,7 +30,8 @@ export const getClientOrders = async (req, res) => {
 
         return res.status(200).json({ orders });
     } catch (e) {
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };
 
@@ -142,6 +143,7 @@ export const createClientOrder = async (req, res) => {
         });
     } catch (e) {
         console.error('[createClientOrder]', e);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in controller:', e);
+        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
     }
 };

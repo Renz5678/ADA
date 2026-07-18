@@ -32,17 +32,36 @@ if (process.env.NODE_ENV === 'test') {
       `${process.env.POSTGRES_PORT || process.env.PGPORT || 5432}/` +
       `${process.env.POSTGRES_DATABASE || process.env.POSTGRES_DB || process.env.PGDATABASE || 'test_db'}`;
 
+    const isSupabaseOrRender = connectionString.includes('supabase') || process.env.NODE_ENV === 'production';
+
     sequelize = new Sequelize(connectionString, {
         dialect: 'postgres',
-        logging: false
+        logging: false,
+        ...(isSupabaseOrRender && {
+            dialectOptions: {
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false
+                }
+            }
+        })
     });
 }
 
 // --- SAFEGUARD TO PREVENT ACCIDENTAL DATA LOSS ---
 const originalSync = sequelize.sync.bind(sequelize);
 sequelize.sync = async (options) => {
-    if (options && options.force && sequelize.getDialect() !== 'sqlite') {
-        throw new Error('CRITICAL WARNING: Attempted to run sequelize.sync({ force: true }) on a non-SQLite database! This drops all tables. Operation aborted to protect your database.');
+    if (sequelize.getDialect() !== 'sqlite') {
+        if (options && options.force) {
+            throw new Error('CRITICAL WARNING: Attempted to run sequelize.sync({ force: true }) on a non-SQLite database! This drops all tables. Operation aborted to protect your database.');
+        }
+        if (options && options.alter) {
+            if (options.alter !== true && options.alter.drop === false) {
+                // Safe alter allowed
+            } else {
+                throw new Error('CRITICAL WARNING: Attempted to run sequelize.sync({ alter: true }) without { drop: false } on a non-SQLite database! This can drop existing columns and data. Operation aborted.');
+            }
+        }
     }
     return await originalSync(options);
 };
