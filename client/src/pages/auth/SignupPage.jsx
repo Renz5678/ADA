@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useGoogleLogin } from '@react-oauth/google';
 import { signup, googleLogin } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const PASSWORD_RULES = [
     { label: "Uppercase letter", test: (p) => /[A-Z]/.test(p) },
@@ -15,7 +16,7 @@ const PASSWORD_RULES = [
     { label: "Symbol", test: (p) => /[^A-Za-z0-9]/.test(p) },
 ];
 
-const INITIAL_FORM = { username: "", businessName: "", email: "", password: "", confirmPassword: "" };
+const INITIAL_FORM = { username: "", businessName: "", email: "", password: "", confirmPassword: "", phone_ext: "" };
 
 function PasswordRulesList({ password, visible }) {
     return (
@@ -53,6 +54,7 @@ export default function SignupPage({ onStart, onStop }) {
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     const handleGoogleAuth = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -75,7 +77,7 @@ export default function SignupPage({ onStart, onStop }) {
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
     const allRulesPassed = PASSWORD_RULES.every(({ test }) => test(form.password));
     const passwordsMatch = form.password === form.confirmPassword;
-    const canSubmit = isValidEmail && allRulesPassed && passwordsMatch && agreed && !loading;
+    const canSubmit = isValidEmail && allRulesPassed && passwordsMatch && agreed && turnstileToken && !loading;
 
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -93,6 +95,8 @@ export default function SignupPage({ onStart, onStop }) {
                 business_name: form.businessName,
                 email: form.email,
                 password: form.password,
+                phone_ext: form.phone_ext,
+                turnstileToken,
             });
             navigate("/verify-otp", { state: { email: form.email } });
         } catch (e) {
@@ -186,6 +190,19 @@ export default function SignupPage({ onStart, onStop }) {
                                 <FieldError message={form.email && !isValidEmail ? "Enter a valid email (e.g. name@example.com)" : null} />
                             </label>
 
+                            {/* Honeypot Field - Hidden from real users via CSS */}
+                            <label className="hidden" aria-hidden="true" style={{ display: 'none' }}>
+                                <span className="font-medium text-sm flex items-center gap-2">Phone Extension</span>
+                                <input
+                                    name="phone_ext"
+                                    type="text"
+                                    value={form.phone_ext}
+                                    onChange={handleChange}
+                                    tabIndex="-1"
+                                    autoComplete="off"
+                                />
+                            </label>
+
                             {/* Password */}
                             <div className="flex flex-col gap-0.5">
                                 <label htmlFor="password" className="font-medium text-xs flex items-center gap-1.5 text-[#0F1D29]">
@@ -268,6 +285,11 @@ export default function SignupPage({ onStart, onStop }) {
                                     </a>
                                 </span>
                             </label>
+
+                            <Turnstile
+                                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                                onSuccess={(token) => setTurnstileToken(token)}
+                            />
 
                             {/* Submit */}
                             <button

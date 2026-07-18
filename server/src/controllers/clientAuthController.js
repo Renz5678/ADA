@@ -6,6 +6,9 @@ import { validationResult } from 'express-validator';
 import transporter from '../utils/mailer.js';
 import { getVerificationEmailHtml } from '../utils/emailTemplates.js';
 
+import { normalizeEmail } from '../utils/emailNormalization.js';
+import { isSpammyName, isSpammyEmail } from '../utils/spamHeuristics.js';
+
 const { Clients, Users } = models;
 
 export const registerClient = async (req, res) => {
@@ -15,7 +18,13 @@ export const registerClient = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
+        // Honeypot check
+        if (req.body.phone_ext) {
+            return res.status(200).json({ message: 'Client registered successfully!' }); // Fake success for bots
+        }
+
         const { name, email, password, freelancer_id } = req.body;
+        const normalized_email = normalizeEmail(email);
 
         // Verify freelancer exists if provided
         if (freelancer_id) {
@@ -25,7 +34,7 @@ export const registerClient = async (req, res) => {
             }
         }
 
-        const existingClient = await Clients.findOne({ where: { email } });
+        const existingClient = await Clients.findOne({ where: { normalized_email } });
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
 
@@ -36,10 +45,10 @@ export const registerClient = async (req, res) => {
                 await existingClient.save();
 
                 await transporter.sendMail({
-                    to: email,
+                    to: existingClient.email,
                     subject: 'OTP Verification for ADA Client Account',
-                    text: `Good day, ${name}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes. (Please also check your spam folder.)`,
-                    html: getVerificationEmailHtml(name, verification_token)
+                    text: `Good day, ${existingClient.name}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes. (Please also check your spam folder.)`,
+                    html: getVerificationEmailHtml(existingClient.name, verification_token)
                 });
 
                 return res.status(200).json({ message: 'OTP resent!' });
@@ -47,14 +56,18 @@ export const registerClient = async (req, res) => {
             return res.status(409).json({ message: 'Email already in use!' });
         }
 
+        const flaggedForReview = isSpammyName(name) || isSpammyEmail(email);
+
         const newClient = await Clients.create({
             name,
             email,
+            normalized_email,
             password,
             freelancer_id: freelancer_id || null,
             is_verified: false,
             verification_token,
-            otp_expires_at
+            otp_expires_at,
+            flaggedForReview
         });
 
         await transporter.sendMail({

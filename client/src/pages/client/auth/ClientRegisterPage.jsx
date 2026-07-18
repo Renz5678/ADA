@@ -7,16 +7,18 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 import Icon from "#components/ui/Icon.jsx";
 import { registerClient, googleLoginClient } from "#api/clientEndpoints.js";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ClientRegisterPage({ onStart, onStop }) {
     const navigate = useNavigate();
 
-    const [form, setForm] = useState({ name: "", email: "", password: "" });
+    const [form, setForm] = useState({ name: "", email: "", password: "", phone_ext: "" });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     const handleGoogleAuth = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -37,7 +39,7 @@ export default function ClientRegisterPage({ onStart, onStop }) {
     });
 
     const isValidEmail = EMAIL_REGEX.test(form.email);
-    const canSubmit = isValidEmail && form.password.length > 0 && form.name.length > 0 && !isSubmitting;
+    const canSubmit = isValidEmail && form.password.length > 0 && form.name.length > 0 && turnstileToken && !isSubmitting;
 
     const handleChange = (e) => {
         setError("");
@@ -55,7 +57,9 @@ export default function ClientRegisterPage({ onStart, onStop }) {
             await registerClient({
                 name: form.name,
                 email: form.email,
-                password: form.password
+                password: form.password,
+                phone_ext: form.phone_ext,
+                turnstileToken
             });
             navigate("/verify-otp-client", { state: { email: form.email } });
         } catch (err) {
@@ -125,6 +129,19 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                             )}
                         </label>
 
+                        {/* Honeypot Field - Hidden from real users via CSS */}
+                        <label className="hidden" aria-hidden="true" style={{ display: 'none' }}>
+                            <span className="font-medium text-sm flex items-center gap-2">Phone Extension</span>
+                            <input
+                                name="phone_ext"
+                                type="text"
+                                value={form.phone_ext}
+                                onChange={handleChange}
+                                tabIndex="-1"
+                                autoComplete="off"
+                            />
+                        </label>
+
                         {/* Password */}
                         <div className="flex flex-col gap-1 text-gray-200">
                             <span className="font-medium text-sm flex items-center justify-between">
@@ -156,6 +173,12 @@ export default function ClientRegisterPage({ onStart, onStop }) {
                         {error && (
                             <p className="text-xs text-red-400 -mt-2">{error}</p>
                         )}
+
+                        <Turnstile
+                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                            onSuccess={(token) => setTurnstileToken(token)}
+                            theme="dark"
+                        />
 
                         <button
                             type="submit"

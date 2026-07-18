@@ -7,6 +7,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 
 import Icon from "#components/ui/Icon.jsx";
 import { loginClient, googleLoginClient } from "#api/clientEndpoints.js";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -17,6 +18,7 @@ export default function ClientLoginPage({ onStart, onStop }) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     const handleGoogleAuth = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -37,7 +39,7 @@ export default function ClientLoginPage({ onStart, onStop }) {
     });
 
     const isValidEmail = EMAIL_REGEX.test(form.email);
-    const canSubmit = isValidEmail && form.password.length > 0 && !isSubmitting;
+    const canSubmit = isValidEmail && form.password.length > 0 && turnstileToken && !isSubmitting;
 
     const handleChange = (e) => {
         setError("");
@@ -52,7 +54,7 @@ export default function ClientLoginPage({ onStart, onStop }) {
         setIsSubmitting(true);
 
         try {
-            const res = await loginClient({ email: form.email, password: form.password });
+            const res = await loginClient({ email: form.email, password: form.password, turnstileToken });
             localStorage.setItem("client_token", res.token);
             navigate("/client/dashboard");
         } catch (err) {
@@ -141,6 +143,11 @@ export default function ClientLoginPage({ onStart, onStop }) {
                         {error && (
                             <p className="text-xs text-red-500 -mt-2">{error}</p>
                         )}
+
+                        <Turnstile
+                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                            onSuccess={(token) => setTurnstileToken(token)}
+                        />
 
                         <button
                             type="submit"

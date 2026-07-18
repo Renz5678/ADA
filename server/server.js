@@ -3,6 +3,7 @@ import { sequelize } from "./src/models/index.js";
 import startCleanUpJob from './src/utils/cleanUpJob.js';
 import startDeadlineReminderJob from './src/utils/deadlineReminderJob.js';
 import startScheduleReminderJob from './src/utils/scheduleReminderJob.js';
+import { startPruningJob } from './src/utils/pruneUnverifiedJob.js';
 
 const port = process.env.PORT || 3000;
 
@@ -16,6 +17,7 @@ const start = async () => {
     // Start Cron Jobs
     startDeadlineReminderJob();
     startScheduleReminderJob();
+    startPruningJob();
 
     app.listen(port, () => {
         console.log(`Server is running at port ${port}`);

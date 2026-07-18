@@ -55,6 +55,14 @@ export default (sequelize, DataTypes) => {
         otp_expires_at: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        flaggedForReview: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        normalized_email: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     }, {
         sequelize,

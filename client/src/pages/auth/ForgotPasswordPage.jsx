@@ -6,6 +6,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Icon from "#components/ui/Icon.jsx";
 import ErrorModal from "#components/ui/ErrorModal.jsx";
 import { resendOtp, confirmResetPassword } from "#api/auth.js";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 30;
@@ -26,6 +27,7 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
     const [errorModal, setErrorModal] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [resendCooldown, setResendCooldown] = useState(0);
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     const inputs = useRef([]);
 
@@ -89,11 +91,11 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
 
     // ── Resend ──────────────────────────────────────────────────
     const handleResendOtp = async () => {
-        if (resendCooldown > 0) return;
+        if (resendCooldown > 0 || !turnstileToken) return;
 
         onStart("Sending a new code...");
         try {
-            await resendOtp({ email });
+            await resendOtp({ email, turnstileToken });
             setResendCooldown(RESEND_COOLDOWN_SECONDS);
             setOtp(Array(OTP_LENGTH).fill(""));
             focusInput(0);
@@ -120,7 +122,7 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
     // ── Submit reset ────────────────────────────────────────────
     const handleResetPassword = async () => {
         const code = otp.join("");
-        if (code.length < OTP_LENGTH) return;
+        if (code.length < OTP_LENGTH || !turnstileToken) return;
 
         setIsSubmitting(true);
         onStart("Resetting your password...");
@@ -129,6 +131,7 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
                 email,
                 verification_token: code,
                 password: newPassword,
+                turnstileToken,
             });
             navigate("/login-freelancer");
         } catch (err) {
@@ -307,9 +310,14 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
                         ))}
                     </div>
 
+                    <Turnstile
+                        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                    />
+
                     <button
                         type="button"
-                        disabled={!isOtpComplete || isSubmitting}
+                        disabled={!isOtpComplete || isSubmitting || !turnstileToken}
                         onClick={handleResetPassword}
                         className="w-[70%] h-12 text-lg bg-[#8D4A52] rounded-full text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -318,7 +326,7 @@ export default function ForgotPasswordPage({ onStart, onStop }) {
 
                     <button
                         type="button"
-                        disabled={resendCooldown > 0}
+                        disabled={resendCooldown > 0 || !turnstileToken}
                         onClick={handleResendOtp}
                         className="text-sm text-[#8D4A52] font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:underline"
                     >

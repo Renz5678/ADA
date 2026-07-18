@@ -99,6 +99,14 @@ export default (sequelize, DataTypes) => {
         social_linkedin: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        flaggedForReview: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        normalized_email: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     },
         {

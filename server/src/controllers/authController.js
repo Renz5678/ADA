@@ -7,6 +7,8 @@ import { models } from '../models/index.js';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 import transporter from '../utils/mailer.js';
 import { getVerificationEmailHtml } from '../utils/emailTemplates.js';
+import { normalizeEmail } from '../utils/emailNormalization.js';
+import { isSpammyName, isSpammyEmail } from '../utils/spamHeuristics.js';
 import { validationResult } from 'express-validator';
 
 const { Users } = models;
@@ -18,14 +20,20 @@ const register = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
+        // Honeypot check
+        if (req.body.phone_ext) {
+            return res.status(200).json({ message: 'New User Created Successfully!' }); // Fake success for bots
+        }
+
         const verification_token = crypto.randomInt(100000, 999999).toString();
         const otp_expires_at = new Date(Date.now() + 5 * 60 * 1000);
 
         const { username, business_name, email, password } = req.body;
+        const normalized_email = normalizeEmail(email);
 
         const userResult = await Users.findOne({
-            where: { email }
-        })
+            where: { normalized_email }
+        });
 
         if (userResult !== null) {
             if (!userResult.is_verified) {
@@ -34,12 +42,11 @@ const register = async (req, res) => {
                 await userResult.save();
 
                 await transporter.sendMail({
-                    to: email,
+                    to: userResult.email,
                     subject: 'OTP Verification for ADA Account Registration',
-                    text: `Good day, ${username}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes. (Please also check your spam folder.)`,
-                    html: getVerificationEmailHtml(username, verification_token)
+                    text: `Good day, ${userResult.username}! Here is your OTP for your ADA account creation verification: ${verification_token}. Make sure to not share this OTP to anyone. This code will expire in 5 minutes. (Please also check your spam folder.)`,
+                    html: getVerificationEmailHtml(userResult.username, verification_token)
                 });
-
 
                 return res.status(200).json({ message: 'OTP resent!' });
             }
@@ -47,13 +54,17 @@ const register = async (req, res) => {
             return res.status(409).json({ message: 'Email already in use!' });
         }
 
+        const flaggedForReview = isSpammyName(username) || isSpammyName(business_name) || isSpammyEmail(email);
+
         const newUser = await Users.create({
             username,
             business_name,
             email,
+            normalized_email,
             password,
             verification_token,
-            otp_expires_at
+            otp_expires_at,
+            flaggedForReview
         });
 
         await transporter.sendMail({

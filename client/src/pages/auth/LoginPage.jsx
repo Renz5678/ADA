@@ -5,6 +5,7 @@ import { FaGoogle, FaEye, FaEyeSlash } from "react-icons/fa";
 import { MdOutlineMailOutline, MdLockOutline, MdCheck } from "react-icons/md";
 import { useGoogleLogin } from '@react-oauth/google';
 
+import { Turnstile } from '@marsidev/react-turnstile';
 import Icon from "#components/ui/Icon.jsx";
 import { login, forgotPassword, googleLogin } from "#api/auth.js";
 
@@ -17,6 +18,7 @@ export default function LoginPage({ onStart, onStop }) {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState("");
 
     const handleGoogleAuth = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
@@ -37,7 +39,7 @@ export default function LoginPage({ onStart, onStop }) {
     });
 
     const isValidEmail = EMAIL_REGEX.test(form.email);
-    const canSubmit = isValidEmail && form.password.length > 0 && !isSubmitting;
+    const canSubmit = isValidEmail && form.password.length > 0 && turnstileToken && !isSubmitting;
 
     const handleChange = (e) => {
         setError("");
@@ -51,9 +53,8 @@ export default function LoginPage({ onStart, onStop }) {
         onStart("Logging you in...");
         setIsSubmitting(true);
 
-        setIsSubmitting(true);
         try {
-            const res = await login({ email: form.email, password: form.password });
+            const res = await login({ email: form.email, password: form.password, turnstileToken });
             localStorage.setItem("token", res.data.token);
             navigate("/dashboard");
         } catch (err) {
@@ -171,6 +172,11 @@ export default function LoginPage({ onStart, onStop }) {
                         {error && (
                             <p className="text-xs text-red-500 -mt-2">{error}</p>
                         )}
+
+                        <Turnstile
+                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                            onSuccess={(token) => setTurnstileToken(token)}
+                        />
 
                         <button
                             type="submit"
