@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchUsers, updateUserStatus, fetchFeedbacks, updateFeedbackStatus } from '#api/admin.js';
 import toast from 'react-hot-toast';
+import { MdArrowBack } from 'react-icons/md';
 
 export default function AdminDashboard() {
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState('users');
 
@@ -70,7 +73,15 @@ export default function AdminDashboard() {
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
-            <h1 className="text-3xl font-headline font-bold text-[#0F1D29]">Admin Dashboard</h1>
+            <div className="flex items-center gap-4">
+                <button 
+                    onClick={() => navigate('/dashboard')}
+                    className="p-2 bg-white rounded-full shadow-sm hover:bg-gray-50 border border-[#dddddd] transition-colors text-gray-600 hover:text-[#0F1D29]"
+                >
+                    <MdArrowBack size={24} />
+                </button>
+                <h1 className="text-3xl font-headline font-bold text-[#0F1D29]">Admin Dashboard</h1>
+            </div>
 
             <div className="flex space-x-6 border-b border-[#dddddd] pb-0">
                 <button 
