@@ -1,4 +1,7 @@
 import { body } from 'express-validator';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const disposableDomains = require('disposable-email-domains');
 
 export const emailValidator = [
     body('email')
@@ -12,7 +15,14 @@ export const registerValidator = [
         .isLength({ min: 3, max: 20 }).withMessage('Username must be between 3 and 20 characters'),
     body('email')
         .notEmpty().withMessage('Email is required!')
-        .isEmail().withMessage('Email must be a valid email'),
+        .isEmail().withMessage('Email must be a valid email')
+        .custom(value => {
+            const domain = value.split('@')[1];
+            if (disposableDomains.includes(domain)) {
+                throw new Error('Disposable or temporary emails are not allowed');
+            }
+            return true;
+        }),
     body('password')
         .notEmpty().withMessage('Password is required')
         .isLength({ min: 8 }).withMessage('Minimum length for password is 8')
