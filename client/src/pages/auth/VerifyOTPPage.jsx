@@ -164,7 +164,7 @@ export default function VerifyOTPPage({ onStart, onStop }) {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-screen h-screen bg-[#FFF7E6] flex justify-center items-center"
+            className="w-full min-h-screen bg-[#FFF7E6] flex justify-center items-center py-10"
         >
             <ErrorModal errorModal={errorModal} setErrorModal={setErrorModal} />
 

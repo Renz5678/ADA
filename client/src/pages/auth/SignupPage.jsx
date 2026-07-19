@@ -112,7 +112,7 @@ export default function SignupPage({ onStart, onStop }) {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="min-h-screen bg-[#FFF7E6] flex justify-center items-center"
+            className="w-full min-h-screen bg-[#FFF7E6] flex justify-center items-center py-10"
         >
             <div className="w-full max-w-5xl flex gap-2 items-center justify-center px-4">
 

@@ -64,8 +64,8 @@ export default function FreelancerCatalogPage() {
 
             <div className="max-w-5xl mx-auto px-6 pb-12">
                 {/* Profile Info */}
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-end -mt-12 md:-mt-16 mb-12 relative z-10">
-                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl border-4 border-[#FDF9F1] overflow-hidden bg-white shadow-lg flex-shrink-0">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start mb-12 relative z-10">
+                    <div className="w-24 h-24 md:w-32 md:h-32 -mt-12 md:-mt-16 rounded-3xl border-4 border-[#FDF9F1] overflow-hidden bg-white shadow-lg flex-shrink-0">
                         {freelancer.profile_picture ? (
                             <img src={freelancer.profile_picture} alt={freelancer.business_name} className="w-full h-full object-cover" />
                         ) : (

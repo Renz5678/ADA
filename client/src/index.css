@@ -3,7 +3,7 @@
 @import "tw-animate-css";
 
 html, body {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
