@@ -23,7 +23,7 @@ export default function AppLayout() {
             isChatAllowed = payload.role === 'admin' || payload.approval_status === 'approved';
         }
     } catch (e) {
-        console.error('Failed to parse token for chat permissions');
+        console.error('Failed to parse token for chat permissions', e);
     }
 
     // Load any pending orders that arrived while the freelancer was offline

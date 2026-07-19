@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, X, Send, Trash2, Info, Loader2, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -16,7 +16,7 @@ export default function FloatingChatbot() {
         enabled: isOpen,
     });
 
-    const messages = data?.messages || [];
+    const messages = useMemo(() => data?.messages || [], [data?.messages]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
