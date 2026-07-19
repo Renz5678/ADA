@@ -19,3 +19,8 @@ export const updateFeedbackStatus = async (feedbackId, status) => {
     const { data } = await api.put(`/admin/feedback/${feedbackId}/status`, { status });
     return data;
 };
+
+export const fetchAdminDigest = async () => {
+    const { data } = await api.get('/admin/digest');
+    return data;
+};

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchUsers, updateUserStatus, fetchFeedbacks, updateFeedbackStatus } from '#api/admin.js';
+import { fetchUsers, updateUserStatus, fetchFeedbacks, updateFeedbackStatus, fetchAdminDigest } from '#api/admin.js';
 import toast from 'react-hot-toast';
-import { MdArrowBack } from 'react-icons/md';
+import { MdArrowBack, MdAutoAwesome } from 'react-icons/md';
 
 export default function AdminDashboard() {
     const navigate = useNavigate();
@@ -18,6 +18,12 @@ export default function AdminDashboard() {
     const { data: feedbacks, isLoading: feedbacksLoading } = useQuery({
         queryKey: ['adminFeedbacks'],
         queryFn: fetchFeedbacks,
+    });
+
+    const { data: digestData, isLoading: digestLoading } = useQuery({
+        queryKey: ['adminDigest'],
+        queryFn: fetchAdminDigest,
+        retry: false
     });
 
     const userMutation = useMutation({
@@ -81,6 +87,33 @@ export default function AdminDashboard() {
                     <MdArrowBack size={24} />
                 </button>
                 <h1 className="text-3xl font-headline font-bold text-[#0F1D29]">Admin Dashboard</h1>
+            </div>
+
+            {/* Admin Digest Card */}
+            <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 shadow-md text-white relative overflow-hidden flex flex-col gap-2 border border-indigo-900/50">
+                <div className="absolute right-0 top-0 opacity-10 pointer-events-none translate-x-1/4 -translate-y-1/4">
+                    <MdAutoAwesome className="w-64 h-64 text-indigo-400" />
+                </div>
+                <div className="flex items-center gap-2 z-10 mb-1">
+                    <MdAutoAwesome className="text-indigo-400 w-5 h-5" />
+                    <h2 className="text-xs font-bold tracking-widest uppercase text-indigo-300">Platform Insight</h2>
+                </div>
+                <div className="z-10 relative min-h-[48px] flex items-center">
+                    {digestLoading ? (
+                        <div className="animate-pulse flex flex-col gap-2 w-full max-w-2xl">
+                            <div className="h-4 bg-slate-700/50 rounded w-full"></div>
+                            <div className="h-4 bg-slate-700/50 rounded w-4/5"></div>
+                        </div>
+                    ) : digestData?.digest?.content ? (
+                        <p className="text-base md:text-lg leading-relaxed font-medium text-slate-200">
+                            {digestData.digest.content}
+                        </p>
+                    ) : (
+                        <p className="text-sm text-slate-400 italic">
+                            No AI digest available for today yet.
+                        </p>
+                    )}
+                </div>
             </div>
 
             <div className="flex space-x-6 border-b border-[#dddddd] pb-0">

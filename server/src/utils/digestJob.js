@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { Users, Orders, Product, Digest } = models;
+const { Users, Orders, Product, Digest, Feedback } = models;
 
 const startDigestJob = () => {
     if (!process.env.GEMINI_API_KEY) {
@@ -73,7 +73,7 @@ Total Completed Revenue: ${totalRevenue} PHP
 Order Statuses Breakdown: ${JSON.stringify(orderStatuses)}
 `;
 
-                        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+                        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
                         const result = await model.generateContent(prompt);
                         const content = result.response.text();
 
@@ -88,6 +88,66 @@ Order Statuses Breakdown: ${JSON.stringify(orderStatuses)}
                 }
             }
             console.log('Daily digest job completed.');
+
+            // --- ADMIN DIGEST GENERATION ---
+            try {
+                console.log('Generating admin digest...');
+                const admins = await Users.findAll({ where: { role: 'admin' } });
+                
+                if (admins.length > 0) {
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+                    // Platform Metrics
+                    const newSignups = await Users.count({
+                        where: { createdAt: { [Op.gte]: thirtyDaysAgo }, role: 'user' }
+                    });
+                    
+                    const platformOrders = await Orders.findAll({
+                        where: { order_date: { [Op.gte]: thirtyDaysAgo } }
+                    });
+                    
+                    const platformRevenue = platformOrders.reduce((sum, order) => {
+                        if (order.status === 'Delivered' || order.status === 'Done') {
+                            return sum + parseFloat(order.total_amount);
+                        }
+                        return sum;
+                    }, 0);
+
+                    const newFeedbacks = await Feedback.count({
+                        where: { createdAt: { [Op.gte]: thirtyDaysAgo } }
+                    });
+
+                    const adminPrompt = `You are a helpful AI assistant for the Admin of a SaaS platform called ADA. Given the platform's aggregate operations data for the last 30 days, write a short (2-3 sentences max), friendly, engaging daily digest highlighting platform growth, revenue, and user activity. Speak directly to the Admin using "you" or "the platform". DO NOT use markdown, lists, or tables. Just a plain text paragraph.
+
+Platform Data (Last 30 Days):
+New User Signups: ${newSignups}
+Total Platform Completed Revenue: ${platformRevenue} PHP
+Total Orders Tracked: ${platformOrders.length}
+New Feedbacks/Bug Reports: ${newFeedbacks}
+`;
+                    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+                    const adminResult = await model.generateContent(adminPrompt);
+                    const adminContent = adminResult.response.text();
+
+                    for (const admin of admins) {
+                        const existingAdminDigest = await Digest.findOne({
+                            where: { user_id: admin.user_id, date: today }
+                        });
+                        
+                        if (!existingAdminDigest) {
+                            await Digest.create({
+                                user_id: admin.user_id,
+                                date: today,
+                                content: adminContent.trim()
+                            });
+                        }
+                    }
+                }
+            } catch (adminErr) {
+                console.error('Failed to generate admin digest:', adminErr);
+            }
+            // --- END ADMIN DIGEST ---
         } catch (error) {
             console.error('Digest Job Global Error:', error);
         }

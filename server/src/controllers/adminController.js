@@ -104,3 +104,23 @@ export const updateFeedbackStatus = async (req, res) => {
         res.status(500).json({ error: 'Failed to update feedback' });
     }
 };
+
+export const getAdminDigest = async (req, res) => {
+    try {
+        const userId = req.user.user_id;
+
+        const digest = await models.Digest.findOne({
+            where: { user_id: userId },
+            order: [['date', 'DESC']]
+        });
+
+        if (!digest) {
+            return res.status(404).json({ message: 'Admin digest not found' });
+        }
+
+        res.status(200).json({ digest });
+    } catch (error) {
+        console.error('Error fetching admin digest:', error);
+        res.status(500).json({ error: 'Failed to fetch admin digest' });
+    }
+};
