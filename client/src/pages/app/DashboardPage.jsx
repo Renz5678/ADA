@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAnalyticsSummary, useTopProducts, useWeakProducts, useSalesByMonth, useSuggestedTasks } from '#hooks/useAnalytics.js';
+import { useAnalyticsSummary, useTopProducts, useWeakProducts, useSalesByMonth, useSuggestedTasks, useDailyDigest } from '#hooks/useAnalytics.js';
 import { useScheduledOrders } from '#hooks/useOrders.js';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { MdLocalFireDepartment, MdFlashOn, MdPushPin, MdLightbulb, MdHelpOutline
 import Skeleton from '#components/ui/Skeleton.jsx';
 import InfoTooltip from '#components/ui/Tooltip.jsx';
 import ErrorBoundary from '#components/ui/ErrorBoundary.jsx';
+import DigestView from '#components/dashboard/DigestView.jsx';
 
 const formatCurrency = (amount) =>
   new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(amount);
@@ -24,6 +25,7 @@ const formatDate = (dateStr) => {
 
 export default function DashboardPage() {
     const [period, setPeriod] = useState('month');
+    const [activeTab, setActiveTab] = useState('chart');
     const navigate = useNavigate();
 
     const { data: summary, isFetching: fetchingSummary } = useAnalyticsSummary(period);
@@ -32,6 +34,7 @@ export default function DashboardPage() {
     const { data: salesTrend, isFetching: fetchingTrend } = useSalesByMonth();
     const { data: scheduledOrders, isFetching: fetchingScheduled } = useScheduledOrders();
     const { data: suggestedTasks, isFetching: fetchingSuggestions } = useSuggestedTasks();
+    const { data: digestData, isFetching: fetchingDigest } = useDailyDigest();
 
     if ((!summary && fetchingSummary) || (!salesTrend && fetchingTrend)) {
         return (
@@ -116,29 +119,51 @@ export default function DashboardPage() {
                     {/* Sales Trend */}
                     <ErrorBoundary>
                     <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#f0f0f0] flex flex-col gap-3 h-[380px]">
-                    <div className="flex items-center gap-1.5 shrink-0">
-                        <h3 className="font-headline font-semibold text-base text-[#0F1D29]">Sales Trend</h3>
-                        <InfoTooltip content="A chronological view of your sales performance month over month.">
-                            <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[16px] h-[16px]" />
-                        </InfoTooltip>
+                    <div className="flex items-center justify-between shrink-0">
+                        <div className="flex items-center gap-1.5">
+                            <h3 className="font-headline font-semibold text-base text-[#0F1D29]">
+                                {activeTab === 'chart' ? 'Sales Trend' : 'Daily Digest'}
+                            </h3>
+                            <InfoTooltip content={activeTab === 'chart' ? "A chronological view of your sales performance month over month." : "AI-generated daily insight based on your recent data."}>
+                                <MdHelpOutline className="text-gray-400 hover:text-[#8D4A52] transition-colors w-[16px] h-[16px]" />
+                            </InfoTooltip>
+                        </div>
+                        <div className="flex bg-[#f0f0f0] rounded-lg p-1">
+                            <button
+                                onClick={() => setActiveTab('chart')}
+                                className={`px-3 py-1 text-xs rounded-md capitalize transition duration-150 ${activeTab === 'chart' ? 'bg-white shadow-sm font-medium text-[#0F1D29]' : 'text-gray-500 hover:text-[#0F1D29]'}`}
+                            >
+                                Chart
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('digest')}
+                                className={`px-3 py-1 text-xs rounded-md capitalize transition duration-150 ${activeTab === 'digest' ? 'bg-white shadow-sm font-medium text-[#0F1D29]' : 'text-gray-500 hover:text-[#0F1D29]'}`}
+                            >
+                                Digest
+                            </button>
+                        </div>
                     </div>
-                    <div className={`flex-1 min-h-0 transition-opacity duration-150 ${fetchingTrend ? 'opacity-60' : ''}`}>
-                        {salesTrend && salesTrend.length > 0 ? (
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={salesTrend}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                    <XAxis dataKey="month" tickFormatter={formatMonth} axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} dy={10} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} dx={-10} tickFormatter={(val) => `₱${val}`} />
-                                    <Tooltip 
-                                        formatter={(value) => [formatCurrency(value), 'Sales']} 
-                                        labelFormatter={formatMonth}
-                                        contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
-                                    />
-                                    <Line type="monotone" dataKey="total_sales" stroke="#8D4A52" strokeWidth={3} dot={{fill: '#8D4A52', r: 4}} activeDot={{r: 6}} />
-                                </LineChart>
-                            </ResponsiveContainer>
+                    <div className={`flex-1 min-h-0 transition-opacity duration-150 ${(activeTab === 'chart' && fetchingTrend) || (activeTab === 'digest' && fetchingDigest) ? 'opacity-60' : ''}`}>
+                        {activeTab === 'chart' ? (
+                            salesTrend && salesTrend.length > 0 ? (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={salesTrend}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                        <XAxis dataKey="month" tickFormatter={formatMonth} axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} dy={10} />
+                                        <YAxis axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} dx={-10} tickFormatter={(val) => `₱${val}`} />
+                                        <Tooltip 
+                                            formatter={(value) => [formatCurrency(value), 'Sales']} 
+                                            labelFormatter={formatMonth}
+                                            contentStyle={{borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'}}
+                                        />
+                                        <Line type="monotone" dataKey="total_sales" stroke="#8D4A52" strokeWidth={3} dot={{fill: '#8D4A52', r: 4}} activeDot={{r: 6}} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-400">No data available</div>
+                            )
                         ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400">No data available</div>
+                            <DigestView digestData={digestData} isFetching={fetchingDigest} />
                         )}
                     </div>
                 </div>

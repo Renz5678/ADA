@@ -4,6 +4,7 @@ import startCleanUpJob from './src/utils/cleanUpJob.js';
 import startDeadlineReminderJob from './src/utils/deadlineReminderJob.js';
 import startScheduleReminderJob from './src/utils/scheduleReminderJob.js';
 import { startPruningJob } from './src/utils/pruneUnverifiedJob.js';
+import startDigestJob from './src/utils/digestJob.js';
 
 const port = process.env.PORT || 3000;
 
@@ -18,6 +19,7 @@ const start = async () => {
     startDeadlineReminderJob();
     startScheduleReminderJob();
     startPruningJob();
+    startDigestJob();
 
     app.listen(port, () => {
         console.log(`Server is running at port ${port}`);

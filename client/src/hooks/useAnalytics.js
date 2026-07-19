@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getSummary, getTopProducts, getWeakProducts, getSalesByMonth, getSuggestedFocus } from "#api/analytics.js";
+import { getSummary, getTopProducts, getWeakProducts, getSalesByMonth, getSuggestedFocus, getDailyDigest } from "#api/analytics.js";
 
 export const useAnalyticsSummary = (period) => {
     return useQuery({
@@ -33,5 +33,13 @@ export const useSuggestedTasks = () => {
     return useQuery({
         queryKey: ['analytics', 'suggested-focus'],
         queryFn: () => getSuggestedFocus()
+    });
+};
+
+export const useDailyDigest = () => {
+    return useQuery({
+        queryKey: ['analytics', 'daily-digest'],
+        queryFn: getDailyDigest,
+        retry: false
     });
 };

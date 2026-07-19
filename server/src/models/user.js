@@ -148,6 +148,7 @@ export default (sequelize, DataTypes) => {
         if (models.Notifications) Users.hasMany(models.Notifications, { foreignKey: 'user_id' });
         if (models.Clients) Users.hasMany(models.Clients, { foreignKey: 'freelancer_id' });
         if (models.Feedback) Users.hasMany(models.Feedback, { foreignKey: 'user_id' });
+        if (models.Digest) Users.hasMany(models.Digest, { foreignKey: 'user_id' });
     };
 
     return Users;

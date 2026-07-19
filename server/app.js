@@ -26,6 +26,7 @@ import pendingOrdersRouter from './src/routes/pendingOrder.js';
 import marketplaceRouter from './src/routes/marketplace.js';
 import adminRouter from './src/routes/adminRoutes.js';
 import feedbackRouter from './src/routes/feedbackRoutes.js';
+import digestRouter from './src/routes/digest.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
@@ -88,6 +89,7 @@ app.use('/pending-orders', pendingOrdersRouter);
 app.use('/marketplace', marketplaceRouter);
 app.use('/admin', adminRouter);
 app.use('/feedback', feedbackRouter);
+app.use('/digest', digestRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
