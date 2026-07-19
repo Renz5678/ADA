@@ -1,7 +1,7 @@
 import Navitem from "./Navitem"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { MdOutlineDashboard, MdOutlineReceiptLong, MdMenu, MdClose, MdLogout } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineReceiptLong, MdMenu, MdClose, MdLogout, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import Icon from "#components/ui/Icon.jsx";
 
 const navItems = {
@@ -13,6 +13,17 @@ export default function ClientSidebar() {
     const navigate = useNavigate();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+
+    const [isCollapsed, setIsCollapsed] = useState(() => {
+        const saved = localStorage.getItem("sidebarCollapsed");
+        return saved === "true";
+    });
+
+    useEffect(() => {
+        localStorage.setItem("sidebarCollapsed", isCollapsed);
+    }, [isCollapsed]);
+
+    const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
     const handleLogout = () => {
         localStorage.removeItem("client_token");
@@ -40,9 +51,9 @@ export default function ClientSidebar() {
             {/* Sidebar panel */}
             <div
                 className={`flex flex-none flex-col h-full bg-[#0F1D29] p-4
-                    fixed lg:static top-0 left-0 z-50 transition-transform duration-300
-                    w-[75vw] max-w-[280px] lg:w-[220px]
-                    ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+                    fixed lg:static top-0 left-0 z-50 transition-all duration-300
+                    w-[75vw] max-w-[280px] ${isCollapsed ? 'lg:w-[88px]' : 'lg:w-[220px]'}
+                    ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 overflow-x-hidden`}
             >
                 <button
                     onClick={() => setIsOpen(false)}
@@ -51,11 +62,15 @@ export default function ClientSidebar() {
                     <MdClose size={24} />
                 </button>
 
-                <div className="font-headline text-white font-semibold text-3xl lg:text-4xl text-left p-2 flex items-center gap-3">
-                    <Icon height={2.5} width={2.5} variant="dark" />
-                    ADA
+                <div className={`font-headline text-white font-semibold text-3xl lg:text-4xl p-2 flex items-center gap-3 transition-all duration-300 ${isCollapsed ? 'lg:justify-center lg:px-0' : ''}`}>
+                    <div className="shrink-0">
+                        <Icon height={2.5} width={2.5} variant="dark" />
+                    </div>
+                    <span className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed ? 'lg:w-0 lg:opacity-0' : 'w-auto opacity-100'}`}>
+                        ADA
+                    </span>
                 </div>
-                <div className="font-body text-[#BAC8D8] font-medium px-2 text-xs lg:text-sm">
+                <div className={`font-body text-[#BAC8D8] font-medium px-2 text-xs lg:text-sm transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed ? 'lg:h-0 lg:opacity-0' : 'h-auto opacity-100'}`}>
                     Client Portal
                 </div>
 
@@ -70,18 +85,30 @@ export default function ClientSidebar() {
                                 setIsOpen(false);
                             }}
                             icon={icon}
+                            isCollapsed={isCollapsed}
                         />
                     ))}
                 </div>
 
-                <div className="mt-auto mb-4">
+                <div className="mt-auto mb-4 border-t border-white/10 pt-4">
                     <button
                         onClick={handleLogout}
-                        className="w-full h-14 transition duration-300 ease-in items-center p-4 cursor-pointer font-body flex gap-2 text-[#E8F2FF] hover:bg-[#FFB2B9] hover:text-[#71333C] hover:scale-95"
+                        className={`w-full h-14 transition duration-300 ease-in items-center p-4 cursor-pointer font-body flex gap-2 text-[#E8F2FF] hover:bg-[#FFB2B9] hover:text-[#71333C] hover:scale-95 ${isCollapsed ? 'lg:justify-center lg:px-0' : ''}`}
                     >
-                        <MdLogout size={20} />
-                        Logout
+                        <MdLogout size={20} className="shrink-0" />
+                        <span className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed ? 'lg:w-0 lg:opacity-0' : 'w-auto opacity-100'}`}>
+                            Logout
+                        </span>
                     </button>
+                    
+                    <div className="hidden lg:flex justify-end pt-2 mt-2 border-t border-white/10">
+                        <button 
+                            onClick={toggleCollapse}
+                            className={`p-2 text-gray-400 hover:text-white transition-all duration-300 rounded-lg hover:bg-white/10 flex items-center justify-center ${isCollapsed ? 'w-full' : ''}`}
+                        >
+                            {isCollapsed ? <MdChevronRight size={24} /> : <MdChevronLeft size={24} />}
+                        </button>
+                    </div>
                 </div>
             </div>
         </>

@@ -1,7 +1,7 @@
 import Navitem from "./Navitem"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdOutlineInventory, MdOutlineChecklist, MdMenu, MdClose } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineReceiptLong, MdOutlineCases, MdOutlineShoppingCart, MdOutlineInventory, MdOutlineChecklist, MdMenu, MdClose, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import Icon from "#components/ui/Icon.jsx";
 
 const navItems = {
@@ -18,6 +18,16 @@ export default function Sidebar() {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
 
+    const [isCollapsed, setIsCollapsed] = useState(() => {
+        const saved = localStorage.getItem("sidebarCollapsed");
+        return saved === "true";
+    });
+
+    useEffect(() => {
+        localStorage.setItem("sidebarCollapsed", isCollapsed);
+    }, [isCollapsed]);
+
+    const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
     return (
         <>
@@ -40,9 +50,9 @@ export default function Sidebar() {
             {/* Sidebar panel */}
             <div
                 className={`flex flex-none flex-col h-full bg-[#0F1D29] p-4
-                    fixed lg:static top-0 left-0 z-50 transition-transform duration-300
-                    w-[75vw] max-w-[280px] lg:w-[220px]
-                    ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+                    fixed lg:static top-0 left-0 z-50 transition-all duration-300
+                    w-[75vw] max-w-[280px] ${isCollapsed ? 'lg:w-[88px]' : 'lg:w-[220px]'}
+                    ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 overflow-x-hidden`}
             >
                 <button
                     onClick={() => setIsOpen(false)}
@@ -51,11 +61,15 @@ export default function Sidebar() {
                     <MdClose size={24} />
                 </button>
 
-                <div className="font-headline text-white font-semibold text-3xl lg:text-4xl text-left p-2 flex items-center gap-3">
-                    <Icon height={2.5} width={2.5} variant="dark" />
-                    ADA
+                <div className={`font-headline text-white font-semibold text-3xl lg:text-4xl p-2 flex items-center gap-3 transition-all duration-300 ${isCollapsed ? 'lg:justify-center lg:px-0' : ''}`}>
+                    <div className="shrink-0">
+                        <Icon height={2.5} width={2.5} variant="dark" />
+                    </div>
+                    <span className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed ? 'lg:w-0 lg:opacity-0' : 'w-auto opacity-100'}`}>
+                        ADA
+                    </span>
                 </div>
-                <div className="font-body text-[#BAC8D8] font-medium px-2 text-xs lg:text-sm">
+                <div className={`font-body text-[#BAC8D8] font-medium px-2 text-xs lg:text-sm transition-all duration-300 overflow-hidden whitespace-nowrap ${isCollapsed ? 'lg:h-0 lg:opacity-0' : 'h-auto opacity-100'}`}>
                     Create. Sell. Track
                 </div>
 
@@ -70,10 +84,19 @@ export default function Sidebar() {
                                 setIsOpen(false);
                             }}
                             icon={icon}
+                            isCollapsed={isCollapsed}
                         />
                     ))}
                 </div>
 
+                <div className="mt-auto hidden lg:flex justify-end pt-4 border-t border-white/10">
+                    <button 
+                        onClick={toggleCollapse}
+                        className={`p-2 text-gray-400 hover:text-white transition-all duration-300 rounded-lg hover:bg-white/10 flex items-center justify-center ${isCollapsed ? 'w-full' : ''}`}
+                    >
+                        {isCollapsed ? <MdChevronRight size={24} /> : <MdChevronLeft size={24} />}
+                    </button>
+                </div>
             </div>
         </>
     )
