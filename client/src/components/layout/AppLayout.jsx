@@ -7,11 +7,24 @@ import useSse from "#hooks/useSse.js";
 import IncomingOrderModal from "#components/orders/IncomingOrderModal.jsx";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPendingOrders } from "#api/pendingOrders.js";
+import FloatingChatbot from "#components/chat/FloatingChatbot.jsx";
 
 export default function AppLayout() {
     const location = useLocation();
     const queryClient = useQueryClient();
     const [pendingQueue, setPendingQueue] = useState([]);
+
+    // Check if user is allowed to use chatbot
+    let isChatAllowed = false;
+    try {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            isChatAllowed = payload.role === 'admin' || payload.approval_status === 'approved';
+        }
+    } catch (e) {
+        console.error('Failed to parse token for chat permissions');
+    }
 
     // Load any pending orders that arrived while the freelancer was offline
     useQuery({
@@ -86,6 +99,9 @@ export default function AppLayout() {
                 pendingQueue={pendingQueue}
                 onDismiss={handleDismiss}
             />
+
+            {/* AI Assistant Chatbot */}
+            {isChatAllowed && <FloatingChatbot />}
         </div>
     );
 }

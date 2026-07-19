@@ -17,6 +17,7 @@ import ClientFactory from '../models/client.js';
 import PendingOrdersFactory from '../models/pendingOrder.js';
 import FeedbackFactory from '../models/feedback.js';
 import DigestFactory from '../models/digest.js';
+import ChatHistoryFactory from '../models/chatHistory.js';
 
 let sequelize;
 
@@ -84,7 +85,8 @@ const models = {
     Clients: ClientFactory(sequelize, DataTypes),
     PendingOrders: PendingOrdersFactory(sequelize, DataTypes),
     Feedback: FeedbackFactory(sequelize, DataTypes),
-    Digest: DigestFactory(sequelize, DataTypes)
+    Digest: DigestFactory(sequelize, DataTypes),
+    ChatHistory: ChatHistoryFactory(sequelize, DataTypes)
 };
 
 Object.values(models).forEach(model => {

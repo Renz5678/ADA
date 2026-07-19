@@ -9,6 +9,14 @@ export const authLimiter = rateLimit({
     }
 });
 
+export const chatLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 10,
+    message: {
+        message: 'AI Chat limit reached (10 per hour). Please try again later.'
+    }
+});
+
 export const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 1000,

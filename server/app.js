@@ -27,6 +27,7 @@ import marketplaceRouter from './src/routes/marketplace.js';
 import adminRouter from './src/routes/adminRoutes.js';
 import feedbackRouter from './src/routes/feedbackRoutes.js';
 import digestRouter from './src/routes/digest.js';
+import chatRouter from './src/routes/chat.js';
 
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
@@ -90,6 +91,7 @@ app.use('/marketplace', marketplaceRouter);
 app.use('/admin', adminRouter);
 app.use('/feedback', feedbackRouter);
 app.use('/digest', digestRouter);
+app.use('/chat', chatRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
