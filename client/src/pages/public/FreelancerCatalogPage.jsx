@@ -64,49 +64,57 @@ export default function FreelancerCatalogPage() {
 
             <div className="max-w-5xl mx-auto px-6 pb-12">
                 {/* Profile Info */}
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center mb-12 relative z-10 mt-6 md:mt-8">
-                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl border-4 border-[#FDF9F1] overflow-hidden bg-white shadow-lg flex-shrink-0">
-                        {freelancer.profile_picture ? (
-                            <img src={freelancer.profile_picture} alt={freelancer.business_name} className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full bg-[#E57A44] flex items-center justify-center text-white font-bold text-3xl uppercase">
-                                {freelancer.business_name?.substring(0,2) || freelancer.username?.substring(0,2)}
-                            </div>
-                        )}
+                <div className="mb-10 relative z-10">
+                    <div className="flex flex-wrap md:flex-nowrap gap-4 md:gap-6 items-start">
+                        <div className="w-24 h-24 md:w-32 md:h-32 -mt-5 md:-mt-6 rounded-3xl border-4 border-[#FDF9F1] overflow-hidden bg-white shadow-lg flex-shrink-0">
+                            {freelancer.profile_picture ? (
+                                <img src={freelancer.profile_picture} alt={freelancer.business_name} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-[#E57A44] flex items-center justify-center text-white font-bold text-3xl uppercase">
+                                    {freelancer.business_name?.substring(0,2) || freelancer.username?.substring(0,2)}
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex-1 mt-2 md:mt-4">
+                            <h1 className="text-3xl md:text-4xl font-headline font-black text-[#0F1D29]">{freelancer.business_name}</h1>
+                            <p className="text-gray-500 font-body mt-1">@{freelancer.username}</p>
+                        </div>
+                        <div className="w-full md:w-auto mt-4 md:mt-4">
+                            <Button variant="primary" className="w-full md:w-auto flex items-center justify-center gap-2" onClick={handleInteract}>
+                                <MdMessage size={20} />
+                                Contact Maker
+                            </Button>
+                        </div>
                     </div>
-                    <div className="flex-1 md:mb-2">
-                        <h1 className="text-3xl md:text-4xl font-headline font-black text-[#0F1D29]">{freelancer.business_name}</h1>
-                        <p className="text-gray-500 font-body mt-1">@{freelancer.username}</p>
-                        <p className="text-gray-700 font-body mt-4 max-w-2xl">{freelancer.bio || freelancer.description}</p>
+
+                    {/* Bio and Socials */}
+                    <div className="mt-6 md:mt-8">
+                        {(freelancer.bio || freelancer.description) && (
+                            <p className="text-gray-700 font-body text-base md:text-lg max-w-3xl leading-relaxed">{freelancer.bio || freelancer.description}</p>
+                        )}
                         
                         <div className="flex gap-4 mt-6 items-center">
                             {freelancer.social_facebook && (
-                                <a href={freelancer.social_facebook.startsWith('http') ? freelancer.social_facebook : `https://${freelancer.social_facebook}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#1877F2] transition-colors bg-white p-2 rounded-full shadow-sm">
+                                <a href={freelancer.social_facebook.startsWith('http') ? freelancer.social_facebook : `https://${freelancer.social_facebook}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#1877F2] transition-colors bg-white p-3 rounded-full shadow-sm">
                                     <FaFacebook size={24} />
                                 </a>
                             )}
                             {freelancer.social_instagram && (
-                                <a href={freelancer.social_instagram.startsWith('http') ? freelancer.social_instagram : `https://${freelancer.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#E4405F] transition-colors bg-white p-2 rounded-full shadow-sm">
+                                <a href={freelancer.social_instagram.startsWith('http') ? freelancer.social_instagram : `https://${freelancer.social_instagram}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#E4405F] transition-colors bg-white p-3 rounded-full shadow-sm">
                                     <FaInstagram size={24} />
                                 </a>
                             )}
                             {freelancer.social_tiktok && (
-                                <a href={freelancer.social_tiktok.startsWith('http') ? freelancer.social_tiktok : `https://${freelancer.social_tiktok}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors bg-white p-2 rounded-full shadow-sm">
+                                <a href={freelancer.social_tiktok.startsWith('http') ? freelancer.social_tiktok : `https://${freelancer.social_tiktok}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors bg-white p-3 rounded-full shadow-sm">
                                     <FaTiktok size={24} />
                                 </a>
                             )}
                             {freelancer.social_shopee && (
-                                <a href={freelancer.social_shopee.startsWith('http') ? freelancer.social_shopee : `https://${freelancer.social_shopee}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#EE4D2D] transition-colors bg-white p-2 rounded-full shadow-sm">
+                                <a href={freelancer.social_shopee.startsWith('http') ? freelancer.social_shopee : `https://${freelancer.social_shopee}`} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#EE4D2D] transition-colors bg-white p-3 rounded-full shadow-sm">
                                     <SiShopee size={24} />
                                 </a>
                             )}
                         </div>
-                    </div>
-                    <div className="w-full md:w-auto">
-                        <Button variant="primary" className="w-full md:w-auto flex items-center justify-center gap-2" onClick={handleInteract}>
-                            <MdMessage size={20} />
-                            Contact Maker
-                        </Button>
                     </div>
                 </div>
 
