@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import { useProducts } from '#hooks/useProducts.js';
 import { createProduct, updateProduct, deleteProduct } from '#api/product.js';
 import ProductsTable from '#components/products/ProductsTable.jsx';
@@ -138,24 +139,28 @@ export default function ProductsPage() {
                     onManageMaterials={handleOpenMaterials}
                 />
 
-                {data && data.totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
+                {data && (
+                    <div className="flex items-center justify-between mt-auto pt-6 shrink-0 border-t border-[#f0f0f0]">
                         <Button
-                            variant="secondary"
+                            variant="primary"
                             disabled={page === 1}
                             onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            className="px-4 py-2"
                         >
-                            Previous
+                            <MdChevronLeft size={24} className="-ml-1" />
+                            <span className="hidden sm:inline">Previous</span>
                         </Button>
-                        <span className="text-sm text-gray-600 font-body">
+                        <span className="text-base font-bold text-[#0F1D29] font-body bg-[#FFF7E6] border border-[#e8d5b5] px-5 py-2 rounded-xl shadow-sm">
                             Page {data.currentPage} of {data.totalPages}
                         </span>
                         <Button
-                            variant="secondary"
+                            variant="primary"
                             disabled={page === data.totalPages}
                             onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
+                            className="px-4 py-2"
                         >
-                            Next
+                            <span className="hidden sm:inline">Next</span>
+                            <MdChevronRight size={24} className="-mr-1" />
                         </Button>
                     </div>
                 )}

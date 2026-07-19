@@ -1,8 +1,8 @@
 const variantStyles = {
-    primary: "bg-[#8D4A52] text-white hover:bg-[#0F1D29]",
-    secondary: "border border-[#c1c1c1] text-[#0F1D29] hover:bg-gray-50",
-    danger: "bg-[#AB626A] text-white hover:bg-[#7a444a]",
-    "outline-primary": "border border-[#8D4A52] text-[#8D4A52] hover:bg-[#FFF7E6] hover:text-[#8D4A52]"
+    primary: "bg-[#8D4A52] text-white hover:bg-[#0F1D29] disabled:opacity-50 disabled:hover:bg-[#8D4A52] disabled:cursor-not-allowed",
+    secondary: "border border-[#c1c1c1] text-[#0F1D29] hover:bg-gray-50 disabled:opacity-50 disabled:hover:bg-transparent disabled:cursor-not-allowed",
+    danger: "bg-[#AB626A] text-white hover:bg-[#7a444a] disabled:opacity-50 disabled:hover:bg-[#AB626A] disabled:cursor-not-allowed",
+    "outline-primary": "border border-[#8D4A52] text-[#8D4A52] hover:bg-[#FFF7E6] hover:text-[#8D4A52] disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-[#8D4A52] disabled:cursor-not-allowed"
 };
 
 export default function Button({ variant = "primary", icon: Icon, children, className = "", ...props }) {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
 import { useMaterials } from '#hooks/useMaterials.js';
 import { createMaterial, updateMaterial, deleteMaterial } from '#api/materials.js';
 import { createMaterialTransaction } from '#api/materialTransactions.js';
@@ -72,11 +73,17 @@ export default function MaterialsPage() {
                     onDelete={handleDeleteMaterial}
                     onTransaction={(mat) => { setTxMaterial(mat); setTxError(null); setIsTxModalOpen(true); }}
                 />
-                {materialsData && materialsData.totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-auto pt-4 shrink-0 border-t border-[#f0f0f0]">
-                        <Button variant="secondary" disabled={materialsPage === 1} onClick={() => setMaterialsPage(p => Math.max(1, p - 1))}>Previous</Button>
-                        <span className="text-sm text-gray-600 font-body">Page {materialsData.currentPage} of {materialsData.totalPages}</span>
-                        <Button variant="secondary" disabled={materialsPage === materialsData.totalPages} onClick={() => setMaterialsPage(p => Math.min(materialsData.totalPages, p + 1))}>Next</Button>
+                {materialsData && (
+                    <div className="flex items-center justify-between mt-auto pt-6 shrink-0 border-t border-[#f0f0f0]">
+                        <Button variant="primary" disabled={materialsPage === 1} onClick={() => setMaterialsPage(p => Math.max(1, p - 1))} className="px-4 py-2">
+                            <MdChevronLeft size={24} className="-ml-1" />
+                            <span className="hidden sm:inline">Previous</span>
+                        </Button>
+                        <span className="text-base font-bold text-[#0F1D29] font-body bg-[#FFF7E6] border border-[#e8d5b5] px-5 py-2 rounded-xl shadow-sm">Page {materialsData.currentPage} of {materialsData.totalPages}</span>
+                        <Button variant="primary" disabled={materialsPage === materialsData.totalPages} onClick={() => setMaterialsPage(p => Math.min(materialsData.totalPages, p + 1))} className="px-4 py-2">
+                            <span className="hidden sm:inline">Next</span>
+                            <MdChevronRight size={24} className="-mr-1" />
+                        </Button>
                     </div>
                 )}
             </div>
