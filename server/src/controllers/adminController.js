@@ -107,7 +107,7 @@ export const updateFeedbackStatus = async (req, res) => {
 
 export const getAdminDigest = async (req, res) => {
     try {
-        const userId = req.user.user_id;
+        const userId = req.user.id;
 
         const digest = await models.Digest.findOne({
             where: { user_id: userId },
