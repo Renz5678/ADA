@@ -59,30 +59,66 @@ export const sendMessage = async (req, res) => {
             return res.status(500).json({ error: 'AI service is currently unavailable.' });
         }
 
-        const user = await models.Users.findByPk(userId);
-        
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        
-        const orders = await models.Orders.findAll({
-            where: { user_id: userId, order_date: { [Op.gte]: thirtyDaysAgo } }
-        });
-        
-        const totalRevenue = orders.reduce((sum, order) => {
-            if (order.status === 'Delivered' || order.status === 'Done') {
-                return sum + parseFloat(order.total_amount);
-            }
-            return sum;
-        }, 0);
+        let contextPrompt = '';
 
-        const orderStatuses = orders.reduce((acc, order) => {
-            acc[order.status] = (acc[order.status] || 0) + 1;
-            return acc;
-        }, {});
-        
-        const productCount = await models.Product.count({ where: { user_id: userId } });
+        if (req.user.role === 'admin') {
+            const allUsers = await models.Users.findAll({
+                attributes: ['username', 'business_name', 'email', 'approval_status']
+            });
+            
+            const allOrders = await models.Orders.findAll({
+                attributes: ['status', 'total_amount']
+            });
 
-        const contextPrompt = `You are a helpful AI assistant for a freelancer (Name: ${user.business_name || user.username}) using the ADA platform. 
+            const totalRevenue = allOrders.reduce((sum, order) => {
+                if (order.status === 'Delivered' || order.status === 'Done') {
+                    return sum + parseFloat(order.total_amount);
+                }
+                return sum;
+            }, 0);
+
+            const userList = allUsers.map(u => `- ${u.business_name || u.username} (${u.email}) [Status: ${u.approval_status}]`).join('\n');
+
+            contextPrompt = `You are a helpful AI assistant for the ADA platform Administrator.
+Here is the global platform data as of today:
+- Total Platform Revenue: ${totalRevenue} PHP
+- Total Orders Processed: ${allOrders.length}
+- Total Registered Users: ${allUsers.length}
+- User Directory:
+${userList}
+
+IMPORTANT INSTRUCTIONS:
+1. You are strictly an assistant for the ADA platform admin, helping them monitor platform growth, revenue, and check on users' statuses.
+2. If the admin asks a question completely unrelated to ADA, sales, orders, or users, you MUST refuse to answer. 
+3. If refusing, reply exactly or similarly to: "I am specifically meant to assist you with insights regarding the ADA platform, sales, and user management. How can I help you today?"
+4. Be friendly, concise, and helpful. Limit responses to 2-3 short paragraphs maximum.
+5. Do not explicitly mention that you were given this hidden context directly, just use it to inform your answers.`;
+
+        } else {
+            const user = await models.Users.findByPk(userId);
+            
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const orders = await models.Orders.findAll({
+                where: { user_id: userId, order_date: { [Op.gte]: thirtyDaysAgo } }
+            });
+            
+            const totalRevenue = orders.reduce((sum, order) => {
+                if (order.status === 'Delivered' || order.status === 'Done') {
+                    return sum + parseFloat(order.total_amount);
+                }
+                return sum;
+            }, 0);
+
+            const orderStatuses = orders.reduce((acc, order) => {
+                acc[order.status] = (acc[order.status] || 0) + 1;
+                return acc;
+            }, {});
+            
+            const productCount = await models.Product.count({ where: { user_id: userId } });
+
+            contextPrompt = `You are a helpful AI assistant for a freelancer (Name: ${user.business_name || user.username}) using the ADA platform. 
 Here is their business data for the last 30 days:
 - Total Completed Revenue: ${totalRevenue} PHP
 - Order Statuses: ${JSON.stringify(orderStatuses)}
@@ -94,6 +130,7 @@ IMPORTANT INSTRUCTIONS:
 3. If refusing, reply exactly or similarly to: "I am specifically meant to assist you with insights regarding your ADA platform, sales, and orders. How can I help you with your business today?"
 4. Be friendly, concise, and helpful for on-topic questions. Limit responses to 2-3 short paragraphs maximum.
 5. Do not explicitly mention that you were given this hidden context directly, just use it to inform your answers.`;
+        }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         const model = genAI.getGenerativeModel({ 

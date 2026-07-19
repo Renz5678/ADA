@@ -9,13 +9,28 @@ export const authLimiter = rateLimit({
     }
 });
 
-export const chatLimiter = rateLimit({
+const chatLimiterFreelancer = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     max: 10,
     message: {
         message: 'AI Chat limit reached (10 per hour). Please try again later.'
     }
 });
+
+const chatLimiterAdmin = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 100,
+    message: {
+        message: 'AI Chat limit reached (100 per hour). Please try again later.'
+    }
+});
+
+export const chatLimiter = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        return chatLimiterAdmin(req, res, next);
+    }
+    return chatLimiterFreelancer(req, res, next);
+};
 
 export const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
