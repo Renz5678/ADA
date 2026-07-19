@@ -64,8 +64,8 @@ export default function FreelancerCatalogPage() {
 
             <div className="max-w-5xl mx-auto px-6 pb-12">
                 {/* Profile Info */}
-                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-start mb-12 relative z-10">
-                    <div className="w-24 h-24 md:w-32 md:h-32 -mt-12 md:-mt-16 rounded-3xl border-4 border-[#FDF9F1] overflow-hidden bg-white shadow-lg flex-shrink-0">
+                <div className="flex flex-col md:flex-row gap-4 md:gap-6 items-center mb-12 relative z-10 mt-6 md:mt-8">
+                    <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl border-4 border-[#FDF9F1] overflow-hidden bg-white shadow-lg flex-shrink-0">
                         {freelancer.profile_picture ? (
                             <img src={freelancer.profile_picture} alt={freelancer.business_name} className="w-full h-full object-cover" />
                         ) : (
@@ -74,7 +74,7 @@ export default function FreelancerCatalogPage() {
                             </div>
                         )}
                     </div>
-                    <div className="flex-1 mt-2 md:mt-4 md:mb-2">
+                    <div className="flex-1 md:mb-2">
                         <h1 className="text-3xl md:text-4xl font-headline font-black text-[#0F1D29]">{freelancer.business_name}</h1>
                         <p className="text-gray-500 font-body mt-1">@{freelancer.username}</p>
                         <p className="text-gray-700 font-body mt-4 max-w-2xl">{freelancer.bio || freelancer.description}</p>
@@ -102,7 +102,7 @@ export default function FreelancerCatalogPage() {
                             )}
                         </div>
                     </div>
-                    <div className="w-full md:w-auto mt-4 md:mt-4 md:mb-2">
+                    <div className="w-full md:w-auto">
                         <Button variant="primary" className="w-full md:w-auto flex items-center justify-center gap-2" onClick={handleInteract}>
                             <MdMessage size={20} />
                             Contact Maker
