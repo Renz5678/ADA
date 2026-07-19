@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Bot, X, Send, Trash2, Info, Loader2, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -7,6 +8,9 @@ import { getChatHistory, sendChatMessage, clearChatHistory } from '#api/chat.js'
 export default function FloatingChatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [input, setInput] = useState('');
+    const [showDisclaimer, setShowDisclaimer] = useState(() => {
+        return localStorage.getItem('hideChatDisclaimer') !== 'true';
+    });
     const messagesEndRef = useRef(null);
     const queryClient = useQueryClient();
 
@@ -60,6 +64,11 @@ export default function FloatingChatbot() {
         setInput('');
     };
 
+    const handleDismissDisclaimer = () => {
+        setShowDisclaimer(false);
+        localStorage.setItem('hideChatDisclaimer', 'true');
+    };
+
     return (
         <>
             <AnimatePresence>
@@ -100,12 +109,21 @@ export default function FloatingChatbot() {
                         </div>
 
                         {/* Disclaimer */}
-                        <div className="bg-[#8D4A52]/10 border-b border-[#8D4A52]/20 p-3 flex items-start gap-2">
-                            <Info className="w-4 h-4 text-[#8D4A52] shrink-0 mt-0.5" />
-                            <p className="text-xs text-gray-700 leading-relaxed">
-                                <span className="font-semibold text-[#8D4A52]">Disclaimer:</span> AI insights are generated based on your business data but may not always be 100% accurate. Please double-check important metrics. <span className="opacity-75">Limit: 10 queries per hour.</span>
-                            </p>
-                        </div>
+                        {showDisclaimer && (
+                            <div className="bg-[#8D4A52]/10 border-b border-[#8D4A52]/20 p-3 flex items-start gap-2 relative">
+                                <Info className="w-4 h-4 text-[#8D4A52] shrink-0 mt-0.5" />
+                                <p className="text-xs text-gray-700 leading-relaxed pr-6">
+                                    <span className="font-semibold text-[#8D4A52]">Disclaimer:</span> AI insights are generated based on your business data but may not always be 100% accurate. Please double-check important metrics. <span className="opacity-75">Limit: 10 queries per hour.</span>
+                                </p>
+                                <button 
+                                    onClick={handleDismissDisclaimer}
+                                    className="absolute top-2 right-2 p-1 text-gray-500 hover:text-gray-800 rounded transition-colors"
+                                    title="Dismiss"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        )}
 
                         {/* Messages Area */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -130,10 +148,16 @@ export default function FloatingChatbot() {
                                         className={`max-w-[85%] rounded-2xl px-4 py-2.5 ${
                                             msg.sender === 'user' 
                                                 ? 'bg-[#8D4A52] text-white rounded-br-sm' 
-                                                : 'bg-[#FFF7E6] text-[#0F1D29] border border-[#e6decb] rounded-bl-sm'
+                                                : 'bg-[#FFF7E6] text-[#0F1D29] border border-[#e6decb] rounded-bl-sm markdown-body'
                                         }`}
                                     >
-                                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.text}</p>
+                                        {msg.sender === 'user' ? (
+                                            <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.text}</p>
+                                        ) : (
+                                            <div className="text-sm leading-relaxed max-w-none">
+                                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}
