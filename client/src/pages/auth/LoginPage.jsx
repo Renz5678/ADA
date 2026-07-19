@@ -91,7 +91,7 @@ export default function LoginPage({ onStart, onStop }) {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-full min-h-screen bg-[#FFF7E6] flex justify-center items-center py-10"
+            className="w-full min-h-[100dvh] bg-[#FFF7E6] flex justify-center items-center py-10 pb-24 md:pb-10"
         >
             <div className="w-[80%] lg:w-[35%] flex flex-col gap-4 items-center">
 
