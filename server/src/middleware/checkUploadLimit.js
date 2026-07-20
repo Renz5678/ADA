@@ -3,8 +3,8 @@ import { Op } from 'sequelize';
 
 const { Product } = models;
 
-// Configurable via MAX_PRODUCT_IMAGES_PER_USER env var, defaults to 150
-const MAX_PRODUCT_IMAGES = parseInt(process.env.MAX_PRODUCT_IMAGES_PER_USER ?? '150', 10);
+// Configurable via MAX_PRODUCT_IMAGES_PER_USER env var, defaults to 50
+const MAX_PRODUCT_IMAGES = parseInt(process.env.MAX_PRODUCT_IMAGES_PER_USER ?? '50', 10);
 
 /**
  * Middleware that blocks a new product image upload if the user already has
@@ -18,10 +18,10 @@ const MAX_PRODUCT_IMAGES = parseInt(process.env.MAX_PRODUCT_IMAGES_PER_USER ?? '
  */
 export const checkProductImageLimit = async (req, res, next) => {
     // Only enforce the limit when a file is actually being sent.
-    // multer hasn't parsed the file yet at this point, so we check
-    // the Content-Type header as a fast pre-flight guard.
+    // Use a more robust check: the boundary param is always present in
+    // legitimate multipart requests, so check for that specifically.
     const contentType = req.headers['content-type'] || '';
-    if (!contentType.includes('multipart/form-data')) {
+    if (!contentType.includes('multipart/form-data') || !contentType.includes('boundary=')) {
         return next();
     }
 

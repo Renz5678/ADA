@@ -69,7 +69,7 @@ const globalSearch = async (req, res) => {
 
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 

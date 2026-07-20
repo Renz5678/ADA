@@ -9,9 +9,9 @@ const clientOrdersRouter = express.Router();
 clientOrdersRouter.use(clientAuthMiddleware);
 
 const createOrderLimiter = rateLimit({
-    windowMs: 1 * 60 * 1000, // 1 minute
-    max: process.env.NODE_ENV === 'test' ? 100 : 1, // Limit each IP to 1 create order request per `window` (here, per 1 minute), but 100 in tests
-    message: { message: 'Too many orders requested from this IP, please try again after a minute.' },
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: process.env.NODE_ENV === 'test' ? 100 : 10, // Limit each IP to 10 create order requests per 15 minutes
+    message: { message: 'Too many orders requested from this IP, please try again after 15 minutes.' },
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 });

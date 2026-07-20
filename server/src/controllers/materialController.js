@@ -36,7 +36,7 @@ const getMaterials = async (req, res) => {
         }
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -57,7 +57,7 @@ const getMaterialById = async (req, res) => {
         return res.status(200).json(material);
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -74,6 +74,14 @@ const createMaterial = async (req, res) => {
 
         if (!material_name || unit_cost === undefined || quantity === undefined) {
             return res.status(400).json({ message: 'Missing required fields' });
+        }
+
+        const user = await models.Users.findByPk(userId);
+        if (user && user.approval_status !== 'approved') {
+            const totalMaterials = await Material.count({ where: { user_id: userId } });
+            if (totalMaterials >= 5) {
+                return res.status(403).json({ message: 'Unverified accounts can only create up to 5 materials. Please wait for admin approval.' });
+            }
         }
 
         // Default threshold = 20% of initial quantity if not provided
@@ -103,7 +111,7 @@ const createMaterial = async (req, res) => {
         return res.status(201).json({ message: 'Material created!', data: newMaterial });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -140,7 +148,7 @@ const updateMaterial = async (req, res) => {
         return res.status(200).json({ message: 'Material updated successfully!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -165,7 +173,7 @@ const deleteMaterial = async (req, res) => {
             return res.status(400).json({ message: 'Cannot delete material because it is associated with existing transactions or products.' });
         }
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 

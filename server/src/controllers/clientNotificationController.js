@@ -11,7 +11,7 @@ export const getClientNotifications = async (req, res) => {
     } catch (e) {
         console.error('Error fetching client notifications:', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -25,7 +25,7 @@ export const getClientUnreadCount = async (req, res) => {
     } catch (e) {
         console.error('Error fetching unread count:', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -47,7 +47,7 @@ export const markClientNotificationAsRead = async (req, res) => {
     } catch (e) {
         console.error('Error marking notification as read:', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -62,6 +62,6 @@ export const markAllClientNotificationsAsRead = async (req, res) => {
     } catch (e) {
         console.error('Error marking all notifications as read:', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };

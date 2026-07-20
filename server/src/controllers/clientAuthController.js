@@ -84,7 +84,7 @@ export const registerClient = async (req, res) => {
         return res.status(201).json({ message: 'Client registered successfully!', client: newClient });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -117,7 +117,7 @@ export const loginClient = async (req, res) => {
         return res.status(200).json({ message: 'Login valid!', token });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -163,7 +163,7 @@ export const verifyOtp = async (req, res) => {
         return res.status(200).json({ message: 'Account verified!', token: token });
     } catch (error) {
         console.error('Error in controller:', error);
-        return res.status(500).json({ message: `Server Error: ${error.message || 'An unexpected error occurred.'}`, error: error.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -202,7 +202,7 @@ export const resendOtp = async (req, res) => {
         return res.status(200).json({ message: 'New OTP sent!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -248,6 +248,6 @@ export const googleLoginClient = async (req, res) => {
     } catch (e) {
         console.error(e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };

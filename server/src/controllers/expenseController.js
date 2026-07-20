@@ -34,7 +34,7 @@ const getExpenses = async (req, res) => {
         }
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -55,7 +55,7 @@ const getExpenseById = async (req, res) => {
         return res.status(200).json(expense)
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -85,7 +85,7 @@ const createExpense = async (req, res) => {
         return res.status(201).json({ message: 'Expense created!', data: newExpense });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -122,7 +122,7 @@ const updateExpense = async (req, res) => {
         return res.status(200).json({ message: 'Expense updated successfully!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -145,7 +145,7 @@ const deleteExpense = async (req, res) => {
         return res.status(200).json({ message: 'Expense deleted successfully!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 

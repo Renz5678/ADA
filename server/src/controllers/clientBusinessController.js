@@ -14,7 +14,7 @@ export const getAllBusinesses = async (req, res) => {
         return res.status(200).json({ businesses });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -41,6 +41,6 @@ export const getBusinessDetails = async (req, res) => {
         return res.status(200).json({ business });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };

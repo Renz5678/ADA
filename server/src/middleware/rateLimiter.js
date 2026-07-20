@@ -1,6 +1,7 @@
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { normalizeEmail } from '../utils/emailNormalization.js';
 
+
 const getIp = (req, _res) => {
     const forwarded = req.headers['x-forwarded-for'];
     if (forwarded) {
@@ -101,5 +102,49 @@ export const normalizedEmailLimiter = rateLimit({
     },
     message: {
         message: 'Too many registrations for this email address, please try again later.'
+    }
+});
+
+/**
+ * Per-user upload rate limiter.
+ * Keys by user ID from the JWT so that a single verified account cannot
+ * spam-upload images even from different IPs or browser sessions.
+ *
+ * Limits: 20 image uploads per 10 minutes per user.
+ * Apply this BEFORE upload.single/upload.fields in any route that writes to Cloudinary.
+ */
+export const uploadLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    // Fall back to IP if somehow called before authMiddleware (should never happen)
+    keyGenerator: (req) => {
+        if (req.user && req.user.id) return `upload:user:${req.user.id}`;
+        return `upload:ip:${ipKeyGenerator(req.ip || 'unknown')}`;
+    },
+    message: {
+        message: 'Upload limit reached. You can upload at most 20 images every 10 minutes. Please wait before uploading more.'
+    }
+});
+
+/**
+ * Global mutation rate limiter.
+ * Limits the number of POST, PUT, DELETE requests to prevent spam creation of resources
+ * (like orders, materials, expenses, etc.)
+ * Limits: 100 requests per 10 minutes per user/IP.
+ */
+export const mutationLimiter = rateLimit({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    limit: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: (req) => {
+        if (req.user && req.user.id) return `mutation:user:${req.user.id}`;
+        return `mutation:ip:${ipKeyGenerator(req.ip || req.socket.remoteAddress || 'unknown')}`;
+    },
+    skip: (req) => req.method === 'GET' || req.method === 'OPTIONS',
+    message: {
+        message: 'Too many actions performed. Please wait a few minutes before creating or modifying more data.'
     }
 });

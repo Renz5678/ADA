@@ -10,6 +10,7 @@ import { getVerificationEmailHtml } from '../utils/emailTemplates.js';
 import { normalizeEmail } from '../utils/emailNormalization.js';
 import { isSpammyName, isSpammyEmail } from '../utils/spamHeuristics.js';
 import { validationResult } from 'express-validator';
+import disposableDomains from 'disposable-email-domains';
 
 const { Users } = models;
 
@@ -30,6 +31,11 @@ const register = async (req, res) => {
 
         const { username, business_name, email, password } = req.body;
         const normalized_email = normalizeEmail(email);
+
+        const domain = email.split('@')[1];
+        if (disposableDomains.includes(domain)) {
+            return res.status(400).json({ message: 'Registration blocked: Temporary or disposable email addresses are not allowed.' });
+        }
 
         const userResult = await Users.findOne({
             where: { normalized_email }
@@ -82,7 +88,7 @@ const register = async (req, res) => {
     }
     catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -123,7 +129,7 @@ const login = async (req, res) => {
         return res.status(200).json({ message: 'Login valid!', token: token });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 
 };
@@ -171,7 +177,7 @@ const verifyOtp = async (req, res) => {
         return res.status(200).json({ message: 'Account verified!', token: token });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -210,7 +216,7 @@ const resendOtp = async (req, res) => {
         return res.status(200).json({ message: 'New OTP sent!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -248,7 +254,7 @@ const resetPassword = async (req, res) => {
         return res.status(200).json({ message: 'OTP for password reset sent!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -283,7 +289,7 @@ const confirmResetPassword = async (req, res) => {
         return res.status(200).json({ message: 'Password reset successful!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -331,7 +337,7 @@ const googleLogin = async (req, res) => {
     } catch (e) {
         console.error(e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 

@@ -20,7 +20,7 @@ const getProductMaterials = async (req, res) => {
         return res.status(200).json(materials);
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -88,7 +88,7 @@ const removeProductMaterial = async (req, res) => {
         return res.status(200).json({ message: 'Product Material removed' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 

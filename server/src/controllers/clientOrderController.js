@@ -3,6 +3,7 @@ import { validationResult } from 'express-validator';
 import transporter from '../utils/mailer.js';
 import { getNewOrderRequestHtml } from '../utils/emailTemplates.js';
 import { sendToUser } from '../controllers/sseController.js';
+import { Op } from 'sequelize';
 
 const { PendingOrders, Clients, Users } = models;
 
@@ -31,7 +32,7 @@ export const getClientOrders = async (req, res) => {
         return res.status(200).json({ orders });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -53,6 +54,34 @@ export const createClientOrder = async (req, res) => {
         // Ensure the client can only request from their assigned freelancer
         if (client.freelancer_id && client.freelancer_id !== Number(freelancer_id)) {
             return res.status(403).json({ message: 'You can only request orders from your assigned freelancer.' });
+        }
+
+        // --- Check Active Order Cap ---
+        const activePendingCount = await PendingOrders.count({ where: { client_id } });
+        const activeOrdersCount = await models.Orders.count({ 
+            where: { 
+                client_id, 
+                status: { [Op.in]: ['Awaiting Freelancer Confirmation', 'Pending'] } 
+            } 
+        });
+        
+        if (activePendingCount + activeOrdersCount >= 5) {
+            return res.status(403).json({ message: 'You have reached the maximum of 5 active orders. Please wait for them to be processed or completed before placing more.' });
+        }
+
+        // --- Check Daily Order Cap ---
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const dailyPendingCount = await PendingOrders.count({
+            where: { client_id, createdAt: { [Op.gte]: startOfDay } }
+        });
+        const dailyOrdersCount = await models.Orders.count({
+            where: { client_id, createdAt: { [Op.gte]: startOfDay } }
+        });
+
+        if (dailyPendingCount + dailyOrdersCount >= 10) {
+            return res.status(403).json({ message: 'You have reached your daily limit of 10 order requests to prevent spam.' });
         }
 
         // --- Build item snapshot ---
@@ -144,6 +173,6 @@ export const createClientOrder = async (req, res) => {
     } catch (e) {
         console.error('[createClientOrder]', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };

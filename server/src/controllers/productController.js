@@ -1,8 +1,9 @@
 import { models, sequelize } from "../models/index.js";
 import { validationResult } from "express-validator";
 import { destroyCloudinaryImage } from '../middleware/upload.js';
+import { moderateText, moderateImage } from '../utils/geminiModeration.js';
 
-const { Product, ProductMaterial } = models;
+const { Product, ProductMaterial, Users } = models;
 import { Op } from 'sequelize';
 
 const getProducts = async (req, res) => {
@@ -46,7 +47,7 @@ const getProducts = async (req, res) => {
             return res.status(200).json(products);
         }
     } catch (e) {
-        return res.status(500).json({ message: e.message || 'Internal Server Error' });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -67,7 +68,7 @@ const getProductById = async (req, res) => {
 
         return res.status(200).json(product);
     } catch (e) {
-        return res.status(500).json({ message: e.message || 'Internal Server Error' });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -100,6 +101,37 @@ const createProduct = async (req, res) => {
             image_url = req.file.path;
         }
 
+        const user = await Users.findByPk(userId);
+        
+        // Text Moderation for unapproved users
+        if (user && user.approval_status !== 'approved') {
+            const textToModerate = `${product_name} ${description || ''}`;
+            const modResult = await moderateText(textToModerate);
+            if (modResult.isFlagged) {
+                if (image_url) await destroyCloudinaryImage(image_url);
+                return res.status(403).json({ message: `Content blocked by moderation: ${modResult.reason || 'Spam or inappropriate content detected'}` });
+            }
+        }
+
+        if (user && user.approval_status !== 'approved') {
+            if (image_url) {
+                await destroyCloudinaryImage(image_url);
+                return res.status(403).json({ message: 'You must be verified by an admin to upload pictures.' });
+            }
+
+            const totalProducts = await Product.count({ where: { user_id: userId } });
+            if (totalProducts >= 5) {
+                return res.status(403).json({ message: 'Unverified accounts can only create up to 5 products. Please wait for admin approval.' });
+            }
+        } else if (image_url) {
+            // Image moderation for verified users
+            const modResult = await moderateImage(image_url);
+            if (modResult.isFlagged) {
+                await destroyCloudinaryImage(image_url);
+                return res.status(403).json({ message: `Image blocked by moderation: ${modResult.reason || 'Inappropriate content detected'}` });
+            }
+        }
+
         const t = await sequelize.transaction();
         try {
             const newProduct = await Product.create({
@@ -126,10 +158,14 @@ const createProduct = async (req, res) => {
             return res.status(201).json({ message: 'Product created!', data: newProduct });
         } catch (error) {
             await t.rollback();
+            // Cleanup: If the DB insert fails, remove the newly uploaded image from Cloudinary
+            if (req.file && req.file.path) {
+                await destroyCloudinaryImage(req.file.path);
+            }
             throw error;
         }
     } catch (e) {
-        return res.status(500).json({ message: e.message || 'Internal Server Error' });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -172,6 +208,19 @@ const updateProduct = async (req, res) => {
             if (description !== undefined) updates.description = description || null;
             if (estimated_days !== undefined) updates.estimated_days = estimated_days ? parseInt(estimated_days, 10) : null;
             if (req.file && req.file.path) {
+                const user = await Users.findByPk(userId);
+                if (user && user.approval_status !== 'approved') {
+                    await destroyCloudinaryImage(req.file.path);
+                    return res.status(403).json({ message: 'You must be verified by an admin to upload pictures.' });
+                }
+                
+                // Image moderation for verified users
+                const modResult = await moderateImage(req.file.path);
+                if (modResult.isFlagged) {
+                    await destroyCloudinaryImage(req.file.path);
+                    return res.status(403).json({ message: `Image blocked by moderation: ${modResult.reason || 'Inappropriate content detected'}` });
+                }
+                
                 // Delete the old image from Cloudinary before replacing it
                 await destroyCloudinaryImage(product.image_url);
                 updates.image_url = req.file.path;
@@ -195,10 +244,14 @@ const updateProduct = async (req, res) => {
             return res.status(200).json({ message: 'Product updated successfully!' });
         } catch (error) {
             await t.rollback();
+            // Cleanup: If the DB update fails, remove the newly uploaded image from Cloudinary
+            if (req.file && req.file.path) {
+                await destroyCloudinaryImage(req.file.path);
+            }
             throw error;
         }
     } catch (e) {
-        return res.status(500).json({ message: e.message || 'Internal Server Error' });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -225,7 +278,7 @@ const deleteProduct = async (req, res) => {
         if (e.name === 'SequelizeForeignKeyConstraintError') {
             return res.status(400).json({ message: 'Cannot delete product because it is associated with existing orders.' });
         }
-        return res.status(500).json({ message: e.message || 'Internal Server Error' });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 

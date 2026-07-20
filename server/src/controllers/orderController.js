@@ -55,7 +55,7 @@ const getOrders = async (req, res) => {
         });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -80,7 +80,7 @@ const getOrderById = async (req, res) => {
         return res.status(200).json(order);
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -93,31 +93,39 @@ const createOrder = async (req, res) => {
 
         const userId = req.user.id;
         const { order_date, status, deadline, customer_name } = req.body;
-        const newOrder = await Orders.create({
-            user_id: userId,
-            order_date,
-            deadline: deadline || null,
-            customer_name: customer_name || null,
-            total_amount: 0,
-            status
-        });
-
-        const { Tasks } = models;
-        if (Tasks) {
-            await Tasks.create({
+        const t = await sequelize.transaction();
+        
+        try {
+            const newOrder = await Orders.create({
                 user_id: userId,
-                title: `Fulfill Order #${newOrder.order_id}`,
+                order_date,
                 deadline: deadline || null,
-                status: 'Not Started',
-                related_order_id: newOrder.order_id
-            });
-        }
+                customer_name: customer_name || null,
+                total_amount: 0,
+                status
+            }, { transaction: t });
 
-        return res.status(201).json({ message: 'Order created!', data: newOrder });
+            const { Tasks } = models;
+            if (Tasks) {
+                await Tasks.create({
+                    user_id: userId,
+                    title: `Fulfill Order #${newOrder.order_id}`,
+                    deadline: deadline || null,
+                    status: 'Not Started',
+                    related_order_id: newOrder.order_id
+                }, { transaction: t });
+            }
+
+            await t.commit();
+            return res.status(201).json({ message: 'Order created!', data: newOrder });
+        } catch (error) {
+            await t.rollback();
+            throw error;
+        }
     } catch (e) {
         console.error('Error creating order:', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -141,35 +149,43 @@ const updateOrder = async (req, res) => {
 
         if (!order) return res.status(404).json({ message: 'Order not found!' });
 
-        const updates = {};
-        if (order_date !== undefined) updates.order_date = order_date;
-        
-        if (status !== undefined && status !== order.status) {
-            updates.status = status;
+        const t = await sequelize.transaction();
+
+        try {
+            const updates = {};
+            if (order_date !== undefined) updates.order_date = order_date;
             
-            if (order.client_id) {
-                await models.Notifications.create({
-                    client_id: order.client_id,
-                    title: 'Order Status Updated',
-                    message: `Your order #${order.order_id} has been updated to: ${status}`,
-                    type: 'INFO',
-                    reference_id: order.order_id,
-                    reference_type: 'ORDER'
-                });
+            if (status !== undefined && status !== order.status) {
+                updates.status = status;
+                
+                if (order.client_id) {
+                    await models.Notifications.create({
+                        client_id: order.client_id,
+                        title: 'Order Status Updated',
+                        message: `Your order #${order.order_id} has been updated to: ${status}`,
+                        type: 'INFO',
+                        reference_id: order.order_id,
+                        reference_type: 'ORDER'
+                    }, { transaction: t });
+                }
+            } else if (status !== undefined) {
+                updates.status = status;
             }
-        } else if (status !== undefined) {
-            updates.status = status;
+
+            if (deadline !== undefined) updates.deadline = deadline;
+            if (customer_name !== undefined) updates.customer_name = customer_name;
+
+            await order.update(updates, { transaction: t });
+            
+            await t.commit();
+            return res.status(200).json({ message: 'Order updated successfully!' });
+        } catch (error) {
+            await t.rollback();
+            throw error;
         }
-
-        if (deadline !== undefined) updates.deadline = deadline;
-        if (customer_name !== undefined) updates.customer_name = customer_name;
-
-        await order.update(updates);
-
-        return res.status(200).json({ message: 'Order updated successfully!' });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -221,11 +237,11 @@ const deleteOrder = async (req, res) => {
         } catch (error) {
             await t.rollback();
             console.error('Error in controller:', error);
-        return res.status(500).json({ message: `Server Error: ${error.message || 'An unexpected error occurred.'}`, error: error.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
         }
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -245,7 +261,7 @@ const getOrderStats = async (req, res) => {
         });
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -267,7 +283,7 @@ const getScheduledOrders = async (req, res) => {
         return res.status(200).json(scheduledOrders);
     } catch (e) {
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -355,7 +371,7 @@ export const approveOrder = async (req, res) => {
     } catch (e) {
         console.error('[approveOrder]', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
 
@@ -391,6 +407,6 @@ export const declineOrder = async (req, res) => {
     } catch (e) {
         console.error('[declineOrder]', e);
         console.error('Error in controller:', e);
-        return res.status(500).json({ message: `Server Error: ${e.message || 'An unexpected error occurred.'}`, error: e.name });
+        return res.status(500).json({ message: 'An internal server error occurred.' });
     }
 };
