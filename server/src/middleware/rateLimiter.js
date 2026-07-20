@@ -1,12 +1,12 @@
-import rateLimit from 'express-rate-limit';
+import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 import { normalizeEmail } from '../utils/emailNormalization.js';
 
-const getIp = (req) => {
+const getIp = (req, _res) => {
     const forwarded = req.headers['x-forwarded-for'];
     if (forwarded) {
-        return forwarded.split(',')[0].trim();
+        return ipKeyGenerator(forwarded.split(',')[0].trim());
     }
-    return req.ip || req.socket.remoteAddress || 'unknown';
+    return ipKeyGenerator(req.ip || req.socket.remoteAddress || 'unknown');
 };
 
 export const authLimiter = rateLimit({
@@ -97,7 +97,7 @@ export const normalizedEmailLimiter = rateLimit({
             return 'email:' + normalizeEmail(req.body.email);
         }
         // Fallback to IP address if no email is provided
-        return getIp(req);
+        return getIp(req, res);
     },
     message: {
         message: 'Too many registrations for this email address, please try again later.'
