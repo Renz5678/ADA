@@ -72,6 +72,23 @@ export default function ClientRegisterPage({ onStart, onStop }) {
     };
 
     return (
+        <>
+            {/* PAUSE MODAL */}
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F1D29]/60 backdrop-blur-sm p-4">
+                <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-xl flex flex-col items-center text-center gap-4">
+                    <div className="w-16 h-16 bg-[#FDF0D5] rounded-full flex items-center justify-center text-[#8D4A52] text-3xl mb-2">
+                        <MdLockOutline />
+                    </div>
+                    <h2 className="text-2xl font-headline font-semibold text-[#0F1D29]">Signups Paused</h2>
+                    <p className="text-gray-600 font-body text-sm mb-4">
+                        We are currently experiencing a high volume of new accounts. Signing up is paused for the moment. Please check back later.
+                    </p>
+                    <Link to="/login" className="w-full py-3 bg-[#8D4A52] hover:bg-[#0F1D29] text-white rounded-full font-medium transition duration-200">
+                        Back to Login
+                    </Link>
+                </div>
+            </div>
+
         <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -225,5 +242,6 @@ export default function ClientRegisterPage({ onStart, onStop }) {
 
             </div>
         </motion.div>
+        </>
     );
 }
