@@ -12,6 +12,9 @@ import { isSpammyName, isSpammyEmail } from '../utils/spamHeuristics.js';
 const { Clients, Users } = models;
 
 export const registerClient = async (req, res) => {
+    if (process.env.NODE_ENV !== 'test') {
+        return res.status(403).json({ message: 'Registration is currently paused. Please try again later.' });
+    }
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -224,6 +227,9 @@ export const googleLoginClient = async (req, res) => {
         let clientResult = await Clients.findOne({ where: { email } });
 
         if (!clientResult) {
+            if (process.env.NODE_ENV !== 'test') {
+                return res.status(403).json({ message: 'Registration is currently paused. Please try again later.' });
+            }
             clientResult = await Clients.create({
                 name: name,
                 email: email,

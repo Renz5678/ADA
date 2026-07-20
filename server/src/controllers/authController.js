@@ -15,6 +15,9 @@ import disposableDomains from 'disposable-email-domains' with { type: "json" };
 const { Users } = models;
 
 const register = async (req, res) => {
+    if (process.env.NODE_ENV !== 'test') {
+        return res.status(403).json({ message: 'Registration is currently paused. Please try again later.' });
+    }
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -338,6 +341,9 @@ const googleLogin = async (req, res) => {
         let userResult = await Users.findOne({ where: { email } });
 
         if (!userResult) {
+            if (process.env.NODE_ENV !== 'test') {
+                return res.status(403).json({ message: 'Registration is currently paused. Please try again later.' });
+            }
             userResult = await Users.create({
                 username: name,
                 business_name: 'My Business',
