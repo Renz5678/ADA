@@ -1,5 +1,6 @@
 import { models, sequelize } from "../models/index.js";
 import { validationResult } from "express-validator";
+import { destroyCloudinaryImage } from '../middleware/upload.js';
 
 const { Product, ProductMaterial } = models;
 import { Op } from 'sequelize';
@@ -170,7 +171,11 @@ const updateProduct = async (req, res) => {
             if (price !== undefined) updates.price = price;
             if (description !== undefined) updates.description = description || null;
             if (estimated_days !== undefined) updates.estimated_days = estimated_days ? parseInt(estimated_days, 10) : null;
-            if (req.file && req.file.path) updates.image_url = req.file.path;
+            if (req.file && req.file.path) {
+                // Delete the old image from Cloudinary before replacing it
+                await destroyCloudinaryImage(product.image_url);
+                updates.image_url = req.file.path;
+            }
 
             await product.update(updates, { transaction: t });
 
@@ -210,6 +215,8 @@ const deleteProduct = async (req, res) => {
         });
         if (!product) return res.status(404).json({ message: 'Product not found!' });
 
+        // Delete the associated Cloudinary image before removing the DB record
+        await destroyCloudinaryImage(product.image_url);
         await product.destroy();
 
         return res.status(200).json({ message: 'Product deleted successfully!' });

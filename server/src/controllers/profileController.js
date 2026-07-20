@@ -1,4 +1,5 @@
 import { models } from '../models/index.js';
+import { destroyCloudinaryImage } from '../middleware/upload.js';
 
 const { Users } = models;
 
@@ -51,10 +52,14 @@ export const uploadProfileImages = async (req, res) => {
 
         if (req.files) {
             if (req.files.profile_picture && req.files.profile_picture.length > 0) {
+                // Delete the old image from Cloudinary before replacing it
+                await destroyCloudinaryImage(user.profile_picture);
                 user.profile_picture = req.files.profile_picture[0].path; // Cloudinary secure URL
                 updated = true;
             }
             if (req.files.banner_image && req.files.banner_image.length > 0) {
+                // Delete the old image from Cloudinary before replacing it
+                await destroyCloudinaryImage(user.banner_image);
                 user.banner_image = req.files.banner_image[0].path;
                 updated = true;
             }

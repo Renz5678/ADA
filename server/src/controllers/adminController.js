@@ -1,4 +1,5 @@
 import { models } from '../models/index.js';
+import { destroyCloudinaryImage } from '../middleware/upload.js';
 
 export const getUsers = async (req, res) => {
     try {
@@ -60,6 +61,10 @@ export const deleteUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
+        // Clean up Cloudinary assets before removing the DB record
+        await destroyCloudinaryImage(user.profile_picture);
+        await destroyCloudinaryImage(user.banner_image);
 
         await user.destroy();
         res.status(200).json({ message: 'User hard deleted successfully' });
