@@ -51,8 +51,12 @@ export const sendMessage = async (req, res) => {
             return res.status(403).json({ error: 'Chatbot access is restricted to approved users and admins.' });
         }
 
-        if (!message) {
+        if (!message || typeof message !== 'string' || message.trim().length === 0) {
             return res.status(400).json({ error: 'Message is required' });
+        }
+
+        if (message.length > 1000) {
+            return res.status(400).json({ error: 'Message must be 1000 characters or less' });
         }
 
         if (!process.env.GEMINI_API_KEY) {
@@ -62,30 +66,22 @@ export const sendMessage = async (req, res) => {
         let contextPrompt = '';
 
         if (req.user.role === 'admin') {
-            const allUsers = await models.Users.findAll({
-                attributes: ['username', 'business_name', 'email', 'approval_status']
-            });
+            const allUsersCount = await models.Users.count();
+            const allOrdersCount = await models.Orders.count();
             
-            const allOrders = await models.Orders.findAll({
-                attributes: ['status', 'total_amount']
-            });
-
-            const totalRevenue = allOrders.reduce((sum, order) => {
-                if (order.status === 'Delivered' || order.status === 'Done') {
-                    return sum + parseFloat(order.total_amount);
+            const totalRevenue = await models.Orders.sum('total_amount', {
+                where: {
+                    status: {
+                        [Op.in]: ['Delivered', 'Done']
+                    }
                 }
-                return sum;
-            }, 0);
-
-            const userList = allUsers.map(u => `- <user_data>${u.business_name || u.username} (${u.email})</user_data> [Status: ${u.approval_status}]`).join('\n');
+            }) || 0;
 
             contextPrompt = `You are a helpful AI assistant for the ADA platform Administrator.
 Here is the global platform data as of today:
 - Total Platform Revenue: ${totalRevenue} PHP
-- Total Orders Processed: ${allOrders.length}
-- Total Registered Users: ${allUsers.length}
-- User Directory:
-${userList}
+- Total Orders Processed: ${allOrdersCount}
+- Total Registered Users: ${allUsersCount}
 
 IMPORTANT INSTRUCTIONS:
 1. You are strictly an assistant for the ADA platform admin, helping them monitor platform growth, revenue, and check on users' statuses.
@@ -101,16 +97,20 @@ IMPORTANT INSTRUCTIONS:
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             
-            const orders = await models.Orders.findAll({
-                where: { user_id: userId, order_date: { [Op.gte]: thirtyDaysAgo } }
-            });
-            
-            const totalRevenue = orders.reduce((sum, order) => {
-                if (order.status === 'Delivered' || order.status === 'Done') {
-                    return sum + parseFloat(order.total_amount);
+            const totalRevenue = await models.Orders.sum('total_amount', {
+                where: {
+                    user_id: userId,
+                    order_date: { [Op.gte]: thirtyDaysAgo },
+                    status: {
+                        [Op.in]: ['Delivered', 'Done']
+                    }
                 }
-                return sum;
-            }, 0);
+            }) || 0;
+
+            const orders = await models.Orders.findAll({
+                where: { user_id: userId, order_date: { [Op.gte]: thirtyDaysAgo } },
+                attributes: ['status']
+            });
 
             const orderStatuses = orders.reduce((acc, order) => {
                 acc[order.status] = (acc[order.status] || 0) + 1;
