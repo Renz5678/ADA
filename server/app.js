@@ -32,7 +32,7 @@ import chatRouter from './src/routes/chat.js';
 import { authLimiter, generalLimiter } from './src/middleware/rateLimiter.js'
 
 const app = express();
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 // Initialize SSE client registry
 app.locals.sseClients = new Map();
