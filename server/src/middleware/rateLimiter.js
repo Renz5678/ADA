@@ -11,9 +11,9 @@ export const authLimiter = rateLimit({
 
 const chatLimiterFreelancer = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: 10,
+    max: 25,
     message: {
-        message: 'AI Chat limit reached (10 per hour). Please try again later.'
+        message: 'AI Chat limit reached (25 per hour). Please try again later.'
     }
 });
 
@@ -48,10 +48,10 @@ export const adminLimiter = rateLimit({
     }
 });
 
-// Max 3 registrations per IP per hour
+// Max 15 registrations per IP per hour to allow for shared networks
 export const registerLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: 3,
+    max: 15,
     skip: () => process.env.NODE_ENV === 'test',
     message: {
         message: 'Too many registrations from this IP, please try again later.'

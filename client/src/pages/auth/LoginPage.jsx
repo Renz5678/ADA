@@ -91,9 +91,9 @@ export default function LoginPage({ onStart, onStop }) {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-full min-h-[100dvh] bg-[#FFF7E6] flex justify-center items-center py-10 pb-24 md:pb-10"
+            className="w-full min-h-screen bg-[#FFF7E6] flex flex-col py-8 md:py-12"
         >
-            <div className="w-[80%] lg:w-[35%] flex flex-col gap-4 items-center">
+            <div className="w-full max-w-md px-4 flex flex-col gap-4 items-center m-auto">
 
                 {/* Brand */}
                 <div className="text-center">
@@ -107,11 +107,11 @@ export default function LoginPage({ onStart, onStop }) {
                 </div>
 
                 {/* Card */}
-                <div className="w-full bg-white rounded-3xl flex flex-col items-center py-10 font-body">
+                <div className="w-full bg-white rounded-3xl flex flex-col items-center py-8 px-6 sm:px-10 font-body shadow-sm">
                     <form
                         onSubmit={handleLogin}
                         noValidate
-                        className="flex flex-col w-[80%] gap-6"
+                        className="flex flex-col w-full gap-5"
                     >
                         {/* Email */}
                         <label className="flex flex-col gap-1">
@@ -124,7 +124,7 @@ export default function LoginPage({ onStart, onStop }) {
                                 value={form.email}
                                 onChange={handleChange}
                                 autoComplete="email"
-                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:border-[#CBA0AA]"
+                                className="w-full h-10 px-4 border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                             />
                             {form.email && (
                                 <p className={`text-xs mt-1 ${isValidEmail ? "text-green-500 flex items-center gap-1" : "text-red-500"}`}>
@@ -170,18 +170,20 @@ export default function LoginPage({ onStart, onStop }) {
 
                         {/* Global error */}
                         {error && (
-                            <p className="text-xs text-red-500 -mt-2">{error}</p>
+                            <p className="text-xs text-red-500 -mt-1">{error}</p>
                         )}
 
-                        <Turnstile
-                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
-                            onSuccess={(token) => setTurnstileToken(token)}
-                        />
+                        <div className="flex justify-center mt-1">
+                            <Turnstile
+                                siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                                onSuccess={(token) => setTurnstileToken(token)}
+                            />
+                        </div>
 
                         <button
                             type="submit"
                             disabled={!canSubmit}
-                            className="w-full h-10 bg-[#8D4A52] rounded-full text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full h-10 bg-[#8D4A52] rounded-full text-white font-medium hover:bg-[#0F1D29] transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed mt-1"
                         >
                             {isSubmitting ? "Logging in..." : "Login"}
                         </button>
@@ -193,7 +195,7 @@ export default function LoginPage({ onStart, onStop }) {
                         <button
                             type="button"
                             onClick={() => handleGoogleAuth()}
-                            className="w-[80%] border border-[#c1c1c1] h-10 rounded-lg flex justify-center items-center gap-4 hover:bg-[#0F1D29] hover:text-white transition duration-150"
+                            className="w-full border border-[#c1c1c1] h-10 rounded-lg flex justify-center items-center gap-4 hover:bg-[#0F1D29] hover:text-white transition duration-150"
                         >
                             <FaGoogle /> Google
                         </button>
@@ -201,15 +203,15 @@ export default function LoginPage({ onStart, onStop }) {
                 </div>
 
                 {/* Footer */}
-                <p className="font-label">
+                <p className="font-label text-center mt-2">
                     New to ADA?{" "}
-                    <Link to="/signup" className="font-semibold text-[#8D4A52]">
+                    <Link to="/signup" className="font-semibold text-[#8D4A52] hover:underline">
                         Create an Account
                     </Link>
                 </p>
-                <p className="font-label text-xs text-gray-500 mt-2">
+                <p className="font-label text-xs text-gray-500 text-center">
                     Are you a client?{" "}
-                    <Link to="/login-client" className="font-semibold text-[#8D4A52] underline">
+                    <Link to="/login-client" className="font-semibold text-[#8D4A52] underline hover:text-[#0F1D29]">
                         Login here
                     </Link>
                 </p>

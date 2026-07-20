@@ -95,6 +95,32 @@ describe('Client Authentication Controller', () => {
         expect(res.statusCode).toEqual(409);
     });
 
+    it('should fail registration with disposable email (proton.me)', async () => {
+        const res = await request(app)
+            .post('/client-auth/register')
+            .send({
+                name: 'Test Client',
+                email: 'spammer@proton.me',
+                password: 'clientpassword'
+            });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.errors[0].msg).toBe('Disposable or temporary emails are not allowed');
+    });
+
+    it('should fail registration with spammy name', async () => {
+        const res = await request(app)
+            .post('/client-auth/register')
+            .send({
+                name: 'Buy followers here',
+                email: 'normal@test.com',
+                password: 'clientpassword'
+            });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body.message).toBe('Registration blocked: Your email or name has been flagged as spam.');
+    });
+
     it('should login a registered client successfully', async () => {
         const res = await request(app)
             .post('/client-auth/login')

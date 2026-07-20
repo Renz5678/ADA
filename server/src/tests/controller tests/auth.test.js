@@ -65,6 +65,23 @@ describe('Integration Test: Register', () => {
         const dbUser = await Users.findOne({ where: { email: 'normal@email.com' } });
         expect(dbUser).toBeNull();
     });
+
+    it('should return error and not save user for disposable email registration (proton.me)', async () => {
+        const response = await request(app)
+            .post('/auth/register')
+            .send({
+                username: 'DisposableUser',
+                business_name: 'Test Business',
+                email: 'fuckmedaddy23@proton.me',
+                password: 'TestPass1!'
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body.errors[0].msg).toBe('Disposable or temporary emails are not allowed');
+
+        const dbUser = await Users.findOne({ where: { email: 'fuckmedaddy23@proton.me' } });
+        expect(dbUser).toBeNull();
+    });
 });
 
 describe('Integration Test: Login', () => {

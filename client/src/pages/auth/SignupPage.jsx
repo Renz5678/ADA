@@ -114,9 +114,9 @@ export default function SignupPage({ onStart, onStop }) {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: "easeOut" }}
-            className="w-full min-h-[100dvh] bg-[#FFF7E6] flex justify-center items-center py-10 pb-24 md:pb-10"
+            className="w-full min-h-screen bg-[#FFF7E6] flex flex-col py-8 md:py-12"
         >
-            <div className="w-full max-w-5xl flex gap-2 items-center justify-center px-4">
+            <div className="w-full max-w-5xl flex gap-2 items-center justify-center px-4 m-auto">
 
                 {/* — Left panel — */}
                 <div className="hidden lg:flex h-full w-1/2 p-6 flex-col justify-center gap-4">
