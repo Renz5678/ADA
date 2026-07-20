@@ -17,7 +17,8 @@ const customBlocklist = [
     'yopmail.com',
     'trashmail.com',
     'throwawaymail.com',
-    'maildrop.cc'
+    'maildrop.cc',
+    'proton.me'
 ];
 
 export const isDisposableEmail = (email) => {

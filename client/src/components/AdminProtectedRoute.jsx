@@ -11,7 +11,7 @@ const parseJwt = (token) => {
 export default function AdminProtectedRoute() {
     const token = localStorage.getItem("token");
     if (!token) {
-        return <Navigate to="/login-freelancer" replace />;
+        return <Navigate to="/" replace />;
     }
 
     const decoded = parseJwt(token);

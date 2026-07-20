@@ -75,9 +75,11 @@ export default function SignupPage({ onStart, onStop }) {
     });
 
     const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
+    const isValidUsername = form.username.length > 0 && form.username.length <= 30 && /^[a-zA-Z0-9_.-]+$/.test(form.username);
+    const isValidBusinessName = form.businessName.length > 0 && form.businessName.length <= 50 && /^[^<>{}[\]]+$/.test(form.businessName);
     const allRulesPassed = PASSWORD_RULES.every(({ test }) => test(form.password));
     const passwordsMatch = form.password === form.confirmPassword;
-    const canSubmit = isValidEmail && allRulesPassed && passwordsMatch && agreed && turnstileToken && !loading;
+    const canSubmit = isValidUsername && isValidBusinessName && isValidEmail && allRulesPassed && passwordsMatch && agreed && turnstileToken && !loading;
 
     const handleChange = (e) => {
         setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -136,7 +138,10 @@ export default function SignupPage({ onStart, onStop }) {
                 {/* — Right panel (form) — */}
                 <div className="w-full lg:w-1/2 flex items-center justify-center py-8">
                     <div className="w-full max-w-sm bg-white rounded-2xl p-6 flex flex-col gap-4 shadow-sm">
-                        <h2 className="text-2xl font-headline font-[550]">Create your ADA account</h2>
+                        <div className="flex flex-col gap-1">
+                            <h2 className="text-2xl font-headline font-[550]">Create your ADA Freelancer account</h2>
+                            <p className="text-xs text-gray-500">Looking to hire? <Link to="/register-client" className="text-[#8D4A52] font-semibold hover:underline">Sign up as a Client</Link></p>
+                        </div>
 
                         {error && (
                             <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -159,6 +164,7 @@ export default function SignupPage({ onStart, onStop }) {
                                     autoComplete="username"
                                     className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                                 />
+                                <FieldError message={form.username && !isValidUsername ? "1-30 chars, letters, numbers, _, ., -" : null} />
                             </label>
 
                             <label className="flex flex-col gap-0.5">
@@ -173,6 +179,7 @@ export default function SignupPage({ onStart, onStop }) {
                                     autoComplete="businessName"
                                     className="w-full h-8 px-3 pr-9 text-sm border border-[#c1c1c1] rounded-lg focus:outline-[#CBA0AA]"
                                 />
+                                <FieldError message={form.businessName && !isValidBusinessName ? "1-50 chars, no special script tags" : null} />
                             </label>
 
                             {/* Email */}

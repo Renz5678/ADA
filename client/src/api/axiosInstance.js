@@ -15,8 +15,8 @@ api.interceptors.response.use(
     (error) => {
         if (error.response && (error.response.status === 401 || error.response.status === 403)) {
             localStorage.removeItem('token');
-            if (window.location.pathname !== '/login-freelancer') {
-                window.location.href = '/login-freelancer';
+            if (window.location.pathname !== '/') {
+                window.location.href = '/';
             }
         }
         if (error.response && error.response.status >= 500) {
