@@ -56,6 +56,10 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: true
         },
+        otp_attempts: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0
+        },
         normalized_email: {
             type: DataTypes.STRING,
             allowNull: true

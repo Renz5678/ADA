@@ -45,6 +45,7 @@ const register = async (req, res) => {
             if (!userResult.is_verified) {
                 userResult.verification_token = verification_token;
                 userResult.otp_expires_at = otp_expires_at;
+                userResult.otp_attempts = 0;
                 await userResult.save();
 
                 await transporter.sendMail({
@@ -146,19 +147,31 @@ const verifyOtp = async (req, res) => {
 
         const user = await Users.findOne({
             where: {
-                email: email,
-                verification_token: otp
+                email: email
             }
         });
 
         if (!user) return res.status(404).json({ message: 'Email not found or wrong verification code!' });
         if (user.is_deleted) return res.status(403).json({ message: user.warning_message || 'Account has been deleted.' });
 
+        if (user.verification_token !== otp) {
+            user.otp_attempts = (user.otp_attempts || 0) + 1;
+            if (user.otp_attempts >= 5) {
+                user.verification_token = null;
+                user.otp_expires_at = null;
+                await user.save();
+                return res.status(429).json({ message: 'Too many failed attempts. OTP invalidated, please request a new one.' });
+            }
+            await user.save();
+            return res.status(404).json({ message: 'Email not found or wrong verification code!' });
+        }
+
         if (user.otp_expires_at < new Date()) return res.status(400).json({ message: 'OTP has expired!' });
 
         user.is_verified = true;
         user.verification_token = null;
         user.otp_expires_at = null;
+        user.otp_attempts = 0;
 
         await user.save();
 
@@ -203,6 +216,7 @@ const resendOtp = async (req, res) => {
 
         user.verification_token = verification_token;
         user.otp_expires_at = otp_expires_at;
+        user.otp_attempts = 0;
 
         await user.save();
 
@@ -272,11 +286,23 @@ const confirmResetPassword = async (req, res) => {
         const user = await Users.findOne({
             where: {
                 email: email,
-                verification_token: verification_token,
             }
         });
 
         if (!user) return res.status(404).json({ message: 'Account not existing or invalid OTP!' });
+        
+        if (user.verification_token !== verification_token) {
+            user.otp_attempts = (user.otp_attempts || 0) + 1;
+            if (user.otp_attempts >= 5) {
+                user.verification_token = null;
+                user.otp_expires_at = null;
+                await user.save();
+                return res.status(429).json({ message: 'Too many failed attempts. OTP invalidated, please request a new one.' });
+            }
+            await user.save();
+            return res.status(404).json({ message: 'Account not existing or invalid OTP!' });
+        }
+        
         if (user.otp_expires_at < new Date()) return res.status(400).json({ message: 'OTP Expired!' });
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -284,6 +310,7 @@ const confirmResetPassword = async (req, res) => {
         user.password = hashedPassword;
         user.verification_token = null;
         user.otp_expires_at = null;
+        user.otp_attempts = 0;
         await user.save();
 
         return res.status(200).json({ message: 'Password reset successful!' });
