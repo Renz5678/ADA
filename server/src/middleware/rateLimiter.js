@@ -155,8 +155,28 @@ export const resetPasswordLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
     keyGenerator: getIp,
-    skip: () => process.env.NODE_ENV === 'test',
+    skip: () => process.env.NODE_ENV === 'test' && !process.env.TEST_RATE_LIMIT,
     message: {
         message: 'Too many password reset requests from this IP, please try again later.'
+    }
+});
+
+// Max 3 password reset requests per normalized email per hour
+export const normalizedEmailResetLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    limit: 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: () => process.env.NODE_ENV === 'test' && !process.env.TEST_RATE_LIMIT,
+    validate: { xForwardedForHeader: false, default: true },
+    keyGenerator: (req, res) => {
+        if (req.body && req.body.email) {
+            return 'reset:email:' + normalizeEmail(req.body.email);
+        }
+        // Fallback to IP address if no email is provided
+        return getIp(req, res);
+    },
+    message: {
+        message: 'Too many password reset requests for this email address, please try again later.'
     }
 });

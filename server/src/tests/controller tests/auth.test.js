@@ -237,6 +237,55 @@ describe('Integration Test: Reset Password', () => {
         expect(user.verification_token).toBeDefined();
         expect(user.otp_expires_at).toBeDefined();
     });
+
+    it('should block reset request if Turnstile token is missing (verifying middleware chain)', async () => {
+        process.env.TEST_TURNSTILE = 'true';
+        
+        const response = await request(app)
+            .post('/auth/reset-password')
+            .send({ email: 'test@email.com' });
+
+        expect(response.status).toBe(400);
+        expect(response.body.message).toBe('CAPTCHA token is required.');
+
+        delete process.env.TEST_TURNSTILE;
+    });
+
+    it('should block reset request after 3 attempts for the same email even across different IPs', async () => {
+        process.env.TEST_RATE_LIMIT = 'true';
+        const targetEmail = 'throttle@email.com';
+
+        // Attempt 1: IP 1
+        const res1 = await request(app)
+            .post('/auth/reset-password')
+            .set('x-forwarded-for', '10.0.0.1')
+            .send({ email: targetEmail });
+        expect(res1.status).toBe(200);
+
+        // Attempt 2: IP 2
+        const res2 = await request(app)
+            .post('/auth/reset-password')
+            .set('x-forwarded-for', '10.0.0.2')
+            .send({ email: targetEmail });
+        expect(res2.status).toBe(200);
+
+        // Attempt 3: IP 3
+        const res3 = await request(app)
+            .post('/auth/reset-password')
+            .set('x-forwarded-for', '10.0.0.3')
+            .send({ email: targetEmail });
+        expect(res3.status).toBe(200);
+
+        // Attempt 4: IP 4 (Should be blocked by normalizedEmailResetLimiter)
+        const res4 = await request(app)
+            .post('/auth/reset-password')
+            .set('x-forwarded-for', '10.0.0.4')
+            .send({ email: targetEmail });
+        expect(res4.status).toBe(429);
+        expect(res4.body.message).toBe('Too many password reset requests for this email address, please try again later.');
+
+        delete process.env.TEST_RATE_LIMIT;
+    });
 });
 
 afterAll(async () => {

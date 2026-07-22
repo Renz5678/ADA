@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 export const verifyTurnstile = async (req, res, next) => {
-    // Bypass in test environment
-    if (process.env.NODE_ENV === 'test') {
+    // Bypass in test environment unless explicitly testing turnstile
+    if (process.env.NODE_ENV === 'test' && !process.env.TEST_TURNSTILE) {
         return next();
     }
 
