@@ -126,6 +126,10 @@ const createProduct = async (req, res) => {
         } else if (image_url) {
             // Image moderation for verified users
             const modResult = await moderateImage(image_url);
+            if (modResult.quotaExhausted) {
+                await destroyCloudinaryImage(image_url);
+                return res.status(503).json({ message: 'Image moderation is temporarily unavailable due to high traffic. Please try again in a minute.' });
+            }
             if (modResult.isFlagged) {
                 await destroyCloudinaryImage(image_url);
                 return res.status(403).json({ message: `Image blocked by moderation: ${modResult.reason || 'Inappropriate content detected'}` });
@@ -216,6 +220,10 @@ const updateProduct = async (req, res) => {
                 
                 // Image moderation for verified users
                 const modResult = await moderateImage(req.file.path);
+                if (modResult.quotaExhausted) {
+                    await destroyCloudinaryImage(req.file.path);
+                    return res.status(503).json({ message: 'Image moderation is temporarily unavailable due to high traffic. Please try again in a minute.' });
+                }
                 if (modResult.isFlagged) {
                     await destroyCloudinaryImage(req.file.path);
                     return res.status(403).json({ message: `Image blocked by moderation: ${modResult.reason || 'Inappropriate content detected'}` });

@@ -10,8 +10,7 @@ import { getVerificationEmailHtml } from '../utils/emailTemplates.js';
 import { normalizeEmail } from '../utils/emailNormalization.js';
 import { isSpammyName, isSpammyEmail } from '../utils/spamHeuristics.js';
 import { validationResult } from 'express-validator';
-import disposableDomains from 'disposable-email-domains' with { type: "json" };
-
+import disposableDomains from 'disposable-email-domains';
 const { Users } = models;
 
 const register = async (req, res) => {

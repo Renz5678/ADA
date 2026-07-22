@@ -77,6 +77,10 @@ export const uploadProfileImages = async (req, res) => {
             if (req.files.profile_picture && req.files.profile_picture.length > 0) {
                 const imgPath = req.files.profile_picture[0].path;
                 const modResult = await moderateImage(imgPath);
+                if (modResult.quotaExhausted) {
+                    await destroyCloudinaryImage(imgPath);
+                    return res.status(503).json({ message: 'Image moderation is temporarily unavailable due to high traffic. Please try again in a minute.' });
+                }
                 if (modResult.isFlagged) {
                     await destroyCloudinaryImage(imgPath);
                     return res.status(403).json({ message: `Profile picture blocked: ${modResult.reason || 'Inappropriate content detected'}` });
@@ -90,6 +94,10 @@ export const uploadProfileImages = async (req, res) => {
             if (req.files.banner_image && req.files.banner_image.length > 0) {
                 const imgPath = req.files.banner_image[0].path;
                 const modResult = await moderateImage(imgPath);
+                if (modResult.quotaExhausted) {
+                    await destroyCloudinaryImage(imgPath);
+                    return res.status(503).json({ message: 'Image moderation is temporarily unavailable due to high traffic. Please try again in a minute.' });
+                }
                 if (modResult.isFlagged) {
                     await destroyCloudinaryImage(imgPath);
                     return res.status(403).json({ message: `Banner image blocked: ${modResult.reason || 'Inappropriate content detected'}` });

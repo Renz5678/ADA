@@ -1,76 +1,130 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { Redis } from '@upstash/redis';
+import { checkRateLimit } from './lib/rateLimiter';
 
-// A simple in-memory store for rate limiting (per Vercel Edge isolate)
-// Note: This won't share state globally across all Vercel servers, 
-// but it is highly effective at stopping bot floods hitting a single server.
-const rateLimit = new Map<string, { count: number; lastReset: number }>();
+// ---------------------------------------------------------------------------
+// Configuration — read at invocation time so env vars are always current.
+// (Also avoids stale values in test environments that set env vars after
+// module load.)
+// ---------------------------------------------------------------------------
+function getConfig() {
+  return {
+    limit: parseInt(process.env.RATE_LIMIT_REQUESTS ?? '30', 10),
+    windowSeconds: parseInt(process.env.RATE_LIMIT_WINDOW_SECONDS ?? '60', 10),
+  };
+}
 
-// Configuration
-const LIMIT = 30; // Max requests per window
-const WINDOW_MS = 60 * 1000; // 1 minute window
+// ---------------------------------------------------------------------------
+// Upstash Redis client factory — resolved at invocation time.
+//
+// Required env vars (set in Vercel project settings):
+//   UPSTASH_REDIS_REST_URL   — from Upstash console
+//   UPSTASH_REDIS_REST_TOKEN — from Upstash console
+//
+// When either var is absent (local dev, CI without Redis) the function
+// returns null and the rate limiter is skipped.  Bot-UA detection still runs.
+//
+// Exported as getRedis() so tests can verify the guard without side-effects.
+// ---------------------------------------------------------------------------
+export function getRedis(): Redis | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  return new Redis({ url, token });
+}
 
-export function middleware(request: NextRequest) {
-  // 1. Heuristic Bot Detection
-  const userAgent = request.headers.get('user-agent') || '';
-  const isSuspectedBot = /curl|wget|python|go-http|java|postman|insomnia|scraper|spider|bot|crawl/i.test(userAgent);
-  const isGoodBot = /googlebot|bingbot|yandexbot|duckduckbot/i.test(userAgent);
+// ---------------------------------------------------------------------------
+// Bot UA detection helpers
+// ---------------------------------------------------------------------------
+const SUSPECTED_BOT_RE = /curl|wget|python|go-http|java|postman|insomnia|scraper|spider|bot|crawl/i;
+const GOOD_BOT_RE = /googlebot|bingbot|yandexbot|duckduckbot/i;
 
-  // Block requests with no User-Agent or known malicious/generic bot signatures
-  if (!userAgent || (isSuspectedBot && !isGoodBot)) {
+export function isMaliciousBot(userAgent: string): boolean {
+  if (!userAgent) return true;
+  if (SUSPECTED_BOT_RE.test(userAgent) && !GOOD_BOT_RE.test(userAgent)) return true;
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// Middleware
+// ---------------------------------------------------------------------------
+export async function middleware(request: NextRequest) {
+  const userAgent = request.headers.get('user-agent') ?? '';
+
+  // 1. Bot UA check — runs on every request, no Redis required.
+  if (isMaliciousBot(userAgent)) {
     return new NextResponse(
-      JSON.stringify({ error: "Access denied by security policies." }),
+      JSON.stringify({ error: 'Access denied by security policies.' }),
       { status: 403, headers: { 'Content-Type': 'application/json' } }
     );
   }
 
-  // 2. IP Rate Limiting
-  // Get the IP address from Vercel headers
-  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
-  
-  const now = Date.now();
-  const windowData = rateLimit.get(ip);
+  // 2. Redis-backed IP rate limiting.
+  //    Skip gracefully when Redis is not configured (local dev / CI).
+  const redis = getRedis();
+  if (redis) {
+    const { limit, windowSeconds } = getConfig();
 
-  if (windowData) {
-    if (now - windowData.lastReset > WINDOW_MS) {
-      // Window expired, reset counter
-      rateLimit.set(ip, { count: 1, lastReset: now });
-    } else if (windowData.count >= LIMIT) {
-      // Limit exceeded, block request
-      return new NextResponse(
-        JSON.stringify({ error: "Too many requests. Please try again later." }),
-        { 
-          status: 429, 
-          headers: { 'Content-Type': 'application/json' } 
-        }
-      );
-    } else {
-      // Increment counter
-      windowData.count++;
-      rateLimit.set(ip, windowData);
+    // x-forwarded-for may contain a comma-separated list; take the first entry.
+    const rawIp =
+      request.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+      request.headers.get('x-real-ip') ??
+      '127.0.0.1';
+
+    // Sanitise the IP so it's safe to use as a Redis key.
+    const ip = rawIp.replace(/[^a-fA-F0-9.:]/g, '_');
+    const key = `rl:${ip}`;
+
+    try {
+      const result = await checkRateLimit(redis, key, limit, windowSeconds);
+
+      if (!result.allowed) {
+        return new NextResponse(
+          JSON.stringify({ error: 'Too many requests. Please try again later.' }),
+          {
+            status: 429,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-RateLimit-Limit': String(result.limit),
+              'X-RateLimit-Remaining': '0',
+              'Retry-After': String(windowSeconds),
+            },
+          }
+        );
+      }
+
+      const response = NextResponse.next();
+      response.headers.set('X-RateLimit-Limit', String(result.limit));
+      response.headers.set('X-RateLimit-Remaining', String(Math.max(0, result.limit - result.current)));
+      return response;
+    } catch (err) {
+      // If Redis is unreachable, fail open so the site stays up.
+      // Tagged [RATE_LIMIT_STORE_UNAVAILABLE] so it's greppable / alertable
+      // separately from routine application errors in Vercel function logs.
+      console.error('[RATE_LIMIT_STORE_UNAVAILABLE] Redis unreachable — rate limiting skipped, failing open:', err);
     }
-  } else {
-    // First request from this IP
-    rateLimit.set(ip, { count: 1, lastReset: now });
   }
 
-  // Optional: Add a security header to the response to indicate it passed the middleware
-  const response = NextResponse.next();
-  response.headers.set('x-rate-limit-limit', LIMIT.toString());
-  
-  return response;
+  return NextResponse.next();
 }
 
-// Only run the middleware on actual pages and API routes, not static files (images, css, etc.)
+// ---------------------------------------------------------------------------
+// Matcher — only run on page routes.
+//
+// Excluded:
+//   _next/static   Static assets (JS, CSS chunks) — never need rate-limiting.
+//   _next/image    Next.js image optimisation service.
+//   favicon.ico    Browser auto-requests; not a page hit.
+//   sitemap.xml    Crawlers must be able to fetch this (SEO).
+//   robots.txt     Same.
+//   *.{ext}        Common public asset extensions (png, jpg, svg, …).
+//
+// The `api` exclusion is kept for forward-compatibility even though the
+// landing has no API routes today.
+// ---------------------------------------------------------------------------
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|favicon\\.ico|sitemap\\.xml|robots\\.txt|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|otf|eot|css|js|map)).*)',
   ],
 };
