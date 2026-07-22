@@ -7,7 +7,7 @@ const { Digest } = models;
 
 router.get('/', verifyToken, async (req, res, next) => {
     try {
-        const userId = req.user.user_id;
+        const userId = req.user.id;
 
         const digest = await Digest.findOne({
             where: { user_id: userId },
