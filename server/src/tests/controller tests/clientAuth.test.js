@@ -5,6 +5,7 @@ import { models, sequelize } from '../../../src/models/index.js';
 const { Users, Clients } = models;
 
 beforeAll(async () => {
+    process.env.ENABLE_REGISTRATION = 'true';
     await sequelize.sync({ force: true });
 });
 
@@ -22,6 +23,25 @@ describe('Client Authentication Controller', () => {
             is_verified: true
         });
         freelancerId = freelancer.user_id;
+    });
+
+    it('should block client registration with 403 when ENABLE_REGISTRATION is not true', async () => {
+        const originalFlag = process.env.ENABLE_REGISTRATION;
+        process.env.ENABLE_REGISTRATION = 'false';
+
+        const res = await request(app)
+            .post('/client-auth/register')
+            .send({
+                name: 'Blocked Client',
+                email: 'blockedclient@test.com',
+                password: 'clientpassword',
+                freelancer_id: freelancerId
+            });
+
+        expect(res.status).toBe(403);
+        expect(res.body.message).toBe('Registration is currently paused. Please try again later.');
+
+        process.env.ENABLE_REGISTRATION = originalFlag;
     });
 
     it('should register a new client successfully (unverified)', async () => {

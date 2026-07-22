@@ -18,6 +18,26 @@ beforeAll(async () => {
 });
 
 describe('Integration Test: Register', () => {
+    it('should block registration with 403 when ENABLE_REGISTRATION is not true', async () => {
+        const originalFlag = process.env.ENABLE_REGISTRATION;
+        process.env.ENABLE_REGISTRATION = 'false';
+
+        const response = await request(app)
+            .post('/auth/register')
+            .send({
+                username: 'BlockedUser',
+                business_name: 'Blocked Business',
+                email: 'blocked@email.com',
+                password: 'TestPass1!'
+            });
+
+        expect(response.status).toBe(403);
+        expect(response.body.message).toBe('Registration is currently paused. Please try again later.');
+
+        // Restore flag for subsequent tests
+        process.env.ENABLE_REGISTRATION = originalFlag;
+    });
+
     it('should create a new user with hashed password', async () => {
         const response = await request(app)
             .post('/auth/register')

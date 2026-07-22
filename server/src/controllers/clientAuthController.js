@@ -12,7 +12,7 @@ import { isSpammyName, isSpammyEmail } from '../utils/spamHeuristics.js';
 const { Clients, Users } = models;
 
 export const registerClient = async (req, res) => {
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.ENABLE_REGISTRATION !== 'true') {
         return res.status(403).json({ message: 'Registration is currently paused. Please try again later.' });
     }
     try {
