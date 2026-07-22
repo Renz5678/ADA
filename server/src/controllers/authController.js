@@ -10,7 +10,15 @@ import { getVerificationEmailHtml } from '../utils/emailTemplates.js';
 import { normalizeEmail } from '../utils/emailNormalization.js';
 import { isSpammyName, isSpammyEmail } from '../utils/spamHeuristics.js';
 import { validationResult } from 'express-validator';
-import disposableDomains from 'disposable-email-domains' with { type: 'json' };
+import fs from 'fs';
+import path from 'path';
+
+let disposableDomains = [];
+try {
+    disposableDomains = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'node_modules/disposable-email-domains/index.json'), 'utf8'));
+} catch (e) {
+    console.error('Failed to load disposable domains:', e);
+}
 const { Users } = models;
 
 const register = async (req, res) => {
