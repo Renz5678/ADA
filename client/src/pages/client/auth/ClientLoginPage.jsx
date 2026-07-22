@@ -8,11 +8,13 @@ import { useGoogleLogin } from '@react-oauth/google';
 import Icon from "#components/ui/Icon.jsx";
 import { loginClient, googleLoginClient } from "#api/clientEndpoints.js";
 import { Turnstile } from '@marsidev/react-turnstile';
+import { useAuth } from "#contexts/AuthContext.jsx";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ClientLoginPage({ onStart, onStop }) {
     const navigate = useNavigate();
+    const { refreshAuth } = useAuth();
 
     const [form, setForm] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
@@ -25,8 +27,8 @@ export default function ClientLoginPage({ onStart, onStop }) {
             if (onStart) onStart("Logging in with Google...");
             setIsSubmitting(true);
             try {
-                const res = await googleLoginClient({ token: tokenResponse.access_token });
-                localStorage.setItem("client_token", res.token);
+                await googleLoginClient({ token: tokenResponse.access_token });
+                await refreshAuth();
                 navigate("/client/dashboard");
             } catch (err) {
                 setError(err.response?.data?.message || "Google Login failed.");
@@ -54,8 +56,8 @@ export default function ClientLoginPage({ onStart, onStop }) {
         setIsSubmitting(true);
 
         try {
-            const res = await loginClient({ email: form.email, password: form.password, turnstileToken });
-            localStorage.setItem("client_token", res.token);
+            await loginClient({ email: form.email, password: form.password, turnstileToken });
+            await refreshAuth();
             navigate("/client/dashboard");
         } catch (err) {
             setError(err.response?.data?.message || "Login failed. Please try again.");

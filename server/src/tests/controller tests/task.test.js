@@ -1,9 +1,21 @@
 import request from 'supertest';
 import app from '../../../app.js';
 import { sequelize, models } from '../../models/index.js';
-import jwt from 'jsonwebtoken';
 
 const { Users, Tasks } = models;
+
+
+// --- Auto-injected Agent Wrapper ---
+const _testAgent = request.agent(app);
+const agent = {
+    get: (url) => _testAgent.get(url).set('X-Requested-With', 'XMLHttpRequest'),
+    post: (url) => _testAgent.post(url).set('X-Requested-With', 'XMLHttpRequest'),
+    put: (url) => _testAgent.put(url).set('X-Requested-With', 'XMLHttpRequest'),
+    delete: (url) => _testAgent.delete(url).set('X-Requested-With', 'XMLHttpRequest'),
+    patch: (url) => _testAgent.patch(url).set('X-Requested-With', 'XMLHttpRequest'),
+};
+// -----------------------------------
+
 
 let token;
 let userId;
@@ -20,16 +32,19 @@ beforeAll(async () => {
     });
     userId = user.user_id;
 
-    token = jwt.sign({ id: user.user_id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    await agent.post('/auth/login').send({
+        email: 'tasktest@email.com',
+        password: 'TestPass1!'
+    });
 });
 
 describe('Integration Test: Tasks', () => {
     let taskId;
 
     it('should create a new task', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/tasks')
-            .set('Authorization', `Bearer ${token}`)
+            
             .send({
                 title: 'Test Generic Task',
                 deadline: new Date().toISOString()
@@ -43,9 +58,9 @@ describe('Integration Test: Tasks', () => {
     });
 
     it('should get tasks for user', async () => {
-        const response = await request(app)
+        const response = await agent
             .get('/tasks')
-            .set('Authorization', `Bearer ${token}`);
+            ;
 
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
@@ -54,9 +69,9 @@ describe('Integration Test: Tasks', () => {
     });
 
     it('should update a task', async () => {
-        const response = await request(app)
+        const response = await agent
             .put(`/tasks/${taskId}`)
-            .set('Authorization', `Bearer ${token}`)
+            
             .send({
                 status: 'Done'
             });
@@ -67,9 +82,9 @@ describe('Integration Test: Tasks', () => {
     });
 
     it('should delete a task', async () => {
-        const response = await request(app)
+        const response = await agent
             .delete(`/tasks/${taskId}`)
-            .set('Authorization', `Bearer ${token}`);
+            ;
 
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('Task deleted');

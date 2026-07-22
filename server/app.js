@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 
 import authRouter from './src/routes/auth.js';
 import clientAuthRouter from './src/routes/clientAuth.js';
@@ -51,10 +52,23 @@ if (process.env.CLIENT_URL) {
 app.use(cors({
     origin: allowedOrigins,
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true
 }));
 
 app.use(express.json());
+app.use(cookieParser());
+
+// CSRF Defense Middleware
+app.use((req, res, next) => {
+    // Only apply to state-changing methods
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        if (req.headers['x-requested-with'] !== 'XMLHttpRequest') {
+            return res.status(403).json({ message: 'CSRF validation failed: Missing X-Requested-With header.' });
+        }
+    }
+    next();
+});
 
 app.use(generalLimiter);
 app.use(mutationLimiter);

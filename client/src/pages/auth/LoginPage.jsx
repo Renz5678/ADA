@@ -8,11 +8,13 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { Turnstile } from '@marsidev/react-turnstile';
 import Icon from "#components/ui/Icon.jsx";
 import { login, forgotPassword, googleLogin } from "#api/auth.js";
+import { useAuth } from "#contexts/AuthContext.jsx";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginPage({ onStart, onStop }) {
     const navigate = useNavigate();
+    const { refreshAuth } = useAuth();
 
     const [form, setForm] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
@@ -25,8 +27,8 @@ export default function LoginPage({ onStart, onStop }) {
             onStart("Logging in with Google...");
             setIsSubmitting(true);
             try {
-                const res = await googleLogin({ token: tokenResponse.access_token });
-                localStorage.setItem("token", res.data.token);
+                await googleLogin({ token: tokenResponse.access_token });
+                await refreshAuth();
                 navigate("/dashboard");
             } catch (err) {
                 setError(err.response?.data?.message || "Google Login failed.");
@@ -54,8 +56,8 @@ export default function LoginPage({ onStart, onStop }) {
         setIsSubmitting(true);
 
         try {
-            const res = await login({ email: form.email, password: form.password, turnstileToken });
-            localStorage.setItem("token", res.data.token);
+            await login({ email: form.email, password: form.password, turnstileToken });
+            await refreshAuth();
             navigate("/dashboard");
         } catch (err) {
             setError(err.response?.data?.message || "Login failed. Please try again.");

@@ -1,21 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
-
-const parseJwt = (token) => {
-    try {
-        return JSON.parse(atob(token.split('.')[1]));
-    } catch {
-        return null;
-    }
-};
+import { useAuth } from "#contexts/AuthContext.jsx";
 
 export default function AdminProtectedRoute() {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    const { user } = useAuth();
+    
+    if (!user) {
         return <Navigate to="/" replace />;
     }
 
-    const decoded = parseJwt(token);
-    if (decoded?.role === 'admin') {
+    if (user.role === 'admin') {
         return <Outlet />;
     }
 

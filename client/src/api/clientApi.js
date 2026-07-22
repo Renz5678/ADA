@@ -1,15 +1,16 @@
 import axios from "axios";
 
 const clientApi = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'https://ada-mumf.onrender.com/',
+    baseURL: '/api',
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }
 });
 
+clientApi.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
 clientApi.interceptors.request.use((config) => {
-    const token = localStorage.getItem('client_token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
 });
 
@@ -17,7 +18,6 @@ clientApi.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('client_token');
             if (window.location.pathname !== '/') {
                 window.location.href = '/';
             }

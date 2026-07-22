@@ -1,18 +1,16 @@
 import { useEffect, useRef } from 'react';
+import { useAuth } from "#contexts/AuthContext.jsx";
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://ada-mumf.onrender.com/';
 const MAX_RETRY_DELAY = 30_000; // 30 seconds
 
 /**
- * useSse — opens a persistent Server-Sent Events connection to /sse.
- *
- * Because EventSource cannot send Authorization headers, the JWT is passed
- * as a query parameter (?token=...).
+ * useSse — opens a persistent Server-Sent Events connection to /api/sse.
  *
  * @param {Function} onEvent - callback(eventName: string, data: object)
  *   Called every time a named SSE event is received (excluding heartbeat/connected).
  */
 export default function useSse(onEvent) {
+    const { user } = useAuth();
     const esRef = useRef(null);
     const retryDelayRef = useRef(1_000);
     const onEventRef = useRef(onEvent);
@@ -27,12 +25,10 @@ export default function useSse(onEvent) {
 
         const connect = () => {
             if (destroyed) return;
+            if (!user) return; // Not logged in — skip
 
-            const token = localStorage.getItem('token');
-            if (!token) return; // Not logged in — skip
-
-            const url = `${BASE_URL.replace(/\/$/, '')}/sse?token=${encodeURIComponent(token)}`;
-            const es = new EventSource(url);
+            const url = '/api/sse';
+            const es = new EventSource(url, { withCredentials: true });
             esRef.current = es;
 
             // Generic message (un-named events — rarely used)
@@ -77,5 +73,5 @@ export default function useSse(onEvent) {
             destroyed = true;
             esRef.current?.close();
         };
-    }, []); // mount once
+    }, [user]); // re-run if user changes
 }

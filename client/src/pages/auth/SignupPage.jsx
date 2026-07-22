@@ -8,6 +8,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { signup, googleLogin } from "#api/auth.js";
 import Icon from "#components/ui/Icon.jsx";
 import { Turnstile } from '@marsidev/react-turnstile';
+import { useAuth } from "#contexts/AuthContext.jsx";
 
 const PASSWORD_RULES = [
     { label: "Uppercase letter", test: (p) => /[A-Z]/.test(p) },
@@ -46,6 +47,7 @@ function FieldSuccess({ message, visible }) {
 
 export default function SignupPage({ onStart, onStop }) {
     const navigate = useNavigate();
+    const { refreshAuth } = useAuth();
 
     const [form, setForm] = useState(INITIAL_FORM);
     const [showPassword, setShowPassword] = useState(false);
@@ -61,8 +63,8 @@ export default function SignupPage({ onStart, onStop }) {
             onStart("Creating account with Google...");
             setLoading(true);
             try {
-                const res = await googleLogin({ token: tokenResponse.access_token });
-                localStorage.setItem("token", res.data.token);
+                await googleLogin({ token: tokenResponse.access_token });
+                await refreshAuth();
                 navigate("/dashboard");
             } catch (err) {
                 setError(err.response?.data?.message || "Google Signup failed.");

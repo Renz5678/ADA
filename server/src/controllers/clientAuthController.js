@@ -117,7 +117,14 @@ export const loginClient = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );
 
-        return res.status(200).json({ message: 'Login valid!', token });
+        res.cookie('client_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({ message: 'Login valid!' });
     } catch (e) {
         console.error('Error in controller:', e);
         return res.status(500).json({ message: 'An internal server error occurred.' });
@@ -163,7 +170,14 @@ export const verifyOtp = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );
 
-        return res.status(200).json({ message: 'Account verified!', token: token });
+        res.cookie('client_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({ message: 'Account verified!' });
     } catch (error) {
         console.error('Error in controller:', error);
         return res.status(500).json({ message: 'An internal server error occurred.' });
@@ -250,10 +264,34 @@ export const googleLoginClient = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );
 
-        return res.status(200).json({ message: 'Login valid!', token: jwtToken });
+        res.cookie('client_token', jwtToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({ message: 'Login valid!' });
     } catch (e) {
         console.error(e);
         console.error('Error in controller:', e);
         return res.status(500).json({ message: 'An internal server error occurred.' });
     }
+};
+
+export const me = async (req, res) => {
+    // Relies on clientAuthMiddleware to verify token and populate req.client
+    if (!req.client) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    return res.status(200).json({ client: req.client });
+};
+
+export const logout = async (req, res) => {
+    res.clearCookie('client_token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict'
+    });
+    return res.status(200).json({ message: 'Logged out successfully' });
 };

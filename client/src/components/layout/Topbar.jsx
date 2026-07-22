@@ -5,16 +5,24 @@ import { useState, useRef, useEffect } from "react";
 import { MdOutlinePersonOutline, MdOutlineCalendarToday, MdLogout, MdFeedback } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import FeedbackModal from "../FeedbackModal.jsx";
+import { useAuth } from "#contexts/AuthContext.jsx";
+import api from "#api/axiosInstance.js";
 
 export default function Topbar({ pendingQueue = [], onDismiss }) {
     const { data: user, isLoading } = useCurrentUser();
+    const { setUser } = useAuth();
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
+    const handleLogout = async () => {
+        try {
+            await api.post('/auth/logout');
+        } catch (e) {
+            console.error('Logout error', e);
+        }
+        setUser(null);
         navigate("/");
     };
 

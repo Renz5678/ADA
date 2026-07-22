@@ -8,22 +8,18 @@ import IncomingOrderModal from "#components/orders/IncomingOrderModal.jsx";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getPendingOrders } from "#api/pendingOrders.js";
 import FloatingChatbot from "#components/chat/FloatingChatbot.jsx";
+import { useAuth } from "#contexts/AuthContext.jsx";
 
 export default function AppLayout() {
     const location = useLocation();
     const queryClient = useQueryClient();
     const [pendingQueue, setPendingQueue] = useState([]);
+    const { user } = useAuth();
 
     // Check if user is allowed to use chatbot
     let isChatAllowed = false;
-    try {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            isChatAllowed = payload.role === 'admin' || payload.approval_status === 'approved';
-        }
-    } catch (e) {
-        console.error('Failed to parse token for chat permissions', e);
+    if (user) {
+        isChatAllowed = user.role === 'admin' || user.approval_status === 'approved';
     }
 
     // Load any pending orders that arrived while the freelancer was offline

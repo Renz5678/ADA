@@ -2,10 +2,23 @@ const request = require('supertest');
 const app = require('../../../app.js').default;
 const { sequelize, models } = require('../../../src/models/index.js');
 const { Users, Product, Material, ProductMaterial, MaterialTransaction, Orders, OrderItem } = models;
+
+
+// --- Auto-injected Agent Wrapper ---
+const _testAgent = request.agent(app);
+const agent = {
+    get: (url) => _testAgent.get(url).set('X-Requested-With', 'XMLHttpRequest'),
+    post: (url) => _testAgent.post(url).set('X-Requested-With', 'XMLHttpRequest'),
+    put: (url) => _testAgent.put(url).set('X-Requested-With', 'XMLHttpRequest'),
+    delete: (url) => _testAgent.delete(url).set('X-Requested-With', 'XMLHttpRequest'),
+    patch: (url) => _testAgent.patch(url).set('X-Requested-With', 'XMLHttpRequest'),
+};
+// -----------------------------------
+
 const jwt = require('jsonwebtoken');
 
 describe('BOM & Auto-Deduction Logic', () => {
-    let authToken;
+    
     let userId;
     let productId;
     let materialId;
@@ -25,19 +38,19 @@ describe('BOM & Auto-Deduction Logic', () => {
         userId = user.user_id;
 
         // 2. Login
-        const loginRes = await request(app)
+        const loginRes = await agent
             .post('/auth/login')
             .send({
                 email: 'bomtest2@example.com',
                 password: 'password123'
             });
 
-        authToken = loginRes.body.token;
+        
 
         // 3. Create Product
-        const productRes = await request(app)
+        const productRes = await agent
             .post('/products')
-            .set('Authorization', `Bearer ${authToken}`)
+            
             .send({
                 product_code: 'BOM-002',
                 product_name: 'Test BOM Product',
@@ -46,9 +59,9 @@ describe('BOM & Auto-Deduction Logic', () => {
         productId = productRes.body.data.product_id;
 
         // 4. Create Material (Starting Quantity: 100)
-        const materialRes = await request(app)
+        const materialRes = await agent
             .post('/materials')
-            .set('Authorization', `Bearer ${authToken}`)
+            
             .send({
                 material_code: 'MAT-002',
                 material_name: 'Test BOM Material',
@@ -58,9 +71,9 @@ describe('BOM & Auto-Deduction Logic', () => {
         materialId = materialRes.body.data.material_id;
 
         // 5. Create Order
-        const orderRes = await request(app)
+        const orderRes = await agent
             .post('/orders')
-            .set('Authorization', `Bearer ${authToken}`)
+            
             .send({
                 order_date: '2026-07-07',
                 status: 'Pending'
@@ -80,9 +93,9 @@ describe('BOM & Auto-Deduction Logic', () => {
     });
 
     it('should link material to product', async () => {
-        const res = await request(app)
+        const res = await agent
             .post(`/products/${productId}/materials`)
-            .set('Authorization', `Bearer ${authToken}`)
+            
             .send({
                 material_id: materialId,
                 quantity_required: 5 // requires 5 material per 1 product
@@ -92,9 +105,9 @@ describe('BOM & Auto-Deduction Logic', () => {
     });
 
     it('should fail to create order item if material stock is insufficient', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/order-item')
-            .set('Authorization', `Bearer ${authToken}`)
+            
             .send({
                 order_id: orderId,
                 product_id: productId,
@@ -106,9 +119,9 @@ describe('BOM & Auto-Deduction Logic', () => {
     });
 
     it('should auto-deduct material when order item is created successfully', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/order-item')
-            .set('Authorization', `Bearer ${authToken}`)
+            
             .send({
                 order_id: orderId,
                 product_id: productId,

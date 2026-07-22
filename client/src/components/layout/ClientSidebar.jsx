@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { MdOutlineDashboard, MdOutlineReceiptLong, MdMenu, MdClose, MdLogout, MdChevronLeft, MdChevronRight } from "react-icons/md";
 import Icon from "#components/ui/Icon.jsx";
+import { useAuth } from "#contexts/AuthContext.jsx";
+import clientApi from "#api/clientApi.js";
 
 const navItems = {
     "Dashboard": { name: "Dashboard", icon: MdOutlineDashboard, path: "/client/dashboard" },
@@ -13,6 +15,7 @@ export default function ClientSidebar() {
     const navigate = useNavigate();
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
+    const { setClient } = useAuth();
 
     const [isCollapsed, setIsCollapsed] = useState(() => {
         const saved = localStorage.getItem("sidebarCollapsed");
@@ -25,8 +28,13 @@ export default function ClientSidebar() {
 
     const toggleCollapse = () => setIsCollapsed(!isCollapsed);
 
-    const handleLogout = () => {
-        localStorage.removeItem("client_token");
+    const handleLogout = async () => {
+        try {
+            await clientApi.post('/client-auth/logout');
+        } catch (e) {
+            console.error('Logout error', e);
+        }
+        setClient(null);
         navigate("/");
     };
 

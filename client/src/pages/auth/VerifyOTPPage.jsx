@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Icon from "#components/ui/Icon.jsx";
 import ErrorModal from "#components/ui/ErrorModal.jsx";
 import { verifyOtp, resendOtp } from "#api/auth.js";
+import { useAuth } from "#contexts/AuthContext.jsx";
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 30;
@@ -13,6 +14,7 @@ export default function VerifyOTPPage({ onStart, onStop }) {
     const { state } = useLocation();
     const email = state?.email;
     const navigate = useNavigate();
+    const { refreshAuth } = useAuth();
 
     const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(""));
     const [errorModal, setErrorModal] = useState(null);
@@ -100,13 +102,9 @@ export default function VerifyOTPPage({ onStart, onStop }) {
         setIsVerifying(true);
         onStart("Verifying your code...");
         try {
-            const res = await verifyOtp({ email, verification_token: code });
-            if (res.data?.token) {
-                localStorage.setItem("token", res.data.token);
-                navigate("/dashboard");
-            } else {
-                navigate("/login-freelancer");
-            }
+            await verifyOtp({ email, verification_token: code });
+            await refreshAuth();
+            navigate("/dashboard");
         } catch (err) {
             const status = err.response?.status;
             const retryAfter = err.response?.headers?.["retry-after"];

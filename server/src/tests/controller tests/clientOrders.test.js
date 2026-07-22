@@ -1,9 +1,21 @@
 import request from 'supertest';
 import app from '../../../app.js';
 import { models, sequelize } from '../../../src/models/index.js';
-import jwt from 'jsonwebtoken';
 
 const { Users, Clients, Orders, PendingOrders } = models;
+
+
+// --- Auto-injected Agent Wrapper ---
+const _testAgent = request.agent(app);
+const agent = {
+    get: (url) => _testAgent.get(url).set('X-Requested-With', 'XMLHttpRequest'),
+    post: (url) => _testAgent.post(url).set('X-Requested-With', 'XMLHttpRequest'),
+    put: (url) => _testAgent.put(url).set('X-Requested-With', 'XMLHttpRequest'),
+    delete: (url) => _testAgent.delete(url).set('X-Requested-With', 'XMLHttpRequest'),
+    patch: (url) => _testAgent.patch(url).set('X-Requested-With', 'XMLHttpRequest'),
+};
+// -----------------------------------
+
 
 beforeAll(async () => {
     await sequelize.sync({ force: true });
@@ -11,9 +23,9 @@ beforeAll(async () => {
 
 describe('Client Orders Controller', () => {
     let freelancerId;
-    let clientToken;
+    
     let clientId;
-    let freelancerToken;
+    
 
     beforeAll(async () => {
         const freelancer = await Users.create({
@@ -25,11 +37,10 @@ describe('Client Orders Controller', () => {
         });
         freelancerId = freelancer.user_id;
 
-        freelancerToken = jwt.sign(
-            { id: freelancerId, email: freelancer.email, role: 'freelancer' },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+        await agent.post('/auth/login').send({
+            email: freelancer.email,
+            password: 'testpassword'
+        });
 
         const client = await Clients.create({
             name: 'Order Client',
@@ -40,17 +51,16 @@ describe('Client Orders Controller', () => {
         });
         clientId = client.client_id;
 
-        clientToken = jwt.sign(
-            { id: clientId, email: client.email, role: 'client' },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+        await agent.post('/client-auth/login').send({
+            email: client.email,
+            password: 'clientpassword'
+        });
     });
 
     it('should submit an order request to PendingOrders (not Orders) successfully', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-orders')
-            .set('Authorization', `Bearer ${clientToken}`)
+            
             .send({
                 freelancer_id: freelancerId,
                 total_amount: 150.00,
@@ -72,9 +82,9 @@ describe('Client Orders Controller', () => {
     });
 
     it('should forbid creating an order for an unassigned freelancer', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-orders')
-            .set('Authorization', `Bearer ${clientToken}`)
+            
             .send({
                 freelancer_id: 9999, // Unknown
                 total_amount: 150.00
@@ -84,9 +94,9 @@ describe('Client Orders Controller', () => {
     });
 
     it('should get client orders (empty until approved)', async () => {
-        const res = await request(app)
+        const res = await agent
             .get('/client-orders')
-            .set('Authorization', `Bearer ${clientToken}`);
+            ;
 
         expect(res.statusCode).toEqual(200);
         // No orders have been approved yet, so should be empty
@@ -105,9 +115,9 @@ describe('Client Orders Controller', () => {
             expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000)
         });
 
-        const res = await request(app)
+        const res = await agent
             .post(`/orders/approve/${pending.pending_id}`)
-            .set('Authorization', `Bearer ${freelancerToken}`);
+            ;
 
         expect(res.statusCode).toEqual(201);
         expect(res.body.message).toBe('Order approved and created successfully.');
@@ -135,9 +145,9 @@ describe('Client Orders Controller', () => {
             expires_at: new Date(Date.now() + 48 * 60 * 60 * 1000)
         });
 
-        const res = await request(app)
+        const res = await agent
             .post(`/orders/decline/${pending.pending_id}`)
-            .set('Authorization', `Bearer ${freelancerToken}`);
+            ;
 
         expect(res.statusCode).toEqual(200);
         expect(res.body.message).toBe('Order request declined.');

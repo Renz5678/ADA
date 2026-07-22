@@ -129,7 +129,14 @@ const login = async (req, res) => {
             }
         )
 
-        return res.status(200).json({ message: 'Login valid!', token: token });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({ message: 'Login valid!' });
     } catch (e) {
         console.error('Error in controller:', e);
         return res.status(500).json({ message: 'An internal server error occurred.' });
@@ -189,7 +196,14 @@ const verifyOtp = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );
 
-        return res.status(200).json({ message: 'Account verified!', token: token });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({ message: 'Account verified!' });
     } catch (e) {
         console.error('Error in controller:', e);
         return res.status(500).json({ message: 'An internal server error occurred.' });
@@ -368,7 +382,14 @@ const googleLogin = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
         );
 
-        return res.status(200).json({ message: 'Login valid!', token: jwtToken });
+        res.cookie('token', jwtToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({ message: 'Login valid!' });
     } catch (e) {
         console.error(e);
         console.error('Error in controller:', e);
@@ -376,4 +397,21 @@ const googleLogin = async (req, res) => {
     }
 };
 
-export { register, login, verifyOtp, resendOtp, resetPassword, confirmResetPassword, googleLogin };
+const me = async (req, res) => {
+    // Relies on authMiddleware to verify token and populate req.user
+    if (!req.user) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    return res.status(200).json({ user: req.user });
+};
+
+const logout = async (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict'
+    });
+    return res.status(200).json({ message: 'Logged out successfully' });
+};
+
+export { register, login, verifyOtp, resendOtp, resetPassword, confirmResetPassword, googleLogin, me, logout };

@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import LoadingBar from "#components/ui/LoadingBar.jsx";
 import AppRouter from "#routes/AppRouter.jsx";
 import ErrorBoundary from "#components/ui/ErrorBoundary.jsx";
+import { AuthProvider } from "#contexts/AuthContext.jsx";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,9 @@ export default function App() {
                         }}
                     />
                     <LoadingBar isLoading={isLoading} message={loadingMessage} />
-                    <AppRouter onStart={startLoading} onStop={stopLoading} />
+                    <AuthProvider>
+                        <AppRouter onStart={startLoading} onStop={stopLoading} />
+                    </AuthProvider>
                 </ErrorBoundary>
             </QueryClientProvider>
         </>

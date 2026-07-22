@@ -4,6 +4,19 @@ import { sequelize, models } from '../../models/index.js';
 
 const { Users } = models;
 
+
+// --- Auto-injected Agent Wrapper ---
+const _testAgent = request.agent(app);
+const agent = {
+    get: (url) => _testAgent.get(url).set('X-Requested-With', 'XMLHttpRequest'),
+    post: (url) => _testAgent.post(url).set('X-Requested-With', 'XMLHttpRequest'),
+    put: (url) => _testAgent.put(url).set('X-Requested-With', 'XMLHttpRequest'),
+    delete: (url) => _testAgent.delete(url).set('X-Requested-With', 'XMLHttpRequest'),
+    patch: (url) => _testAgent.patch(url).set('X-Requested-With', 'XMLHttpRequest'),
+};
+// -----------------------------------
+
+
 beforeAll(async () => {
     process.env.ENABLE_REGISTRATION = 'true';
     await sequelize.sync({ alter: { drop: false } });
@@ -22,7 +35,7 @@ describe('Integration Test: Register', () => {
         const originalFlag = process.env.ENABLE_REGISTRATION;
         process.env.ENABLE_REGISTRATION = 'false';
 
-        const response = await request(app)
+        const response = await agent
             .post('/auth/register')
             .send({
                 username: 'BlockedUser',
@@ -39,7 +52,7 @@ describe('Integration Test: Register', () => {
     });
 
     it('should create a new user with hashed password', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/auth/register')
             .send({
                 username: 'Renz',
@@ -53,7 +66,7 @@ describe('Integration Test: Register', () => {
     });
 
     it('should return error and not save user for spam registration (too many dots)', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/auth/register')
             .send({
                 username: 'NormalName',
@@ -71,7 +84,7 @@ describe('Integration Test: Register', () => {
     });
 
     it('should return error and not save user for spam registration (profanity name)', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/auth/register')
             .send({
                 username: 'titemomaliit',
@@ -88,7 +101,7 @@ describe('Integration Test: Register', () => {
     });
 
     it('should return error and not save user for disposable email registration (proton.me)', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/auth/register')
             .send({
                 username: 'DisposableUser',
@@ -107,7 +120,7 @@ describe('Integration Test: Register', () => {
 
 describe('Integration Test: Login', () => {
     it('should login an existing user', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/auth/login')
             .send({
                 email: 'test@email.com',
@@ -116,7 +129,6 @@ describe('Integration Test: Login', () => {
 
         expect(response.status).toBe(200);
         expect(response.body.message).toBe('Login valid!');
-        expect(response.body.token).toBeDefined();
     });
 });
 
@@ -144,7 +156,7 @@ describe('Integration Test: OTP Brute Force Lockout', () => {
         const u = await Users.findOne({ where: { email: testUserEmail }});
         console.log("USER BEFORE VERIFY:", u?.toJSON());
 
-        const response = await request(app)
+        const response = await agent
             .post('/auth/verify-otp')
             .send({ email: testUserEmail, verification_token: '123456' });
 
@@ -161,7 +173,7 @@ describe('Integration Test: OTP Brute Force Lockout', () => {
     it('should lock out after 5 failed attempts and invalidate token, rejecting the 6th correct attempt', async () => {
         // 5 wrong attempts
         for (let i = 0; i < 5; i++) {
-            const res = await request(app)
+            const res = await agent
                 .post('/auth/verify-otp')
                 .send({ email: testUserEmail, verification_token: '000000' });
             
@@ -174,7 +186,7 @@ describe('Integration Test: OTP Brute Force Lockout', () => {
         }
 
         // 6th attempt with correct code should fail
-        const res6 = await request(app)
+        const res6 = await agent
             .post('/auth/verify-otp')
             .send({ email: testUserEmail, verification_token: '123456' });
         
@@ -187,14 +199,14 @@ describe('Integration Test: OTP Brute Force Lockout', () => {
     it('should reset attempts when a new OTP is requested', async () => {
         // fail 3 times
         for (let i = 0; i < 3; i++) {
-            await request(app).post('/auth/verify-otp').send({ email: testUserEmail, verification_token: '000000' });
+            await agent.post('/auth/verify-otp').send({ email: testUserEmail, verification_token: '000000' });
         }
         
         const userMid = await Users.findOne({ where: { email: testUserEmail } });
         expect(userMid.otp_attempts).toBe(3);
 
         // resend OTP
-        await request(app).post('/auth/resend-otp').send({ email: testUserEmail });
+        await agent.post('/auth/resend-otp').send({ email: testUserEmail });
 
         const userAfterResend = await Users.findOne({ where: { email: testUserEmail } });
         expect(userAfterResend.otp_attempts).toBe(0);
@@ -206,7 +218,7 @@ describe('Integration Test: OTP Brute Force Lockout', () => {
         user.otp_expires_at = new Date(Date.now() - 1000); // expire it
         await user.save();
 
-        const res = await request(app)
+        const res = await agent
             .post('/auth/verify-otp')
             .send({ email: testUserEmail, verification_token: '123456' });
 
@@ -217,7 +229,7 @@ describe('Integration Test: OTP Brute Force Lockout', () => {
 
 describe('Integration Test: Reset Password', () => {
     it('should return generic success for non-existent email to prevent enumeration', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/auth/reset-password')
             .send({ email: 'doesnotexist123123@email.com' });
 
@@ -226,7 +238,7 @@ describe('Integration Test: Reset Password', () => {
     });
 
     it('should return generic success for existing email and generate verification token', async () => {
-        const response = await request(app)
+        const response = await agent
             .post('/auth/reset-password')
             .send({ email: 'test@email.com' });
 
@@ -241,7 +253,7 @@ describe('Integration Test: Reset Password', () => {
     it('should block reset request if Turnstile token is missing (verifying middleware chain)', async () => {
         process.env.TEST_TURNSTILE = 'true';
         
-        const response = await request(app)
+        const response = await agent
             .post('/auth/reset-password')
             .send({ email: 'test@email.com' });
 
@@ -256,28 +268,28 @@ describe('Integration Test: Reset Password', () => {
         const targetEmail = 'throttle@email.com';
 
         // Attempt 1: IP 1
-        const res1 = await request(app)
+        const res1 = await agent
             .post('/auth/reset-password')
             .set('x-forwarded-for', '10.0.0.1')
             .send({ email: targetEmail });
         expect(res1.status).toBe(200);
 
         // Attempt 2: IP 2
-        const res2 = await request(app)
+        const res2 = await agent
             .post('/auth/reset-password')
             .set('x-forwarded-for', '10.0.0.2')
             .send({ email: targetEmail });
         expect(res2.status).toBe(200);
 
         // Attempt 3: IP 3
-        const res3 = await request(app)
+        const res3 = await agent
             .post('/auth/reset-password')
             .set('x-forwarded-for', '10.0.0.3')
             .send({ email: targetEmail });
         expect(res3.status).toBe(200);
 
         // Attempt 4: IP 4 (Should be blocked by normalizedEmailResetLimiter)
-        const res4 = await request(app)
+        const res4 = await agent
             .post('/auth/reset-password')
             .set('x-forwarded-for', '10.0.0.4')
             .send({ email: targetEmail });

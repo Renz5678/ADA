@@ -4,6 +4,19 @@ import { sequelize, models } from '../../models/index.js';
 
 const { Users, Product } = models;
 
+
+// --- Auto-injected Agent Wrapper ---
+const _testAgent = request.agent(app);
+const agent = {
+    get: (url) => _testAgent.get(url).set('X-Requested-With', 'XMLHttpRequest'),
+    post: (url) => _testAgent.post(url).set('X-Requested-With', 'XMLHttpRequest'),
+    put: (url) => _testAgent.put(url).set('X-Requested-With', 'XMLHttpRequest'),
+    delete: (url) => _testAgent.delete(url).set('X-Requested-With', 'XMLHttpRequest'),
+    patch: (url) => _testAgent.patch(url).set('X-Requested-With', 'XMLHttpRequest'),
+};
+// -----------------------------------
+
+
 let testUserId;
 let testProductId;
 
@@ -37,7 +50,7 @@ beforeAll(async () => {
 
 describe('Integration Test: Marketplace', () => {
     it('should fetch public freelancers without exposing sensitive data', async () => {
-        const response = await request(app).get('/marketplace/freelancers');
+        const response = await agent.get('/marketplace/freelancers');
         expect(response.status).toBe(200);
         expect(Array.isArray(response.body)).toBe(true);
 
@@ -55,7 +68,7 @@ describe('Integration Test: Marketplace', () => {
     });
 
     it('should fetch a public freelancer profile with products securely', async () => {
-        const response = await request(app).get(`/marketplace/freelancer/${testUserId}`);
+        const response = await agent.get(`/marketplace/freelancer/${testUserId}`);
         expect(response.status).toBe(200);
         
         // Assert public fields
@@ -78,7 +91,7 @@ describe('Integration Test: Marketplace', () => {
     });
 
     it('should return 404 for a non-existent freelancer', async () => {
-        const response = await request(app).get('/marketplace/freelancer/999999');
+        const response = await agent.get('/marketplace/freelancer/999999');
         expect(response.status).toBe(404);
     });
 });

@@ -8,11 +8,13 @@ import { useGoogleLogin } from '@react-oauth/google';
 import Icon from "#components/ui/Icon.jsx";
 import { registerClient, googleLoginClient } from "#api/clientEndpoints.js";
 import { Turnstile } from '@marsidev/react-turnstile';
+import { useAuth } from "#contexts/AuthContext.jsx";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ClientRegisterPage({ onStart, onStop }) {
     const navigate = useNavigate();
+    const { refreshAuth } = useAuth();
 
     const [form, setForm] = useState({ name: "", email: "", password: "", phone_ext: "" });
     const [showPassword, setShowPassword] = useState(false);
@@ -25,8 +27,8 @@ export default function ClientRegisterPage({ onStart, onStop }) {
             if (onStart) onStart("Registering with Google...");
             setIsSubmitting(true);
             try {
-                const res = await googleLoginClient({ token: tokenResponse.access_token });
-                localStorage.setItem("client_token", res.token);
+                await googleLoginClient({ token: tokenResponse.access_token });
+                await refreshAuth();
                 navigate("/client/dashboard");
             } catch (err) {
                 setError(err.response?.data?.message || "Google Signup failed.");

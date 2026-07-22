@@ -1,9 +1,21 @@
 import request from 'supertest';
 import app from '../../../app.js';
 import { models, sequelize } from '../../../src/models/index.js';
-import jwt from 'jsonwebtoken';
 
 const { Users, Clients } = models;
+
+
+// --- Auto-injected Agent Wrapper ---
+const _testAgent = request.agent(app);
+const agent = {
+    get: (url) => _testAgent.get(url).set('X-Requested-With', 'XMLHttpRequest'),
+    post: (url) => _testAgent.post(url).set('X-Requested-With', 'XMLHttpRequest'),
+    put: (url) => _testAgent.put(url).set('X-Requested-With', 'XMLHttpRequest'),
+    delete: (url) => _testAgent.delete(url).set('X-Requested-With', 'XMLHttpRequest'),
+    patch: (url) => _testAgent.patch(url).set('X-Requested-With', 'XMLHttpRequest'),
+};
+// -----------------------------------
+
 
 beforeAll(async () => {
     await sequelize.sync({ force: true });
@@ -29,24 +41,24 @@ describe('Client Businesses Controller', () => {
             is_verified: false // Should not be returned
         });
 
-        // Create a test client and token
+        // Create a test client and login
         const client = await Clients.create({
             name: 'Test Client',
             email: 'client@test.com',
-            password: 'testpassword'
+            password: 'testpassword',
+            is_verified: true
         });
 
-        token = jwt.sign(
-            { id: client.client_id, email: client.email, role: 'client' },
-            process.env.JWT_SECRET || 'testsecret',
-            { expiresIn: '1h' }
-        );
+        await agent.post('/client-auth/login').send({
+            email: client.email,
+            password: 'testpassword'
+        });
     });
 
     it('should fetch all verified businesses', async () => {
-        const res = await request(app)
+        const res = await agent
             .get('/client-businesses')
-            .set('Authorization', `Bearer ${token}`);
+            ;
 
         expect(res.statusCode).toEqual(200);
         expect(res.body.businesses.length).toBe(1);

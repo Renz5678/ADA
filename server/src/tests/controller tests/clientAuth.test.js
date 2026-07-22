@@ -4,6 +4,19 @@ import { models, sequelize } from '../../../src/models/index.js';
 
 const { Users, Clients } = models;
 
+
+// --- Auto-injected Agent Wrapper ---
+const _testAgent = request.agent(app);
+const agent = {
+    get: (url) => _testAgent.get(url).set('X-Requested-With', 'XMLHttpRequest'),
+    post: (url) => _testAgent.post(url).set('X-Requested-With', 'XMLHttpRequest'),
+    put: (url) => _testAgent.put(url).set('X-Requested-With', 'XMLHttpRequest'),
+    delete: (url) => _testAgent.delete(url).set('X-Requested-With', 'XMLHttpRequest'),
+    patch: (url) => _testAgent.patch(url).set('X-Requested-With', 'XMLHttpRequest'),
+};
+// -----------------------------------
+
+
 beforeAll(async () => {
     process.env.ENABLE_REGISTRATION = 'true';
     await sequelize.sync({ force: true });
@@ -29,7 +42,7 @@ describe('Client Authentication Controller', () => {
         const originalFlag = process.env.ENABLE_REGISTRATION;
         process.env.ENABLE_REGISTRATION = 'false';
 
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/register')
             .send({
                 name: 'Blocked Client',
@@ -45,7 +58,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should register a new client successfully (unverified)', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/register')
             .send({
                 name: 'Test Client',
@@ -64,7 +77,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should fail login when account is not verified', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/login')
             .send({
                 email: 'client@test.com',
@@ -75,7 +88,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should resend OTP successfully', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/register') // Calling register again on unverified account resends OTP
             .send({
                 name: 'Test Client',
@@ -91,7 +104,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should verify OTP successfully', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/verify-otp')
             .send({
                 email: 'client@test.com',
@@ -103,7 +116,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should fail registration with existing verified email', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/register')
             .send({
                 name: 'Another Client',
@@ -116,7 +129,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should fail registration with disposable email (proton.me)', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/register')
             .send({
                 name: 'Test Client',
@@ -129,7 +142,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should fail registration with spammy name', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/register')
             .send({
                 name: 'Buy followers here',
@@ -142,7 +155,7 @@ describe('Client Authentication Controller', () => {
     });
 
     it('should login a registered client successfully', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/login')
             .send({
                 email: 'client@test.com',
@@ -150,12 +163,11 @@ describe('Client Authentication Controller', () => {
             });
 
         expect(res.statusCode).toEqual(200);
-        expect(res.body.token).toBeDefined();
         validToken = res.body.token;
     });
 
     it('should fail login with wrong password', async () => {
-        const res = await request(app)
+        const res = await agent
             .post('/client-auth/login')
             .send({
                 email: 'client@test.com',
