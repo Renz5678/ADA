@@ -10,12 +10,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * GET /sse?token=<jwt>
+ * GET /sse
  * Opens a persistent SSE stream for the authenticated freelancer.
- * EventSource cannot send Authorization headers, so we accept the token as a query param.
+ * Reads the HttpOnly token cookie. SseController handles its own JWT validation.
  */
 export const connectSse = (req, res) => {
-    const token = req.query.token;
+    const token = req.cookies?.token;
 
     if (!token) {
         return res.status(401).json({ message: 'Unauthorized: token required' });
