@@ -30,7 +30,8 @@ describe('Client Businesses Controller', () => {
             business_name: 'Business 1',
             email: 'f1@test.com',
             password: 'testpassword',
-            is_verified: true
+            is_verified: true,
+            approval_status: 'approved'
         });
 
         await Users.create({

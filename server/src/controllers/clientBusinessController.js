@@ -7,7 +7,8 @@ export const getAllBusinesses = async (req, res) => {
         const businesses = await Users.findAll({
             attributes: ['user_id', 'business_name', 'username', 'email', 'profile_picture', 'bio', 'banner_image', 'theme_color', 'description', 'social_facebook', 'social_instagram', 'social_shopee', 'social_tiktok', 'social_twitter', 'social_linkedin'],
             where: {
-                is_verified: true
+                is_verified: true,
+                approval_status: 'approved'
             }
         });
 
@@ -26,7 +27,8 @@ export const getBusinessDetails = async (req, res) => {
             attributes: ['user_id', 'business_name', 'username', 'email', 'profile_picture', 'banner_image', 'bio', 'description', 'theme_color', 'social_facebook', 'social_instagram', 'social_shopee', 'social_tiktok', 'social_twitter', 'social_linkedin'],
             where: {
                 user_id: id,
-                is_verified: true
+                is_verified: true,
+                approval_status: 'approved'
             },
             include: [{
                 model: Product,
