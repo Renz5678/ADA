@@ -14,11 +14,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            if (window.location.pathname !== '/') {
-                window.location.href = '/';
-            }
-        }
         if (error.response && error.response.status >= 500) {
             console.error(
                 `%c [API Error - ${error.response.status}] `, 'background: red; color: white; font-weight: bold;', 
