@@ -148,3 +148,15 @@ export const mutationLimiter = rateLimit({
         message: 'Too many actions performed. Please wait a few minutes before creating or modifying more data.'
     }
 });
+
+export const resetPasswordLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    limit: 3,
+    standardHeaders: true,
+    legacyHeaders: false,
+    keyGenerator: getIp,
+    skip: () => process.env.NODE_ENV === 'test',
+    message: {
+        message: 'Too many password reset requests from this IP, please try again later.'
+    }
+});

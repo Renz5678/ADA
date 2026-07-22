@@ -215,6 +215,30 @@ describe('Integration Test: OTP Brute Force Lockout', () => {
     });
 });
 
+describe('Integration Test: Reset Password', () => {
+    it('should return generic success for non-existent email to prevent enumeration', async () => {
+        const response = await request(app)
+            .post('/auth/reset-password')
+            .send({ email: 'doesnotexist123123@email.com' });
+
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('If that email address exists and is verified, an OTP for password reset has been sent.');
+    });
+
+    it('should return generic success for existing email and generate verification token', async () => {
+        const response = await request(app)
+            .post('/auth/reset-password')
+            .send({ email: 'test@email.com' });
+
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('If that email address exists and is verified, an OTP for password reset has been sent.');
+
+        const user = await Users.findOne({ where: { email: 'test@email.com' } });
+        expect(user.verification_token).toBeDefined();
+        expect(user.otp_expires_at).toBeDefined();
+    });
+});
+
 afterAll(async () => {
     await Users.destroy({
         where: { email: 'test2@email.com' }

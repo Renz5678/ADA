@@ -254,7 +254,10 @@ const resetPassword = async (req, res) => {
             }
         });
 
-        if (!user) return res.status(404).json({ message: 'Account not found!' });
+        if (!user) {
+            // Anti-enumeration: Return generic success even if user doesn't exist
+            return res.status(200).json({ message: 'If that email address exists and is verified, an OTP for password reset has been sent.' });
+        }
 
         user.verification_token = verification_token;
         user.otp_expires_at = otp_expires_at;
@@ -267,7 +270,7 @@ const resetPassword = async (req, res) => {
             html: getVerificationEmailHtml(user.username, verification_token)
         });
 
-        return res.status(200).json({ message: 'OTP for password reset sent!' });
+        return res.status(200).json({ message: 'If that email address exists and is verified, an OTP for password reset has been sent.' });
     } catch (e) {
         console.error('Error in controller:', e);
         return res.status(500).json({ message: 'An internal server error occurred.' });
