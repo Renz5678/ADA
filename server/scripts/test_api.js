@@ -16,7 +16,7 @@ async function testApi() {
             return process.exit();
         }
 
-        const token = jwt.sign({ id: user.user_id }, process.env.ACCESS_TOKEN_SECRET || 'secret', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.user_id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
 
         const material = await models.Material.findOne({ where: { user_id: user.user_id } });
         if(!material) {

@@ -27,7 +27,7 @@ describe('Client Orders Controller', () => {
 
         freelancerToken = jwt.sign(
             { id: freelancerId, email: freelancer.email, role: 'freelancer' },
-            process.env.JWT_SECRET || 'secret',
+            process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
@@ -42,7 +42,7 @@ describe('Client Orders Controller', () => {
 
         clientToken = jwt.sign(
             { id: clientId, email: client.email, role: 'client' },
-            process.env.JWT_SECRET || 'secret',
+            process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
     });
