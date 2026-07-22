@@ -5,6 +5,7 @@ import { sequelize, models } from '../../models/index.js';
 const { Users } = models;
 
 beforeAll(async () => {
+    process.env.ENABLE_REGISTRATION = 'true';
     await sequelize.sync({ alter: { drop: false } });
     await Users.destroy({ where: { email: 'test@email.com' } });
     await Users.create({

@@ -23,6 +23,7 @@ let firstOrderItemId;
 // ─── Setup & Teardown ─────────────────────────────────────────────────────────
 
 beforeAll(async () => {
+    process.env.ENABLE_REGISTRATION = 'true';
     await sequelize.sync();
 
     await Users.destroy({ where: { email: testUser.email } });

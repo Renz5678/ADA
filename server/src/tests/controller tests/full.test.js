@@ -25,6 +25,7 @@ let expenseId;
 // ─── Setup & Teardown ─────────────────────────────────────────────────────────
 
 beforeAll(async () => {
+    process.env.ENABLE_REGISTRATION = 'true';
     await sequelize.sync();
 
     // Clean up any leftover test data
