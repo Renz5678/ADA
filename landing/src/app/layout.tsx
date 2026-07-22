@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Work_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col font-body">
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
